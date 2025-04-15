@@ -1,10 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Apr 11 12:36:03 2025
 
-@author: Admin
-"""
-
+import os
 import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -16,6 +11,11 @@ okt = Okt()
 from transformers import AutoTokenizer, AutoModel
 import torch
 
+# CSV 로드
+df = pd.read_csv("tving_entertainment_all_merged.csv")
+
+# 결측값 채우기
+df.fillna("정보 없음", inplace=True)
 
 # 한글 텍스트 → 명사만 추출 + 불용어 필터링 추가
 stopwords = {"이", "가", "은", "는", "을", "를", "의", "에", "에서", "으로", "입니다"}
@@ -37,24 +37,22 @@ def get_kobert_embedding(text):
     cls_embedding = outputs.last_hidden_state[:, 0, :]
     return cls_embedding.squeeze().numpy()
 
+# 임베딩 파일 체크 → 없으면 생성
+if os.path.exists("kobert_embedding_matrix.npy"):
+    embedding_matrix = np.load("kobert_embedding_matrix.npy")
+else:
+    print("KoBERT 임베딩 생성 중...")
+    desc_embeddings = []
+    for desc in df["description"]:
+        try:
+            vec = get_kobert_embedding(desc)
+        except:
+            vec = np.zeros(768)
+        desc_embeddings.append(vec)
 
-
-# CSV 로드
-df = pd.read_csv("tving_entertainment_all_merged.csv")
-
-# 결측값 채우기
-df.fillna("정보 없음", inplace=True)
-
-# 모든 콘텐츠 설명 벡터화
-desc_embeddings = []
-for desc in df['description']:
-    try:
-        vec = get_kobert_embedding(str(desc))
-    except:
-        vec = np.zeros(768)  # 오류 시 빈 벡터 처리
-    desc_embeddings.append(vec)
-
-embedding_matrix = np.vstack(desc_embeddings)
+    embedding_matrix = np.vstack(desc_embeddings)
+    np.save("kobert_embedding_matrix.npy", embedding_matrix)
+    print("저장 완료: kobert_embedding_matrix.npy")
 
 # 추천 특징 조합 (설명 + 장르+ 서브장르 + 출연진)
 df["features"] = df[["description", "genre", "subgenre", "cast"]].apply(
