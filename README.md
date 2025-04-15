@@ -7,7 +7,7 @@ React 프론트엔드와 Flask 백엔드를 사용하여 콘텐츠를 선택하�
 ---
 
 ## 📁 프로젝트 구조
-
+'''
 IFITV-React/
 ├── backend/                # Flask 백엔드
 │   ├── app.py              # 추천 API 라우터
@@ -21,7 +21,7 @@ IFITV-React/
 │
 ├── README.md
 └── .gitignore
-
+'''
 ---
 
 ## 🚀 주요 기능
