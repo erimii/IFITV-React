@@ -16,6 +16,8 @@ def recommend_api():
     top_n = data.get("top_n", 5)
     alpha = data.get("alpha", 0.7)
 
+    print(f"추천 요청 title: {title}, alpha: {alpha}, top_n: {top_n}")
+
     try:
         result_df = hybrid_recommend_with_reason(title, top_n=top_n, alpha=alpha)
         return jsonify(result_df.to_dict(orient="records"))
@@ -26,10 +28,11 @@ def recommend_api():
 def get_titles():
     return jsonify(df["title"].unique().tolist())
 
+# 썸네일+제목 랜덤 10개만 뜨도록 설정
 @app.route("/titles_with_thumbnails", methods=["GET"])
 def get_titles_with_thumbnails():
-    items = df[["title", "thumbnail"]].drop_duplicates().to_dict(orient="records")
-    return jsonify(items)
+    sample_df = df[["title", "thumbnail"]].drop_duplicates().sample(n=10, random_state=42)
+    return jsonify(sample_df.to_dict(orient="records"))
 
 
 if __name__ == "__main__":
