@@ -46,7 +46,7 @@ function App() {
             }}
           >
             <img
-              src={item.thumbnail || "https://via.placeholder.com/150"}
+              src={item.thumbnail}
               alt={item.title}
               style={{ width: '100%', borderRadius: '4px' }}
             />
@@ -63,6 +63,7 @@ function App() {
           <ul>
             {results.map((item, idx) => (
               <li key={idx}>
+                <img src={item.thumbnail} alt={item.title} style={{ width: '100px' }} />
                 <strong>{item.title}</strong> ({item.subgenre})<br />
                 📌 {item["추천 근거"]}
               </li>

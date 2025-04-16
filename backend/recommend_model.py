@@ -178,6 +178,7 @@ def hybrid_recommend_with_reason(title, top_n=5, alpha=0.7, genre_weight=0.1):
         result = {
             "title": df.iloc[i]["title"],
             "subgenre": df.iloc[i]["subgenre"],
+            "thumbnail": df.iloc[i]["thumbnail"],
             "추천 근거": ""
         }
         if genres:
