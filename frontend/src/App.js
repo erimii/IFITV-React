@@ -2,14 +2,22 @@ import React, { useEffect, useState } from 'react';
 
 function App() {
   const [contents, setContents] = useState([]);
+  const [profiles, setProfiles] = useState([]);
+  const [selectedProfile, setSelectedProfile] = useState(null);
+  const [genreContents, setGenreContents] = useState([]);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  
 
   // 썸네일 포함된 콘텐츠 리스트 불러오기
   useEffect(() => {
     fetch("http://localhost:5000/titles_with_thumbnails")
       .then(res => res.json())
       .then(data => setContents(data));
+
+      fetch("http://localhost:5000/profiles")
+      .then(res => res.json())
+      .then(data => setProfiles(data));
   }, []);
 
   const handleClick = async (title) => {
@@ -27,12 +35,37 @@ function App() {
     setLoading(false);
   };
 
+  const handleProfileSelect = async (username) => {
+    setSelectedProfile(username);
+    setResults([]); // 기존 추천 초기화
+  
+    const response = await fetch("http://localhost:5000/profile_recommend", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username }),
+    });
+    const data = await response.json();
+    setGenreContents(data);
+  };
+  
+
   return (
     <div style={{ padding: '2rem' }}>
       <h1>🎬 IFITV 예능 추천기</h1>
-      <h2>👇 콘텐츠를 선택해보세요</h2>
+
+      <div style={{ marginBottom: '2rem' }}>
+        <label>👤 사용자 선택: </label>
+        <select onChange={(e) => handleProfileSelect(e.target.value)}>
+          <option value="">-- 선택하세요 --</option>
+          {profiles.map((p, idx) => (
+            <option key={idx} value={p.username}>{p.username}</option>
+          ))}
+        </select>
+      </div>
+
+      <h2>👇 {selectedProfile}님의 선호 장르 기반 콘텐츠</h2>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-        {contents.map((item, idx) => (
+        {genreContents.map((item, idx) => (
           <div
             key={idx}
             onClick={() => handleClick(item.title)}
@@ -54,6 +87,7 @@ function App() {
           </div>
         ))}
       </div>
+
 
       {loading && <p>추천 중입니다...</p>}
 
