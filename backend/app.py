@@ -5,12 +5,51 @@ from flask_cors import CORS
 import json
 
 from recommend_model import hybrid_recommend_with_reason, df
-
+from utils import load_today_programs
 from user_profiles import get_profile
 from user_profiles import load_profiles
 
 app = Flask(__name__)
 CORS(app)
+
+# CSV에서 오늘 방송 불러오기
+today_programs_df = load_today_programs()
+
+# 편성표 기반 선호 추천
+@app.route("/live_recommend", methods=["POST"])
+def live_recommend():
+    data = request.get_json()
+    username = data["username"]
+    profile_name = data["profile_name"]
+
+    try:
+        profiles = load_profiles()
+        for user in profiles:
+            if user["username"] == username:
+                for p in user.get("profiles", []):
+                    if p["name"] == profile_name:
+                        preferred_genres = p["preferred_genres"]
+
+                        clean_df = today_programs_df.dropna(subset=["장르"])
+                        matched_df = clean_df[clean_df["장르"].apply(
+                            lambda g: any(genre in g for genre in preferred_genres)
+                        )]
+
+                        if matched_df.empty:
+                            return jsonify([])
+
+                        result = matched_df[
+                            ["채널명", "방송 시간", "프로그램명", "장르", "출연진", "설명"]
+                        ].drop_duplicates().head(10)
+                        result = result.fillna("")
+
+                        return jsonify(result.to_dict(orient="records"))
+
+        return jsonify({"error": "해당 프로필을 찾을 수 없습니다."}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
 
 # 사용자 프로필 목록 조회
 @app.route("/user_profiles/<username>", methods=["GET"])

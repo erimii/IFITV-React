@@ -5,3 +5,4 @@ __pycache__/
 .env
 kobert_embedding_matrix.npy
 frontend/node_modules/
+backend/data_crawling_live/

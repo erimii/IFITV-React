@@ -7,32 +7,49 @@ function HomePage({ user, profile, onLogout }) {
   const navigate = useNavigate();
 
   const [genreContents, setGenreContents] = useState([]);
+  const [livePrograms, setLivePrograms] = useState([]);
+
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  
   // 첫 진입 시 사용자 선호 장르 기반 콘텐츠 추천
   useEffect(() => {
-    const fetchGenreContents = async () => {
-      const response = await fetch("http://localhost:5000/profile_recommend", {
+    const fetchRecommendations = async () => {
+      if (!user || !profile) return;
+  
+      // 1. 선호 장르 기반 콘텐츠
+      const res1 = await fetch("http://localhost:5000/profile_recommend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: user.username, profile_name: profile.name }),
       });
-      const data = await response.json();
-      console.log("서버 응답:", data);
-      if (Array.isArray(data)) {
-        setGenreContents(data);  // 🔥 배열이면 그대로 세팅
+      const genreData = await res1.json();
+      if (Array.isArray(genreData)) {
+        setGenreContents(genreData);
       } else {
-        alert(data.error || "추천 실패");
-        setGenreContents([]); // ⚠️ 안전하게 빈 배열로
+        setGenreContents([]);
+        alert(genreData.error || "선호 장르 콘텐츠 추천 실패");
+      }
+  
+      // 2. 오늘 방송 추천
+      const res2 = await fetch("http://localhost:5000/live_recommend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: user.username, profile_name: profile.name }),
+      });
+      const liveData = await res2.json();
+      console.log("🔥 livePrograms 응답:", liveData);
+      if (Array.isArray(liveData)) {
+        setLivePrograms(liveData);
+      } else {
+        setLivePrograms([]);
       }
     };
-
-    if (user) {
-      fetchGenreContents();
-    }
-  }, [user]);
+  
+    fetchRecommendations();
+  }, [user, profile]);
+  
 
   // 콘텐츠 클릭 → 추천 결과 받아오기
   const handleClick = async (title) => {
@@ -136,6 +153,30 @@ function HomePage({ user, profile, onLogout }) {
           </div>
         </div>
       )}
+      {livePrograms.length > 0 && (
+        <div style={{ marginTop: "2rem" }}>
+          <h2>📺 {profile.name}님의 오늘 방송 추천</h2>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+            {livePrograms.map((program, idx) => (
+              <div key={idx} style={{
+                width: '250px',
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                padding: '1rem',
+                background: '#fdfdfd'
+              }}>
+                <h4>{program["프로그램명"]}</h4>
+                <p>⏰ {program["방송 시간"]}</p>
+                <p>📡 {program["채널명"]}</p>
+                <p>🎭 장르: {program["장르"]}</p>
+                {program["출연진"] && <p>👤 출연: {program["출연진"]}</p>}
+                {program["설명"] && <p>📝 {program["설명"]}</p>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
