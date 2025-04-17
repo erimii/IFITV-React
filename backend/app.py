@@ -87,6 +87,7 @@ def add_profile():
 
     return jsonify({"error": "사용자를 찾을 수 없습니다."}), 404
 
+# 회원가입
 @app.route("/signup", methods=["POST"])
 def signup():
     data = request.get_json()
@@ -94,7 +95,6 @@ def signup():
     password = data["password"]
     age = data["age"]
     gender = data["gender"]
-    preferred_genres = data.get("preferred_genres", [])
 
     profiles = load_profiles()
 
@@ -103,15 +103,15 @@ def signup():
         return jsonify({"error": "이미 존재하는 사용자입니다."}), 400
 
     # 새 사용자 생성
-    new_profile = {
+    new_user = {
         "username": username,
         "password": password,
         "age": age,
         "gender": gender,
-        "preferred_genres": preferred_genres
+        "profiles": []
     }
 
-    profiles.append(new_profile)
+    profiles.append(new_user)
 
     # JSON 파일에 저장
     with open("profiles.json", "w", encoding="utf-8") as f:

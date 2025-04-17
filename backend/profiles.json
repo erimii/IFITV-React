@@ -86,5 +86,11 @@
         ]
       }
     ]
+  },
+  {
+    "username": "test1",
+    "password": "1111",
+    "age": "20",
+    "gender": "여"
   }
 ]

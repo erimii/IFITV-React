@@ -10,10 +10,7 @@ function SignupPage() {
     password: "",
     age: "",
     gender: "",
-    preferred_genres: []
   });
-
-  const genres = ["버라이어티", "쿡방/먹방", "음악예능", "에니멀", "힐링예능", "여행", "토크쇼", "서바이벌", "스포츠예능"];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,15 +18,6 @@ function SignupPage() {
       ...prev,
       [name]: value
     }));
-  };
-
-  const handleGenreToggle = (genre) => {
-    setFormData(prev => {
-      const selected = prev.preferred_genres.includes(genre)
-        ? prev.preferred_genres.filter(g => g !== genre)
-        : [...prev.preferred_genres, genre];
-      return { ...prev, preferred_genres: selected };
-    });
   };
 
   const handleSubmit = async (e) => {
@@ -61,29 +49,6 @@ function SignupPage() {
           <option value="여">여</option>
           <option value="남">남</option>
         </select>
-
-        <div style={{ textAlign: "left" }}>
-          <strong>선호 장르 선택:</strong>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.5rem" }}>
-            {genres.map((g) => (
-              <button
-                type="button"
-                key={g}
-                onClick={() => handleGenreToggle(g)}
-                style={{
-                  padding: "0.3rem 0.8rem",
-                  borderRadius: "20px",
-                  border: formData.preferred_genres.includes(g) ? "2px solid #A50034" : "1px solid #ccc",
-                  backgroundColor: formData.preferred_genres.includes(g) ? "#A50034" : "#fff",
-                  color: formData.preferred_genres.includes(g) ? "#fff" : "#333",
-                  cursor: "pointer"
-                }}
-              >
-                {g}
-              </button>
-            ))}
-          </div>
-        </div>
 
         <button type="submit" style={submitButton}>회원가입</button>
       </form>
