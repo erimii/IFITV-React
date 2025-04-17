@@ -5,6 +5,8 @@ import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import ProfileSelectPage from './pages/ProfileSelectPage';
+import AddProfileForm from './pages/AddProfileForm';
+import SelectContentPage from './pages/SelectContentPage';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -44,6 +46,8 @@ function App() {
             )
           }
         />
+        <Route path="/add-profile" element={<AddProfileForm user={user} />} />
+        <Route path="/select-content" element={<SelectContentPage user={user} />} />
         <Route
           path="/home"
           element={

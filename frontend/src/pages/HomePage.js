@@ -1,14 +1,17 @@
 // src/pages/HomePage.js
 import React, { useEffect, useState } from 'react';
 import RecommendationCarousel from '../components/RecommendationCarousel';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation  } from 'react-router-dom';
+
+
 
 function HomePage({ user, profile, onLogout }) {
   const navigate = useNavigate();
-
+  const location = useLocation();
+  const likedContents = location.state?.liked_contents || [];
   const [genreContents, setGenreContents] = useState([]);
   const [livePrograms, setLivePrograms] = useState([]);
-
+  const [personalized, setPersonalized] = useState([]);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,16 +42,32 @@ function HomePage({ user, profile, onLogout }) {
         body: JSON.stringify({ username: user.username, profile_name: profile.name }),
       });
       const liveData = await res2.json();
-      console.log("🔥 livePrograms 응답:", liveData);
       if (Array.isArray(liveData)) {
         setLivePrograms(liveData);
       } else {
         setLivePrograms([]);
       }
+  
+      // 3. liked_contents 기반 추천
+      const likedContents = profile.liked_contents || [];
+      if (likedContents.length > 0) {
+        const res3 = await fetch("http://localhost:5000/initial_recommend", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ titles: likedContents }),
+        });
+        const personalizedData = await res3.json();
+        if (Array.isArray(personalizedData)) {
+          setPersonalized(personalizedData);
+        } else {
+          setPersonalized([]);
+        }
+      }
     };
   
     fetchRecommendations();
   }, [user, profile]);
+  
   
 
   // 콘텐츠 클릭 → 추천 결과 받아오기
@@ -176,6 +195,31 @@ function HomePage({ user, profile, onLogout }) {
           </div>
         </div>
       )}
+      {personalized.length > 0 && (
+        <div style={{ marginTop: "2rem" }}>
+          <h2>💖 {profile.name}님이 좋아한 콘텐츠와 비슷한 추천</h2>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+            {personalized.map((item, idx) => (
+              <div key={idx} style={{
+                width: '150px',
+                textAlign: 'center',
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                padding: '0.5rem'
+              }}>
+                <img
+                  src={item.thumbnail}
+                  alt={item.title}
+                  style={{ width: '100%', borderRadius: '4px' }}
+                />
+                <p style={{ fontWeight: 'bold' }}>{item.title}</p>
+                <p style={{ fontSize: "0.8rem", color: "#777" }}>{item.subgenre}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
 
     </div>
   );

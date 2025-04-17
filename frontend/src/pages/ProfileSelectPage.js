@@ -31,24 +31,7 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
 
   // 프로필 추가
   const handleAddProfile = async () => {
-    const res = await fetch("http://localhost:5000/add_profile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: user.username,
-        profile: newProfile
-      })
-    });
-
-    if (res.ok) {
-      alert("프로필이 추가되었습니다!");
-      setNewProfile({ name: '', age: '', gender: '', preferred_genres: [] });
-      const updated = await res.json();
-      setProfiles(updated); // 업데이트된 목록
-    } else {
-      const err = await res.json();
-      alert(err.error || "추가 실패");
-    }
+    navigate("/add-profile");
   };
 
   const toggleGenre = (g) => {

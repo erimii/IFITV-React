@@ -84,6 +84,25 @@
           "버라이어티",
           "쿡방/먹방"
         ]
+      },
+      {
+        "name": "",
+        "age": "",
+        "gender": "",
+        "preferred_genres": []
+      },
+      {
+        "name": "ㄹㄹ",
+        "age": "22",
+        "gender": "",
+        "preferred_genres": [
+          "버라이어티"
+        ],
+        "liked_contents": [
+          "아는 형님",
+          "주먹이 운다 시즌2",
+          "신서유기 4"
+        ]
       }
     ]
   },

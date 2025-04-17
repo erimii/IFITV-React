@@ -60,6 +60,53 @@ def get_user_profiles(username):
             return jsonify(user.get("profiles", []))  # 없으면 빈 리스트
     return jsonify({"error": "사용자를 찾을 수 없습니다."}), 404
 
+# 멀티 프로필 생성 시 컨텐츠 선택하기
+@app.route("/genre_contents", methods=["POST"])
+def genre_contents():
+    data = request.get_json()
+    genres = data.get("genres", [])
+
+    matched_df = df[df["subgenre"].isin(genres)]
+    matched_df = matched_df[["title", "thumbnail", "cast"]].drop_duplicates().fillna("")
+
+    return jsonify(matched_df.to_dict(orient="records"))
+
+# 선호 장르 기반 미리보기 콘텐츠 추천 (저장 전에도 사용 가능)
+@app.route("/preview_recommend", methods=["POST"])
+def preview_recommend():
+    data = request.get_json()
+    genres = data.get("preferred_genres", [])
+
+    # 필터링
+    filtered_df = df[df["subgenre"].isin(genres)]
+    if filtered_df.empty:
+        return jsonify([])
+
+    sample_df = filtered_df[["title", "thumbnail"]].drop_duplicates().sample(n=10, random_state=42)
+    return jsonify(sample_df.to_dict(orient="records"))
+
+
+# 선택한 컨텐츠 기반 추천
+@app.route("/initial_recommend", methods=["POST"])
+def initial_recommend():
+    data = request.get_json()
+    titles = data.get("titles", [])
+
+    recommendations = []
+    for title in titles:
+        try:
+            result_df = hybrid_recommend_with_reason(title, top_n=2)
+            recommendations.extend(result_df.to_dict(orient="records"))
+        except:
+            continue
+
+    # 중복 제거
+    import pandas as pd
+    df = pd.DataFrame(recommendations)
+    df = df.drop_duplicates(subset="title").fillna("")
+
+    return jsonify(df.to_dict(orient="records"))
+
 
 # 사용자에게 새 프로필 추가
 @app.route("/add_profile", methods=["POST"])
