@@ -43,7 +43,19 @@ function App() {
     const data = await response.json();
     setGenreContents(data);
   };
-  
+  // 추천 캐러셀 안의 콘텐츠 중 하나 클릭 시 다시 추천
+  const handleSimilarClick = async (title) => {
+    setLoading(true);
+    const response = await fetch("http://localhost:5000/recommend_with_reason", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, top_n: 5, alpha: 0.7 }),
+    });
+    const data = await response.json();
+    setResults(data); // 캐러셀 내용 갱신
+    setLoading(false);
+  };
+
 
   return (
     <div style={{ padding: '2rem' }}>
@@ -103,7 +115,10 @@ function App() {
 
             <h2 style={{ textAlign: 'center' }}>✨ 추천 콘텐츠</h2>
 
-            <RecommendationCarousel results={results} />
+            <RecommendationCarousel
+              results={results}
+              onSimilarClick={handleSimilarClick}
+            />
           </div>
         </div>
       )}
