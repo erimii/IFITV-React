@@ -10,7 +10,7 @@ function SelectContentPage({ user }) {
 
   useEffect(() => {
     const fetchPreviewContents = async () => {
-      const res = await fetch("http://localhost:5000/preview_recommend", {
+      const res = await fetch("http://localhost:5000/preview_recommend_model", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -18,7 +18,6 @@ function SelectContentPage({ user }) {
         })
       });
       const data = await res.json();
-      console.log("🎯 preview_recommend 응답:", data);
       setContents(data);
     };
   

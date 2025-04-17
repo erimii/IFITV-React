@@ -10,7 +10,7 @@ function AddProfileForm({ user }) {
     preferred_genres: [],
   });
 
-  const allGenres = ["버라이어티", "리얼리티", "힐링예능", "음악예능", "에니멀", "쿡방/먹방", "여행", "토크쇼", "스포츠예능"];
+  const allGenres = ["오락", "버라이어티", "리얼리티", "힐링예능", "음악예능", "에니멀", "쿡방/먹방", "여행", "토크쇼", "스포츠예능"];
 
   const toggleGenre = (genre) => {
     setForm((prev) => ({

@@ -103,6 +103,30 @@
           "주먹이 운다 시즌2",
           "신서유기 4"
         ]
+      },
+      {
+        "name": "제발",
+        "age": "11",
+        "gender": "여",
+        "preferred_genres": [
+          "힐링예능",
+          "음악예능"
+        ],
+        "liked_contents": [
+          "뚝딱이의 역습"
+        ]
+      },
+      {
+        "name": "제발요",
+        "age": "33",
+        "gender": "여",
+        "preferred_genres": [
+          "오락",
+          "버라이어티"
+        ],
+        "liked_contents": [
+          "요즘애들"
+        ]
       }
     ]
   },

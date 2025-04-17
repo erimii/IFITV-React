@@ -72,18 +72,36 @@ def genre_contents():
     return jsonify(matched_df.to_dict(orient="records"))
 
 # 선호 장르 기반 미리보기 콘텐츠 추천 (저장 전에도 사용 가능)
-@app.route("/preview_recommend", methods=["POST"])
-def preview_recommend():
+@app.route("/preview_recommend_model", methods=["POST"])
+def preview_recommend_model():
+    from recommend_model import hybrid_recommend_with_reason, df
+
     data = request.get_json()
     genres = data.get("preferred_genres", [])
 
-    # 필터링
-    filtered_df = df[df["subgenre"].isin(genres)]
-    if filtered_df.empty:
-        return jsonify([])
+    # 장르에 해당하는 콘텐츠 중에서 대표 타이틀 몇 개 뽑기 (기준점)
+    base_titles = df[df["subgenre"].isin(genres)]["title"].drop_duplicates().sample(n=3, random_state=42).tolist()
 
-    sample_df = filtered_df[["title", "thumbnail"]].drop_duplicates().sample(n=10, random_state=42)
-    return jsonify(sample_df.to_dict(orient="records"))
+    # 추천 모델 결과 모으기
+    recommended = []
+    seen = set()
+    for title in base_titles:
+        try:
+            rec_df = hybrid_recommend_with_reason(title, top_n=5, alpha=0.7)
+            for _, row in rec_df.iterrows():
+                t = row["title"]
+                if t not in seen:
+                    recommended.append({
+                        "title": row["title"],
+                        "thumbnail": row.get("thumbnail", ""),
+                        "추천 근거": row.get("추천 근거", "")
+                    })
+                    seen.add(t)
+        except:
+            continue
+
+    # 10개만 출력
+    return jsonify(recommended[:10])
 
 
 # 선택한 컨텐츠 기반 추천
