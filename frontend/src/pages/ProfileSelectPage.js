@@ -11,7 +11,7 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
     preferred_genres: []
   });
 
-  const genres = ["버라이어티", "쿡방/먹방", "음악예능", "에니멀", "힐링예능", "여행", "토크쇼", "서바이벌", "스포츠예능"];
+  const genres = ["버라이어티", "쿡방/먹방", "음악예능", "애니멀", "힐링예능", "여행", "토크쇼", "서바이벌", "스포츠예능"];
 
   // 로그인한 유저의 프로필 목록 가져오기
   useEffect(() => {
