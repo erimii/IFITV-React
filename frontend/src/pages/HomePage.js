@@ -86,7 +86,7 @@ function HomePage({ user, profile, onLogout }) {
         </div>
       </div>
 
-      <h2>👇 {user.username}님의 선호 장르 기반 콘텐츠</h2>
+      <h2>👇 {profile.name}님의 선호 장르 기반 콘텐츠</h2>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
         {genreContents.map((item, idx) => (
           <div

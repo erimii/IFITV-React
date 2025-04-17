@@ -105,19 +105,30 @@ def profile_recommend():
     profile_name = data["profile_name"]
 
     try:
-        profile = get_profile(username)
-        preferred_genres = profile["preferred_genres"]
+        profiles = load_profiles()
+        for user in profiles:
+            if user["username"] == username:
+                for p in user.get("profiles", []):
+                    if p["name"] == profile_name:
+                        preferred_genres = p["preferred_genres"]
 
-        filtered_df = df[df["subgenre"].apply(
-            lambda sg: any(genre in sg for genre in preferred_genres)
-        )]
-        if filtered_df.empty:
-            return jsonify([])
-        sample_df = filtered_df[["title", "thumbnail"]].drop_duplicates().sample(n=10, random_state=42)
-        return jsonify(sample_df.to_dict(orient="records"))
+                        filtered_df = df[df["subgenre"].apply(
+                            lambda sg: any(genre in sg for genre in preferred_genres)
+                        )]
+
+                        if filtered_df.empty:
+                            return jsonify([])
+
+                        sample_df = filtered_df[["title", "thumbnail"]].drop_duplicates().sample(
+                            n=min(10, len(filtered_df)), random_state=42
+                        )
+                        return jsonify(sample_df.to_dict(orient="records"))
+
+        return jsonify({"error": "프로필을 찾을 수 없습니다."}), 404
 
     except Exception as e:
         return jsonify({"error": str(e)})
+
     
 @app.route("/recommend_with_reason", methods=["POST"])
 def recommend_with_reason():
