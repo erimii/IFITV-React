@@ -1,21 +1,42 @@
 [
-    {
-      "username": "루비",
-      "age": 17,
-      "gender": "여",
-      "preferred_genres": ["버라이어티", "쿡방/먹방", "음악예능"]
-    },
-    {
-      "username": "예림",
-      "age": 23,
-      "gender": "여",
-      "preferred_genres": ["에니멀", "힐링예능", "여행"]
-    },
-    {
-        "username": "승지",
-        "age": 47,
-        "gender": "남",
-        "preferred_genres": ["토크쇼", "서바이벌", "스포츠예능"]
-      }
-  ]
-  
+  {
+    "username": "루비",
+    "age": 17,
+    "gender": "여",
+    "preferred_genres": [
+      "버라이어티",
+      "쿡방/먹방",
+      "음악예능"
+    ]
+  },
+  {
+    "username": "예림",
+    "age": 23,
+    "gender": "여",
+    "preferred_genres": [
+      "에니멀",
+      "힐링예능",
+      "여행"
+    ]
+  },
+  {
+    "username": "승지",
+    "age": 47,
+    "gender": "남",
+    "preferred_genres": [
+      "토크쇼",
+      "서바이벌",
+      "스포츠예능"
+    ]
+  },
+  {
+    "username": "rubi",
+    "password": "1111",
+    "age": "17",
+    "gender": "여",
+    "preferred_genres": [
+      "음악예능",
+      "여행"
+    ]
+  }
+]
