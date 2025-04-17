@@ -4,9 +4,12 @@ import LandingPage from './pages/LandingPage';
 import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
+import ProfileSelectPage from './pages/ProfileSelectPage';
 
 function App() {
   const [user, setUser] = useState(null);
+  const [selectedProfile, setSelectedProfile] = useState(null);
+
   
   // 로그인 상태 확인
   useEffect(() => {
@@ -29,11 +32,33 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage setUser={setUser} />} />
         <Route
-          path="/home"
+          path="/select-profile"
           element={
-            user ? <HomePage user={user} onLogout={handleLogout} /> : <Navigate to="/" />
+            user ? (
+              <ProfileSelectPage
+                user={user}
+                setSelectedProfile={setSelectedProfile}
+              />
+            ) : (
+              <Navigate to="/login" />
+            )
           }
         />
+        <Route
+          path="/home"
+          element={
+            user && selectedProfile ? (
+              <HomePage
+                user={user}
+                profile={selectedProfile}
+                onLogout={handleLogout}
+              />
+            ) : (
+              <Navigate to="/select-profile" />
+            )
+          }
+        />
+
       </Routes>
     </Router>
   );

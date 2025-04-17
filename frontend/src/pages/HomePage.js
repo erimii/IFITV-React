@@ -1,8 +1,11 @@
 // src/pages/HomePage.js
 import React, { useEffect, useState } from 'react';
 import RecommendationCarousel from '../components/RecommendationCarousel';
+import { useNavigate } from 'react-router-dom';
 
-function HomePage({ user, onLogout }) {
+function HomePage({ user, profile, onLogout }) {
+  const navigate = useNavigate();
+
   const [genreContents, setGenreContents] = useState([]);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -14,10 +17,16 @@ function HomePage({ user, onLogout }) {
       const response = await fetch("http://localhost:5000/profile_recommend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: user.username }),
+        body: JSON.stringify({ username: user.username, profile_name: profile.name }),
       });
       const data = await response.json();
-      setGenreContents(data);
+      console.log("서버 응답:", data);
+      if (Array.isArray(data)) {
+        setGenreContents(data);  // 🔥 배열이면 그대로 세팅
+      } else {
+        alert(data.error || "추천 실패");
+        setGenreContents([]); // ⚠️ 안전하게 빈 배열로
+      }
     };
 
     if (user) {
@@ -54,13 +63,27 @@ function HomePage({ user, onLogout }) {
 
   return (
     <div style={{ padding: '2rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1>🎬 IFITV 예능 추천기</h1>
-        <button onClick={onLogout} style={{
-          backgroundColor: '#ccc', padding: '0.5rem 1rem', borderRadius: '8px', border: 'none', cursor: 'pointer'
-        }}>
-          로그아웃
-        </button>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '1rem'
+      }}>
+        <div>
+          <h1 style={{ marginBottom: '0.3rem' }}>🎬 IFITV 예능 추천기</h1>
+          <p style={{ margin: 0 }}>
+            현재 프로필: <strong style={{ color: "#A50034" }}>{profile.name}</strong>
+          </p>
+        </div>
+
+        <div style={{ display: "flex", gap: "1rem" }}>
+          <button onClick={() => navigate("/select-profile")} style={subButtonStyle}>
+            프로필 변경
+          </button>
+          <button onClick={onLogout} style={subButtonStyle}>
+            로그아웃
+          </button>
+        </div>
       </div>
 
       <h2>👇 {user.username}님의 선호 장르 기반 콘텐츠</h2>
@@ -116,5 +139,15 @@ function HomePage({ user, onLogout }) {
     </div>
   );
 }
+
+const subButtonStyle = {
+  backgroundColor: "#ddd",
+  padding: "0.5rem 1rem",
+  borderRadius: "8px",
+  border: "none",
+  cursor: "pointer",
+  fontWeight: "bold"
+};
+
 
 export default HomePage;

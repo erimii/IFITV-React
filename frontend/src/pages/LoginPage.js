@@ -30,7 +30,7 @@ function LoginPage({ setUser }) {
     if (response.ok) {
       localStorage.setItem("user", JSON.stringify(data)); // 로그인 정보 저장
       setUser(data); // App 상태 업데이트
-      navigate("/home"); // 홈으로 이동
+      navigate("/select-profile"); // 홈으로 이동
     } else {
       alert(data.error || "로그인 실패");
     }

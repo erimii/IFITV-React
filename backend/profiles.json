@@ -38,5 +38,52 @@
       "음악예능",
       "여행"
     ]
+  },
+  {
+    "username": "test",
+    "password": "1111",
+    "age": "33",
+    "gender": "남",
+    "preferred_genres": [
+      "애니멀"
+    ],
+    "profiles": [
+      {
+        "name": "루비",
+        "age": "17",
+        "gender": "여",
+        "preferred_genres": [
+          "스포츠예능"
+        ]
+      },
+      {
+        "name": "승지",
+        "age": "27",
+        "gender": "여",
+        "preferred_genres": [
+          "쿡방/먹방"
+        ]
+      },
+      {
+        "name": "카라",
+        "age": "16",
+        "gender": "여",
+        "preferred_genres": [
+          "에니멀",
+          "힐링예능",
+          "여행"
+        ]
+      },
+      {
+        "name": "헤에?",
+        "age": "44",
+        "gender": "여",
+        "preferred_genres": [
+          "음악예능",
+          "버라이어티",
+          "쿡방/먹방"
+        ]
+      }
+    ]
   }
 ]

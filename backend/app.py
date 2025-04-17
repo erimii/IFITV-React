@@ -4,13 +4,49 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import json
 
-from recommend_model import hybrid_recommend_with_reason, df, title_to_index
+from recommend_model import hybrid_recommend_with_reason, df
 
 from user_profiles import get_profile
 from user_profiles import load_profiles
 
 app = Flask(__name__)
 CORS(app)
+
+# 사용자 프로필 목록 조회
+@app.route("/user_profiles/<username>", methods=["GET"])
+def get_user_profiles(username):
+    profiles = load_profiles()
+    for user in profiles:
+        if user["username"] == username:
+            return jsonify(user.get("profiles", []))  # 없으면 빈 리스트
+    return jsonify({"error": "사용자를 찾을 수 없습니다."}), 404
+
+
+# 사용자에게 새 프로필 추가
+@app.route("/add_profile", methods=["POST"])
+def add_profile():
+    data = request.get_json()
+    username = data["username"]
+    new_profile = data["profile"]
+
+    profiles = load_profiles()
+    for user in profiles:
+        if user["username"] == username:
+            if "profiles" not in user:
+                user["profiles"] = []
+
+            # 중복된 프로필 이름 방지
+            if any(p["name"] == new_profile["name"] for p in user["profiles"]):
+                return jsonify({"error": "이미 존재하는 프로필 이름입니다."}), 400
+
+            user["profiles"].append(new_profile)
+
+            with open("profiles.json", "w", encoding="utf-8") as f:
+                json.dump(profiles, f, ensure_ascii=False, indent=2)
+
+            return jsonify(user["profiles"])  # 업데이트된 전체 목록 반환
+
+    return jsonify({"error": "사용자를 찾을 수 없습니다."}), 404
 
 @app.route("/signup", methods=["POST"])
 def signup():
@@ -66,13 +102,18 @@ def get_profiles():
 def profile_recommend():
     data = request.get_json()
     username = data["username"]
+    profile_name = data["profile_name"]
 
     try:
         profile = get_profile(username)
         preferred_genres = profile["preferred_genres"]
 
-        sample_df = df[df["subgenre"].isin(preferred_genres)]
-        sample_df = sample_df[["title", "thumbnail"]].drop_duplicates().sample(n=10, random_state=42)
+        filtered_df = df[df["subgenre"].apply(
+            lambda sg: any(genre in sg for genre in preferred_genres)
+        )]
+        if filtered_df.empty:
+            return jsonify([])
+        sample_df = filtered_df[["title", "thumbnail"]].drop_duplicates().sample(n=10, random_state=42)
         return jsonify(sample_df.to_dict(orient="records"))
 
     except Exception as e:
