@@ -135,5 +135,55 @@
     "password": "1111",
     "age": "20",
     "gender": "여"
+  },
+  {
+    "username": "test0421",
+    "password": "1111",
+    "age": "20",
+    "gender": "여",
+    "profiles": [
+      {
+        "name": "p1",
+        "age": "33",
+        "gender": "남",
+        "preferred_genres": [
+          "오락",
+          "리얼리티",
+          "여행"
+        ],
+        "liked_contents": [
+          "다시 갈 지도",
+          "요술램프",
+          "사서고생 시즌2 : 팔아다이스"
+        ]
+      },
+      {
+        "name": "p2",
+        "age": "66",
+        "gender": "여",
+        "preferred_genres": [
+          "애니멀",
+          "쿡방/먹방"
+        ],
+        "liked_contents": []
+      },
+      {
+        "name": "기준콘텐츠에모두반영",
+        "age": "33",
+        "gender": "여",
+        "preferred_genres": [
+          "오락",
+          "버라이어티",
+          "음악예능",
+          "애니멀",
+          "쿡방/먹방"
+        ],
+        "liked_contents": [
+          "요즘애들",
+          "쿡가대표",
+          "셰프의 야식 시즌2"
+        ]
+      }
+    ]
   }
 ]

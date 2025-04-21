@@ -16,7 +16,6 @@ function HomePage({ user, profile, onLogout }) {
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
-  // 첫 진입 시 사용자 선호 장르 기반 콘텐츠 추천
   useEffect(() => {
     const fetchRecommendations = async () => {
       if (!user || !profile) return;
@@ -69,7 +68,6 @@ function HomePage({ user, profile, onLogout }) {
   }, [user, profile]);
   
   
-
   // 콘텐츠 클릭 → 추천 결과 받아오기
   const handleClick = async (title) => {
     setLoading(true);

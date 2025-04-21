@@ -60,27 +60,22 @@ def get_user_profiles(username):
             return jsonify(user.get("profiles", []))  # 없으면 빈 리스트
     return jsonify({"error": "사용자를 찾을 수 없습니다."}), 404
 
-# 멀티 프로필 생성 시 컨텐츠 선택하기
-@app.route("/genre_contents", methods=["POST"])
-def genre_contents():
-    data = request.get_json()
-    genres = data.get("genres", [])
-
-    matched_df = df[df["subgenre"].isin(genres)]
-    matched_df = matched_df[["title", "thumbnail", "cast"]].drop_duplicates().fillna("")
-
-    return jsonify(matched_df.to_dict(orient="records"))
-
-# 선호 장르 기반 미리보기 콘텐츠 추천 (저장 전에도 사용 가능)
+# 프로필 생성 시 선호 장르 기반 콘텐츠 선택 후 추천
 @app.route("/preview_recommend_model", methods=["POST"])
 def preview_recommend_model():
-    from recommend_model import hybrid_recommend_with_reason, df
-
     data = request.get_json()
     genres = data.get("preferred_genres", [])
 
-    # 장르에 해당하는 콘텐츠 중에서 대표 타이틀 몇 개 뽑기 (기준점)
-    base_titles = df[df["subgenre"].isin(genres)]["title"].drop_duplicates().sample(n=3, random_state=42).tolist()
+    # 선택한 장르별로 2개씩 대표 타이틀 고르기(기준 콘텐츠로 사용)
+    base_titles = []
+    for genre in genres:
+        candidates = df[df["subgenre"] == genre]["title"].drop_duplicates()
+        if not candidates.empty:
+            sampled = candidates.sample(n=2, random_state=42).tolist()
+            base_titles.extend(sampled)
+
+    # 중복 제거 후 최대 5개까지만 사용
+    base_titles = list(set(base_titles))[:5]
 
     # 추천 모델 결과 모으기
     recommended = []
@@ -125,8 +120,7 @@ def initial_recommend():
 
     return jsonify(df.to_dict(orient="records"))
 
-
-# 사용자에게 새 프로필 추가
+# 새 프로필 추가
 @app.route("/add_profile", methods=["POST"])
 def add_profile():
     data = request.get_json()
@@ -184,6 +178,7 @@ def signup():
 
     return jsonify({"message": "회원가입 성공!"})
 
+# 로그인
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -197,11 +192,7 @@ def login():
     
     return jsonify({"error": "아이디 또는 비밀번호가 일치하지 않습니다."}), 401
 
-@app.route("/profiles", methods=["GET"])
-def get_profiles():
-    return jsonify(load_profiles())
-
-
+# 선호 장르 기반 콘텐츠 추천
 @app.route("/profile_recommend", methods=["POST"])
 def profile_recommend():
     data = request.get_json()
@@ -233,7 +224,6 @@ def profile_recommend():
     except Exception as e:
         return jsonify({"error": str(e)})
 
-    
 @app.route("/recommend_with_reason", methods=["POST"])
 def recommend_with_reason():
     data = request.get_json()
@@ -246,10 +236,6 @@ def recommend_with_reason():
         return jsonify(result_df.to_dict(orient="records"))
     except Exception as e:
         return jsonify({"error": str(e)})
-
-@app.route("/titles", methods=["GET"])
-def get_titles():
-    return jsonify(df["title"].unique().tolist())
 
 if __name__ == "__main__":
     app.run(debug=True)
