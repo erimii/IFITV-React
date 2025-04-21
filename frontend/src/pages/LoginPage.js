@@ -38,6 +38,7 @@ function LoginPage({ setUser }) {
 
   return (
     <div style={containerStyle}>
+      <button onClick={() => navigate("/")} style={backButtonStyle}>← 랜딩페이지로</button>
       <h2>로그인</h2>
       <form onSubmit={handleLogin} style={formStyle}>
         <input name="username" placeholder="닉네임" value={formData.username} onChange={handleChange} required />
@@ -47,6 +48,15 @@ function LoginPage({ setUser }) {
     </div>
   );
 }
+
+const backButtonStyle = {
+  backgroundColor: "transparent",
+  border: "none",
+  color: "#A50034",
+  fontWeight: "bold",
+  cursor: "pointer",
+  marginBottom: "1rem"
+};
 
 const containerStyle = {
   maxWidth: "400px",

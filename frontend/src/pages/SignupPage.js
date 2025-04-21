@@ -39,6 +39,7 @@ function SignupPage() {
 
   return (
     <div style={containerStyle}>
+      <button onClick={() => navigate("/")} style={backButtonStyle}>← 랜딩페이지로</button>
       <h2>회원가입</h2>
       <form onSubmit={handleSubmit} style={formStyle}>
         <input name="username" placeholder="닉네임" value={formData.username} onChange={handleChange} required />
@@ -55,6 +56,15 @@ function SignupPage() {
     </div>
   );
 }
+
+const backButtonStyle = {
+  backgroundColor: "transparent",
+  border: "none",
+  color: "#A50034",
+  fontWeight: "bold",
+  cursor: "pointer",
+  marginBottom: "1rem"
+};
 
 const containerStyle = {
   maxWidth: "400px",
