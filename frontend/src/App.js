@@ -40,6 +40,7 @@ function App() {
               <ProfileSelectPage
                 user={user}
                 setSelectedProfile={setSelectedProfile}
+                onLogout={handleLogout}
               />
             ) : (
               <Navigate to="/login" />

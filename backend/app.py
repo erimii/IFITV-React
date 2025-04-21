@@ -6,7 +6,6 @@ import json
 
 from recommend_model import hybrid_recommend_with_reason, df
 from utils import load_today_programs
-from user_profiles import get_profile
 from user_profiles import load_profiles
 
 app = Flask(__name__)

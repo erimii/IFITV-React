@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function ProfileSelectPage({ user, setSelectedProfile }) {
+function ProfileSelectPage({ user, setSelectedProfile, onLogout }) {
   const navigate = useNavigate();
   const [profiles, setProfiles] = useState([]);
 
@@ -28,7 +28,15 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
 
   return (
     <div style={{ padding: "2rem", maxWidth: "600px", margin: "0 auto" }}>
-      <h2>프로필 선택</h2>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '1rem'
+      }}>
+        <h2 style={{ margin: 0 }}>🎭 IFITV - 프로필 선택</h2>
+        <button onClick={onLogout} style={LogoutButtonStyle}>🚪 로그아웃</button>
+      </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginBottom: "2rem" }}>
         {profiles.map((profile, idx) => (
           <button
@@ -56,5 +64,14 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
     </div>
   );
 }
+
+const LogoutButtonStyle = {
+  backgroundColor: "#eee",
+  border: "none",
+  padding: "0.5rem 1rem",
+  borderRadius: "8px",
+  cursor: "pointer",
+  fontWeight: "bold"
+};
 
 export default ProfileSelectPage;
