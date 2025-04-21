@@ -1,8 +1,7 @@
 // src/pages/HomePage.js
 import React, { useEffect, useState } from 'react';
-import RecommendationCarousel from '../components/RecommendationCarousel';
 import { useNavigate, useLocation  } from 'react-router-dom';
-
+import ContentModal from "../components/ContentModal";
 
 
 function HomePage({ user, profile, onLogout }) {
@@ -15,6 +14,8 @@ function HomePage({ user, profile, onLogout }) {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedContent, setSelectedContent] = useState(null);
+
   
   useEffect(() => {
     const fetchRecommendations = async () => {
@@ -71,28 +72,21 @@ function HomePage({ user, profile, onLogout }) {
   // 콘텐츠 클릭 → 추천 결과 받아오기
   const handleClick = async (title) => {
     setLoading(true);
-    const response = await fetch("http://localhost:5000/recommend_with_reason", {
+    const response = await fetch("http://localhost:5000/recommend_with_detail", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title, top_n: 5, alpha: 0.7 }),
     });
     const data = await response.json();
-    setResults(data);
+    setSelectedContent(data.info);
+    setResults(data.recommendations);
     setIsModalOpen(true);
     setLoading(false);
   };
 
-  // 캐러셀 내 “비슷한 콘텐츠 더 보기”
-  const handleSimilarClick = async (title) => {
-    setLoading(true);
-    const response = await fetch("http://localhost:5000/recommend_with_reason", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, top_n: 5, alpha: 0.7 }),
-    });
-    const data = await response.json();
-    setResults(data);
-    setLoading(false);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedContent(null);
   };
 
   return (
@@ -147,29 +141,12 @@ function HomePage({ user, profile, onLogout }) {
 
       {loading && <p>추천 중입니다...</p>}
 
-      {isModalOpen && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-          backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex',
-          justifyContent: 'center', alignItems: 'center', zIndex: 9999
-        }}>
-          <div style={{
-            backgroundColor: 'white', padding: '2rem', borderRadius: '12px',
-            width: '80%', maxWidth: '600px', position: 'relative'
-          }}>
-            <button onClick={() => setIsModalOpen(false)} style={{
-              position: 'absolute', top: '1rem', right: '1rem', fontSize: '1.5rem', background: 'none', border: 'none', cursor: 'pointer'
-            }}>❌</button>
+      <ContentModal
+        content={selectedContent}
+        recommendations={results}
+        onClose={handleCloseModal}
+      />
 
-            <h2 style={{ textAlign: 'center' }}>✨ 추천 콘텐츠</h2>
-
-            <RecommendationCarousel
-              results={results}
-              onSimilarClick={handleSimilarClick}
-            />
-          </div>
-        </div>
-      )}
       {livePrograms.length > 0 && (
         <div style={{ marginTop: "2rem" }}>
           <h2>📺 {profile.name}님의 오늘 방송 추천</h2>
@@ -231,6 +208,5 @@ const subButtonStyle = {
   cursor: "pointer",
   fontWeight: "bold"
 };
-
 
 export default HomePage;

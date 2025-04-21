@@ -223,7 +223,8 @@ def profile_recommend():
     except Exception as e:
         return jsonify({"error": str(e)})
 
-@app.route("/recommend_with_reason", methods=["POST"])
+# 홈에서 컨텐츠 클릭 시 디테일 + 해당 콘텐츠 기반 다른 콘텐츠 추천
+@app.route("/recommend_with_detail", methods=["POST"])
 def recommend_with_reason():
     data = request.get_json()
     title = data["title"]
@@ -232,7 +233,24 @@ def recommend_with_reason():
 
     try:
         result_df = hybrid_recommend_with_reason(title, top_n=top_n, alpha=alpha)
-        return jsonify(result_df.to_dict(orient="records"))
+
+        # 기준 콘텐츠 정보 가져오기
+        base = df[df["title"] == title].iloc[0]
+        info = {
+            "title": base["title"],
+            "thumbnail": base.get("thumbnail", ""),
+            "description": base.get("description", ""),
+            "cast": base.get("cast", ""),
+            "age_rating": base.get("age_rating", ""),
+            "genre": base.get("genre", ""),
+            "subgenre": base.get("subgenre", ""),
+        }
+
+        return jsonify({
+            "info": info,
+            "recommendations": result_df.to_dict(orient="records")
+        })
+
     except Exception as e:
         return jsonify({"error": str(e)})
 
