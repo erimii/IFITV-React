@@ -9,6 +9,7 @@ function SelectContentPage({ user }) {
   const [selectedTitles, setSelectedTitles] = useState([]);
 
   useEffect(() => {
+    // 사용자가 선택한 장르를 기반으로 추천된 콘텐츠 10개 가져오기
     const fetchPreviewContents = async () => {
       const res = await fetch("http://localhost:5000/preview_recommend_model", {
         method: "POST",
@@ -24,13 +25,13 @@ function SelectContentPage({ user }) {
     fetchPreviewContents();
   }, [profile]);
   
-
+  // 콘텐츠 선택
   const toggleContent = (title) => {
     setSelectedTitles((prev) =>
       prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title]
     );
   };
-
+  //선택 완료 클릭 시 실행
   const handleFinish = async () => {
     const fullProfile = {
       ...profile,
