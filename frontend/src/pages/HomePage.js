@@ -69,7 +69,7 @@ function HomePage({ user, profile, onLogout }) {
   }, [user, profile]);
   
   
-  // 콘텐츠 클릭 → 추천 결과 받아오기
+  // 콘텐츠 클릭 → 디테일 + 비슷한 콘텐츠 추천
   const handleClick = async (title) => {
     setLoading(true);
     const response = await fetch("http://localhost:5000/recommend_with_detail", {
