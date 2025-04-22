@@ -70,12 +70,13 @@ def preview_recommend_model():
     for genre in genres:
         candidates = df[df["subgenre"] == genre]["title"].drop_duplicates()
         if not candidates.empty:
-            sampled = candidates.sample(n=2, random_state=42).tolist()
+            import random
+            sampled = candidates.sample(n=2, random_state=random.randint(0, 10000)).tolist()
             base_titles.extend(sampled)
 
     # 중복 제거 후 최대 5개까지만 사용
     base_titles = list(set(base_titles))[:5]
-
+    
     # 추천 모델 결과 모으기
     recommended = []
     seen = set()
