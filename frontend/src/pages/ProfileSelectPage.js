@@ -26,6 +26,27 @@ function ProfileSelectPage({ user, setSelectedProfile, onLogout }) {
     navigate("/add-profile");
   };
 
+  // 프로필 삭제
+  const handleDelete = async (profileName) => {
+    const confirmDelete = window.confirm(`${profileName} 프로필을 삭제하시겠습니까?`);
+    if (!confirmDelete) return;
+  
+    const response = await fetch("http://localhost:5000/delete_profile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: user.username, profile_name: profileName }),
+    });
+  
+    const data = await response.json();
+    if (response.ok) {
+      // 삭제 후 목록 다시 불러오기
+      setProfiles(prev => prev.filter(p => p.name !== profileName));
+    } else {
+      alert(data.error || "삭제 실패");
+    }
+  };
+  
+
   return (
     <div style={{ padding: "2rem", maxWidth: "600px", margin: "0 auto" }}>
       <div style={{
@@ -37,30 +58,32 @@ function ProfileSelectPage({ user, setSelectedProfile, onLogout }) {
         <h2 style={{ margin: 0 }}>🎭 IFITV - 프로필 선택</h2>
         <button onClick={onLogout} style={LogoutButtonStyle}>🚪 로그아웃</button>
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginBottom: "2rem" }}>
+      <div style={profileContainerStyle}>
         {profiles.map((profile, idx) => (
-          <button
-            key={idx}
-            onClick={() => handleSelect(profile)}
-            style={{
-              padding: "1rem",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-              cursor: "pointer",
-              width: "45%"
-            }}
-          >
-            <strong>{profile.name}</strong><br />
-            나이: {profile.age} / 성별: {profile.gender}
-          </button>
+          <div key={idx} style={profileCardStyle}>
+            <div onClick={() => handleSelect(profile)} style={profileTextStyle}>
+              <strong>{profile.name}</strong><br />
+              나이: {profile.age} / 성별: {profile.gender}
+            </div>
+            <button onClick={() => handleDelete(profile.name)} style={deleteButtonStyle}>
+              🗑️
+            </button>
+          </div>
         ))}
       </div>
 
-      <button onClick={handleAddProfile} style={{
-        backgroundColor: "#A50034", color: "white", padding: "0.7rem 1.5rem", border: "none", borderRadius: "8px", fontSize: "1rem"
-      }}>
-        ➕ 프로필 추가
-      </button>
+      {profiles.length < 4 && (
+        <button onClick={handleAddProfile} style={{
+          backgroundColor: "#A50034", color: "white", padding: "0.7rem 1.5rem", border: "none", borderRadius: "8px", fontSize: "1rem"
+        }}>
+          ➕ 프로필 추가
+        </button>
+      )}
+      {profiles.length >= 4 && (
+        <p style={{ color: "gray", fontSize: "0.9rem" }}>
+          ※ 최대 4개의 프로필까지 생성할 수 있어요.
+        </p>
+      )}
     </div>
   );
 }
@@ -73,5 +96,38 @@ const LogoutButtonStyle = {
   cursor: "pointer",
   fontWeight: "bold"
 };
+
+const profileContainerStyle = {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: "1rem",
+  marginBottom: "2rem"
+};
+
+const profileCardStyle = {
+  padding: "1rem",
+  border: "1px solid #ccc",
+  borderRadius: "8px",
+  width: "45%",
+  position: "relative",
+  backgroundColor: "#f9f9f9",
+  cursor: "pointer"
+};
+
+const profileTextStyle = {
+  paddingRight: "2rem"
+};
+
+const deleteButtonStyle = {
+  position: "absolute",
+  top: "0.5rem",
+  right: "0.5rem",
+  background: "none",
+  border: "none",
+  color: "#d00",
+  fontSize: "1.2rem",
+  cursor: "pointer"
+};
+
 
 export default ProfileSelectPage;

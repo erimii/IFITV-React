@@ -49,7 +49,6 @@ def live_recommend():
     except Exception as e:
         return jsonify({"error": str(e)})
 
-
 # 사용자 프로필 목록 조회
 @app.route("/user_profiles/<username>", methods=["GET"])
 def get_user_profiles(username):
@@ -76,7 +75,7 @@ def preview_recommend_model():
 
     # 중복 제거 후 최대 5개까지만 사용
     base_titles = list(set(base_titles))[:5]
-    
+
     # 추천 모델 결과 모으기
     recommended = []
     seen = set()
@@ -97,7 +96,6 @@ def preview_recommend_model():
 
     # 10개만 출력
     return jsonify(recommended[:10])
-
 
 # 선택한 컨텐츠 기반 추천
 @app.route("/initial_recommend", methods=["POST"])
@@ -145,6 +143,24 @@ def add_profile():
             return jsonify(user["profiles"])  # 업데이트된 전체 목록 반환
 
     return jsonify({"error": "사용자를 찾을 수 없습니다."}), 404
+
+# 프로필 삭제
+@app.route("/delete_profile", methods=["POST"])
+def delete_profile():
+    data = request.get_json()
+    username = data["username"]
+    profile_name = data["profile_name"]
+
+    profiles = load_profiles()
+    for user in profiles:
+        if user["username"] == username:
+            user["profiles"] = [p for p in user.get("profiles", []) if p["name"] != profile_name]
+            with open("profiles.json", "w", encoding="utf-8") as f:
+                json.dump(profiles, f, ensure_ascii=False, indent=2)
+            return jsonify({"message": "프로필 삭제 완료"})
+    
+    return jsonify({"error": "사용자 또는 프로필을 찾을 수 없습니다."}), 404
+
 
 # 회원가입
 @app.route("/signup", methods=["POST"])

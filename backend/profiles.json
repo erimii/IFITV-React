@@ -58,65 +58,6 @@
         ]
       },
       {
-        "name": "승지",
-        "age": "27",
-        "gender": "여",
-        "preferred_genres": [
-          "쿡방/먹방"
-        ]
-      },
-      {
-        "name": "카라",
-        "age": "16",
-        "gender": "여",
-        "preferred_genres": [
-          "에니멀",
-          "힐링예능",
-          "여행"
-        ]
-      },
-      {
-        "name": "헤에?",
-        "age": "44",
-        "gender": "여",
-        "preferred_genres": [
-          "음악예능",
-          "버라이어티",
-          "쿡방/먹방"
-        ]
-      },
-      {
-        "name": "",
-        "age": "",
-        "gender": "",
-        "preferred_genres": []
-      },
-      {
-        "name": "ㄹㄹ",
-        "age": "22",
-        "gender": "",
-        "preferred_genres": [
-          "버라이어티"
-        ],
-        "liked_contents": [
-          "아는 형님",
-          "주먹이 운다 시즌2",
-          "신서유기 4"
-        ]
-      },
-      {
-        "name": "제발",
-        "age": "11",
-        "gender": "여",
-        "preferred_genres": [
-          "힐링예능",
-          "음악예능"
-        ],
-        "liked_contents": [
-          "뚝딱이의 역습"
-        ]
-      },
-      {
         "name": "제발요",
         "age": "33",
         "gender": "여",
@@ -126,6 +67,37 @@
         ],
         "liked_contents": [
           "요즘애들"
+        ]
+      },
+      {
+        "name": "세번째",
+        "age": "33",
+        "gender": "여",
+        "preferred_genres": [
+          "오락",
+          "리얼리티",
+          "음악예능",
+          "애니멀"
+        ],
+        "liked_contents": [
+          "비긴어게인 - 인터미션",
+          "히든싱어 5",
+          "우리집 상전"
+        ]
+      },
+      {
+        "name": "네번째",
+        "age": "22",
+        "gender": "여",
+        "preferred_genres": [
+          "리얼리티",
+          "애니멀",
+          "오락"
+        ],
+        "liked_contents": [
+          "글로벌 가족 일기 - 안녕! 4남매",
+          "개밥 주는 남자 개묘한 여행",
+          "<집사인 게 자랑> 시즌1"
         ]
       }
     ]
