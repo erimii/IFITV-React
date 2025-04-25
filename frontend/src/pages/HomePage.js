@@ -146,7 +146,7 @@ function HomePage({ user, profile, onLogout }) {
         recommendations={results}
         onClose={handleCloseModal}
       />
-
+      
       {livePrograms.length > 0 && (
         <div style={{ marginTop: "2rem" }}>
           <h2>📺 {profile.name}님의 오늘 방송 추천</h2>
@@ -159,10 +159,17 @@ function HomePage({ user, profile, onLogout }) {
                 padding: '1rem',
                 background: '#fdfdfd'
               }}>
+                {program["썸네일"] && (
+                  <img
+                    src={program["썸네일"]}
+                    alt={program["프로그램명"]}
+                    style={{ width: "100%", height: "140px", objectFit: "cover", borderRadius: "6px", marginBottom: "0.5rem" }}
+                  />
+                )}
                 <h4>{program["프로그램명"]}</h4>
                 <p>⏰ {program["방송 시간"]}</p>
                 <p>📡 {program["채널명"]}</p>
-                <p>🎭 장르: {program["장르"]}</p>
+                <p>🎭 장르: {program["장르"]} / {program["서브장르"] || "?"}</p>
                 {program["출연진"] && <p>👤 출연: {program["출연진"]}</p>}
                 {program["설명"] && <p>📝 {program["설명"]}</p>}
               </div>
@@ -170,6 +177,7 @@ function HomePage({ user, profile, onLogout }) {
           </div>
         </div>
       )}
+
       {personalized.length > 0 && (
         <div style={{ marginTop: "2rem" }}>
           <h2>💖 {profile.name}님이 좋아한 콘텐츠와 비슷한 추천</h2>

@@ -29,16 +29,19 @@ def live_recommend():
                     if p["name"] == profile_name:
                         preferred_genres = p["preferred_genres"]
 
-                        clean_df = today_programs_df.dropna(subset=["장르"])
-                        matched_df = clean_df[clean_df["장르"].apply(
-                            lambda g: any(genre in g for genre in preferred_genres)
-                        )]
+                        clean_df = today_programs_df.dropna(subset=["서브장르", "장르"])
+                        print(f"🧹 방송 프로그램 개수: {len(clean_df)}")
+                        matched_df = clean_df[
+                            clean_df["서브장르"].apply(lambda g: any(pg in g for pg in preferred_genres)) |
+                            clean_df["장르"].apply(lambda g: any(pg in g for pg in preferred_genres))
+                        ]
+                        print(f"🎉 매칭된 프로그램 개수: {len(matched_df)}")
 
                         if matched_df.empty:
                             return jsonify([])
 
                         result = matched_df[
-                            ["채널명", "방송 시간", "프로그램명", "장르", "출연진", "설명"]
+                            ["채널명", "방송 시간", "프로그램명", "장르", "서브장르", "출연진", "설명", "썸네일"]
                         ].drop_duplicates().head(10)
                         result = result.fillna("")
 
@@ -47,6 +50,7 @@ def live_recommend():
         return jsonify({"error": "해당 프로필을 찾을 수 없습니다."}), 404
 
     except Exception as e:
+        print(f"❌ [live_recommend] 오류: {e}")
         return jsonify({"error": str(e)})
 
 # 사용자 프로필 목록 조회
