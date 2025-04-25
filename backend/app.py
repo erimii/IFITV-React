@@ -5,7 +5,7 @@ from flask_cors import CORS
 import json
 
 from recommend_model import hybrid_recommend_with_reason, df
-from utils import load_today_programs
+from utils import load_today_programs, is_future_program
 from user_profiles import load_profiles
 
 app = Flask(__name__)
@@ -30,12 +30,15 @@ def live_recommend():
                         preferred_genres = p["preferred_genres"]
 
                         clean_df = today_programs_df.dropna(subset=["서브장르", "장르"])
-                        print(f"🧹 방송 프로그램 개수: {len(clean_df)}")
-                        matched_df = clean_df[
-                            clean_df["서브장르"].apply(lambda g: any(pg in g for pg in preferred_genres)) |
-                            clean_df["장르"].apply(lambda g: any(pg in g for pg in preferred_genres))
+
+                        # 방송 시간이 현재 이후인 콘텐츠만 필터링
+                        filtered_df = clean_df[clean_df["방송 시간"].apply(is_future_program)]
+
+                        matched_df = filtered_df[
+                            filtered_df["서브장르"].apply(lambda g: any(pg in g for pg in preferred_genres)) |
+                            filtered_df["장르"].apply(lambda g: any(pg in g for pg in preferred_genres))
                         ]
-                        print(f"🎉 매칭된 프로그램 개수: {len(matched_df)}")
+                        print(f"매칭된 프로그램 개수: {len(matched_df)}")
 
                         if matched_df.empty:
                             return jsonify([])
@@ -50,7 +53,7 @@ def live_recommend():
         return jsonify({"error": "해당 프로필을 찾을 수 없습니다."}), 404
 
     except Exception as e:
-        print(f"❌ [live_recommend] 오류: {e}")
+        print(f"[live_recommend] 오류: {e}")
         return jsonify({"error": str(e)})
 
 # 사용자 프로필 목록 조회
