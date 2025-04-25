@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation  } from 'react-router-dom';
 import ContentModal from "../components/ContentModal";
-
+import HorizontalSlider from '../components/HorizontalSlider';
 
 function HomePage({ user, profile, onLogout }) {
   const navigate = useNavigate();
@@ -89,6 +89,12 @@ function HomePage({ user, profile, onLogout }) {
     setSelectedContent(null);
   };
 
+  // 실시간 카드 클릭 시
+  const handleLiveClick = (title) => {
+    alert(`🔔 "${title}" 바로 보러가기? 예약하기?`);
+  };
+
+
   return (
     <div style={{ padding: '2rem' }}>
       <div style={{
@@ -114,31 +120,6 @@ function HomePage({ user, profile, onLogout }) {
         </div>
       </div>
 
-      <h2>👇 {profile.name}님의 선호 장르 기반 콘텐츠</h2>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-        {genreContents.map((item, idx) => (
-          <div
-            key={idx}
-            onClick={() => handleClick(item.title)}
-            style={{
-              cursor: 'pointer',
-              width: '150px',
-              textAlign: 'center',
-              border: '1px solid #ddd',
-              borderRadius: '8px',
-              padding: '0.5rem'
-            }}
-          >
-            <img
-              src={item.thumbnail}
-              alt={item.title}
-              style={{ width: '100%', borderRadius: '4px' }}
-            />
-            <p style={{ marginTop: '0.5rem', fontWeight: 'bold' }}>{item.title}</p>
-          </div>
-        ))}
-      </div>
-
       {loading && <p>추천 중입니다...</p>}
 
       <ContentModal
@@ -146,68 +127,31 @@ function HomePage({ user, profile, onLogout }) {
         recommendations={results}
         onClose={handleCloseModal}
       />
-      
-      {livePrograms.length > 0 && (
-        <div style={{ marginTop: "2rem" }}>
-          <h2>📺 {profile.name}님의 오늘 방송 추천</h2>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-            {livePrograms.map((program, idx) => (
-              <div key={idx} style={{
-                width: '250px',
-                border: '1px solid #ccc',
-                borderRadius: '8px',
-                padding: '1rem',
-                background: '#fdfdfd'
-              }}>
-                {program["썸네일"] && (
-                  <img
-                    src={program["썸네일"]}
-                    alt={program["프로그램명"]}
-                    style={{ width: "100%", height: "140px", objectFit: "cover", borderRadius: "6px", marginBottom: "0.5rem" }}
-                  />
-                )}
-                <h4>{program["프로그램명"]}</h4>
-                <p>⏰ {program["방송 시간"]}</p>
-                <p>📡 {program["채널명"]}</p>
-                <p>🎭 장르: {program["장르"]} / {program["서브장르"] || "?"}</p>
-                {program["출연진"] && <p>👤 출연: {program["출연진"]}</p>}
-                {program["설명"] && <p>📝 {program["설명"]}</p>}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+
+      <HorizontalSlider
+        title={`👇 ${profile.name}님의 선호 장르 기반 콘텐츠`}
+        items={genreContents}
+        onCardClick={handleClick}
+      />
 
       {personalized.length > 0 && (
-        <div style={{ marginTop: "2rem" }}>
-          <h2>💖 {profile.name}님이 좋아한 콘텐츠와 비슷한 추천</h2>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
-            {personalized.map((item, idx) => (
-              <div
-                key={idx}
-                onClick={() => handleClick(item.title)}
-                style={{
-                  cursor: 'pointer',
-                  width: '150px',
-                  textAlign: 'center',
-                  border: '1px solid #ddd',
-                  borderRadius: '8px',
-                  padding: '0.5rem'
-                }}
-              >
-                <img
-                  src={item.thumbnail}
-                  alt={item.title}
-                  style={{ width: '100%', borderRadius: '4px' }}
-                />
-                <p style={{ fontWeight: 'bold' }}>{item.title}</p>
-                <p style={{ fontSize: "0.8rem", color: "#777" }}>{item.subgenre}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <HorizontalSlider
+          title={`💖 ${profile.name}님이 좋아한 콘텐츠와 비슷한 추천`}
+          items={personalized}
+          onCardClick={handleClick}
+      />
       )}
 
+      {livePrograms.length > 0 && (
+        <HorizontalSlider
+          title={`📺 ${profile.name}님의 오늘 방송 추천`}
+          items={livePrograms.map((item) => ({
+            title: item["프로그램명"],
+            thumbnail: item["썸네일"],
+          }))}
+          onCardClick={handleLiveClick}
+        />
+      )}
 
     </div>
   );
