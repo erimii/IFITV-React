@@ -183,13 +183,18 @@ function HomePage({ user, profile, onLogout }) {
           <h2>💖 {profile.name}님이 좋아한 콘텐츠와 비슷한 추천</h2>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
             {personalized.map((item, idx) => (
-              <div key={idx} style={{
-                width: '150px',
-                textAlign: 'center',
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                padding: '0.5rem'
-              }}>
+              <div
+                key={idx}
+                onClick={() => handleClick(item.title)}
+                style={{
+                  cursor: 'pointer',
+                  width: '150px',
+                  textAlign: 'center',
+                  border: '1px solid #ddd',
+                  borderRadius: '8px',
+                  padding: '0.5rem'
+                }}
+              >
                 <img
                   src={item.thumbnail}
                   alt={item.title}
