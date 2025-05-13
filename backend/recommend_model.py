@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from sqlalchemy import create_engine
 
 from konlpy.tag import Okt
 okt = Okt()
@@ -11,8 +12,14 @@ okt = Okt()
 from transformers import AutoTokenizer, AutoModel
 import torch
 
-# CSV 로드
-df = pd.read_csv("tving_entertainment_all_merged.csv")
+# DB에서 contents 테이블 불러오기
+def load_contents():
+    engine = create_engine('mysql+pymysql://root:rubi@localhost:3306/ifitv_db')
+    query = "SELECT * FROM contents"
+    df = pd.read_sql(query, con=engine)
+    return df
+
+df = load_contents()
 
 # 결측값 채우기
 df.fillna("정보 없음", inplace=True)
