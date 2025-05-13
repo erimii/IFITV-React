@@ -14,7 +14,7 @@ CORS(app)
 # CSV에서 오늘 방송 불러오기
 today_programs_df = load_today_programs()
 
-# 편성표 기반 선호 추천
+# 편성표 기반 선호 추천 -> 일단 완료
 @app.route("/live_recommend", methods=["POST"])
 def live_recommend():
     data = request.get_json()
@@ -56,7 +56,7 @@ def live_recommend():
         print(f"[live_recommend] 오류: {e}")
         return jsonify({"error": str(e)})
 
-# 사용자 프로필 목록 조회
+# 사용자 프로필 목록 조회 -> 완료
 @app.route("/user_profiles/<username>", methods=["GET"])
 def get_user_profiles(username):
     profiles = load_profiles()
@@ -65,8 +65,8 @@ def get_user_profiles(username):
             return jsonify(user.get("profiles", []))  # 없으면 빈 리스트
     return jsonify({"error": "사용자를 찾을 수 없습니다."}), 404
 
-# 프로필 생성 시 선호 장르 기반 콘텐츠 선택 후 추천
-@app.route("/preview_recommend_model", methods=["POST"])
+# 프로필 생성 시 선호 장르 기반 콘텐츠 선택 후 추천 -> 일단 완료
+@app.route("/preview_recommend_model", methㄴods=["POST"])
 def preview_recommend_model():
     data = request.get_json()
     genres = data.get("preferred_genres", [])
@@ -104,7 +104,7 @@ def preview_recommend_model():
     # 10개만 출력
     return jsonify(recommended[:10])
 
-# 선택한 컨텐츠 기반 추천
+# 선택한 컨텐츠 기반 추천 -> 일단? 완료
 @app.route("/initial_recommend", methods=["POST"])
 def initial_recommend():
     data = request.get_json()
@@ -125,7 +125,7 @@ def initial_recommend():
 
     return jsonify(df.to_dict(orient="records"))
 
-# 새 프로필 추가
+# 새 프로필 추가-> 완료
 @app.route("/add_profile", methods=["POST"])
 def add_profile():
     data = request.get_json()
@@ -151,7 +151,7 @@ def add_profile():
 
     return jsonify({"error": "사용자를 찾을 수 없습니다."}), 404
 
-# 프로필 삭제
+# 프로필 삭제-> 완료
 @app.route("/delete_profile", methods=["POST"])
 def delete_profile():
     data = request.get_json()
@@ -169,7 +169,7 @@ def delete_profile():
     return jsonify({"error": "사용자 또는 프로필을 찾을 수 없습니다."}), 404
 
 
-# 회원가입
+# 회원가입-> 완료
 @app.route("/signup", methods=["POST"])
 def signup():
     data = request.get_json()
@@ -201,7 +201,7 @@ def signup():
 
     return jsonify({"message": "회원가입 성공!"})
 
-# 로그인
+# 로그인-> 완료
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -215,7 +215,7 @@ def login():
     
     return jsonify({"error": "아이디 또는 비밀번호가 일치하지 않습니다."}), 401
 
-# 선호 장르 기반 콘텐츠 추천
+# 선호 장르 기반 콘텐츠 추천 -> 일단???완료
 @app.route("/profile_recommend", methods=["POST"])
 def profile_recommend():
     data = request.get_json()
@@ -247,7 +247,7 @@ def profile_recommend():
     except Exception as e:
         return jsonify({"error": str(e)})
 
-# 홈에서 컨텐츠 클릭 시 디테일 + 해당 콘텐츠 기반 다른 콘텐츠 추천
+# 홈에서 컨텐츠 클릭 시 디테일 + 해당 콘텐츠 기반 다른 콘텐츠 추천 -> 일단 완료
 @app.route("/recommend_with_detail", methods=["POST"])
 def recommend_with_reason():
     data = request.get_json()

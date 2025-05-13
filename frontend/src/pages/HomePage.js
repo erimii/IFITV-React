@@ -1,6 +1,6 @@
-// src/pages/HomePage.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation  } from 'react-router-dom';
+import axios from 'axios';
 import ContentModal from "../components/ContentModal";
 import HorizontalSlider from '../components/HorizontalSlider';
 
@@ -16,72 +16,58 @@ function HomePage({ user, profile, onLogout }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedContent, setSelectedContent] = useState(null);
 
-  
   useEffect(() => {
     const fetchRecommendations = async () => {
       if (!user || !profile) return;
-  
-      // 1. 선호 장르 기반 콘텐츠
-      const res1 = await fetch("http://localhost:5000/profile_recommend", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: user.username, profile_name: profile.name }),
-      });
-      const genreData = await res1.json();
-      if (Array.isArray(genreData)) {
-        setGenreContents(genreData);
-      } else {
-        setGenreContents([]);
-        alert(genreData.error || "선호 장르 콘텐츠 추천 실패");
-      }
-  
-      // 2. 오늘 방송 추천
-      const res2 = await fetch("http://localhost:5000/live_recommend", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: user.username, profile_name: profile.name }),
-      });
-      const liveData = await res2.json();
-      if (Array.isArray(liveData)) {
-        setLivePrograms(liveData);
-      } else {
-        setLivePrograms([]);
-      }
-  
-      // 3. liked_contents 기반 추천
-      const likedContents = profile.liked_contents || [];
-      if (likedContents.length > 0) {
-        const res3 = await fetch("http://localhost:5000/initial_recommend", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ titles: likedContents }),
+
+      try {
+        // 1. 선호 장르 기반 콘텐츠
+        const res1 = await axios.post("http://localhost:8000/api/profile_recommend/", {
+          username: user.username,
+          profile_name: profile.name,
         });
-        const personalizedData = await res3.json();
-        if (Array.isArray(personalizedData)) {
-          setPersonalized(personalizedData);
-        } else {
-          setPersonalized([]);
+        setGenreContents(Array.isArray(res1.data) ? res1.data : []);
+
+        // 2. 오늘 방송 추천
+        const res2 = await axios.post("http://localhost:8000/api/live_recommend/", {
+          username: user.username,
+          profile_name: profile.name,
+        });
+        setLivePrograms(Array.isArray(res2.data) ? res2.data : []);
+
+        // 3. liked_contents 기반 추천
+        const liked = profile.liked_contents || [];
+        if (liked.length > 0) {
+          const res3 = await axios.post("http://localhost:8000/api/initial_recommend/", {
+            titles: liked,
+          });
+          setPersonalized(Array.isArray(res3.data) ? res3.data : []);
         }
+      } catch (error) {
+        console.error("추천 불러오기 오류:", error);
       }
     };
-  
+
     fetchRecommendations();
   }, [user, profile]);
-  
-  
-  // 콘텐츠 클릭 → 디테일 + 비슷한 콘텐츠 추천
+
+  // 콘텐츠 클릭 → 디테일 + 유사 콘텐츠 추천
   const handleClick = async (title) => {
     setLoading(true);
-    const response = await fetch("http://localhost:5000/recommend_with_detail", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, top_n: 5, alpha: 0.7 }),
-    });
-    const data = await response.json();
-    setSelectedContent(data.info);
-    setResults(data.recommendations);
-    setIsModalOpen(true);
-    setLoading(false);
+    try {
+      const res = await axios.post("http://localhost:8000/api/recommend_with_detail/", {
+        title,
+        top_n: 5,
+        alpha: 0.7
+      });
+      setSelectedContent(res.data.info);
+      setResults(res.data.recommendations);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("상세 추천 오류:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCloseModal = () => {
@@ -89,14 +75,13 @@ function HomePage({ user, profile, onLogout }) {
     setSelectedContent(null);
   };
 
-  // 실시간 카드 클릭 시
   const handleLiveClick = (title) => {
     alert(`🔔 "${title}" 바로 보러가기? 예약하기?`);
   };
 
-
   return (
     <div style={{ padding: '2rem' }}>
+      {/* 상단 바 */}
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -139,7 +124,7 @@ function HomePage({ user, profile, onLogout }) {
           title={`💖 ${profile.name}님이 좋아한 콘텐츠와 비슷한 추천`}
           items={personalized}
           onCardClick={handleClick}
-      />
+        />
       )}
 
       {livePrograms.length > 0 && (
@@ -152,7 +137,6 @@ function HomePage({ user, profile, onLogout }) {
           onCardClick={handleLiveClick}
         />
       )}
-
     </div>
   );
 }

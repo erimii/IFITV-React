@@ -1,6 +1,8 @@
 // src/pages/SignupPage.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
 
 function SignupPage() {
   const navigate = useNavigate();
@@ -20,20 +22,20 @@ function SignupPage() {
     }));
   };
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:5000/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-
-    const data = await response.json();
-    if (response.ok) {
+    try {
+      const response = await axios.post('http://localhost:8000/api/signup/', formData);
       alert("회원가입 성공! 로그인해주세요.");
       navigate("/login");
-    } else {
-      alert(data.error || "회원가입 실패");
+    } catch (error) {
+      console.error('회원가입 오류:', error);
+      if (error.response) {
+        alert(error.response.data.error || "회원가입 실패");
+      } else {
+        alert("서버 연결 오류");
+      }
     }
   };
 

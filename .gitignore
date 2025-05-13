@@ -1,8 +1,25 @@
-venv/
-node_modules/
+# Python
 __pycache__/
-.DS_Store
-.env
-kobert_embedding_matrix.npy
+venv/
+db.sqlite3
+
+# Node.js 관련
+node_modules/
 frontend/node_modules/
+package-lock.json
+package.json
+
+# Flask legacy 파일
+app.py
+
+# Data Files (큰거, local only)
+*.npy
+*.csv
+profiles.json
+user_profiles.py
+
+kobert_embedding_matrix.npy
+
 backend/data_crawling_live/
+
+profiles.json

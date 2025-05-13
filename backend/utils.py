@@ -1,14 +1,15 @@
 import pandas as pd
 import os
 from datetime import datetime
+from django.conf import settings
 
 def load_today_programs():
+    data_dir = os.path.join(settings.BASE_DIR, 'data_crawling_live')
     csv_list = pd.concat([
-        pd.read_csv(f"./data_crawling_live/{file}")
-        for file in os.listdir("./data_crawling_live") if file.endswith(".csv")
+        pd.read_csv(os.path.join(data_dir, file))
+        for file in os.listdir(data_dir) if file.endswith(".csv")
     ], ignore_index=True)
     return csv_list
-
 
 def is_future_program(time_str):
     """방송 시간이 현재 시간 이후인지 확인"""

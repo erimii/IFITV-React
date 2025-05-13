@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import axios from 'axios';
 
 function SelectContentPage({ user }) {
   const navigate = useNavigate();
@@ -8,23 +9,22 @@ function SelectContentPage({ user }) {
   const [contents, setContents] = useState([]);
   const [selectedTitles, setSelectedTitles] = useState([]);
 
-  useEffect(() => {
-    // 사용자가 선택한 장르를 기반으로 추천된 콘텐츠 10개 가져오기
-    const fetchPreviewContents = async () => {
-      const res = await fetch("http://localhost:5000/preview_recommend_model", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          preferred_genres: profile.preferred_genres
-        })
+  // 추천 콘텐츠 불러오기 함수 (중복 제거, axios 적용)
+  const fetchPreviewContents = async () => {
+    try {
+      const response = await axios.post("http://localhost:8000/api/preview_recommend_model/", {
+        preferred_genres: profile.preferred_genres
       });
-      const data = await res.json();
-      setContents(data);
-    };
-  
+      setContents(response.data);
+    } catch (error) {
+      console.error('추천 콘텐츠 불러오기 오류:', error);
+    }
+  };
+
+  useEffect(() => {
     fetchPreviewContents();
   }, [profile]);
-  
+
   // 콘텐츠 선택
   const toggleContent = (title) => {
     setSelectedTitles((prev) =>
@@ -32,41 +32,29 @@ function SelectContentPage({ user }) {
     );
   };
 
-  // 새로 추천 받기 함수
-  const fetchPreviewContents = async () => {
-    const res = await fetch("http://localhost:5000/preview_recommend_model", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        preferred_genres: profile.preferred_genres
-      })
-    });
-    const data = await res.json();
-    setContents(data);
-  };
-
-  useEffect(() => {
-    fetchPreviewContents();
-  }, [profile]);
-
-  // 완료 시 프로필 저장
+  // 프로필 저장 API 호출 (axios 적용)
   const handleFinish = async () => {
     const fullProfile = {
       ...profile,
       liked_contents: selectedTitles
     };
 
-    await fetch("http://localhost:5000/add_profile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+    console.log("profile 데이터 확인...디비에 왜 깨져서 저장되니?", fullProfile);
+
+    try {
+      await axios.post("http://localhost:8000/api/add_profile/", {
         username: user.username,
         profile: fullProfile
-      })
-    });
-
-    // 다시 프로필 선택 페이지로 이동
-    navigate("/select-profile");
+      });
+      navigate("/select-profile");
+    } catch (error) {
+      console.error('프로필 저장 오류:', error);
+      if (error.response) {
+        alert(error.response.data.error || "프로필 저장 실패");
+      } else {
+        alert("서버 연결 오류");
+      }
+    }
   };
 
   return (

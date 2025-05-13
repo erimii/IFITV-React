@@ -1,6 +1,7 @@
 // src/pages/LoginPage.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function LoginPage({ setUser }) {
   const navigate = useNavigate();
@@ -20,19 +21,18 @@ function LoginPage({ setUser }) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:5000/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData)
-    });
-
-    const data = await response.json();
-    if (response.ok) {
-      localStorage.setItem("user", JSON.stringify(data)); // 로그인 정보 저장
-      setUser(data); // App 상태 업데이트
+    try {
+      const response = await axios.post('http://localhost:8000/api/login/', formData);  // ✅ URL 수정 + axios
+      localStorage.setItem("user", JSON.stringify(response.data)); // 로그인 정보 저장
+      setUser(response.data); // App 상태 업데이트
       navigate("/select-profile"); // 홈으로 이동
-    } else {
-      alert(data.error || "로그인 실패");
+    } catch (error) {
+      console.error('로그인 오류:', error);
+      if (error.response) {
+        alert(error.response.data.error || "로그인 실패");
+      } else {
+        alert("서버 연결 오류");
+      }
     }
   };
 

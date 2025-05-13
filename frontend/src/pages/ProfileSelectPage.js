@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function ProfileSelectPage({ user, setSelectedProfile, onLogout }) {
   const navigate = useNavigate();
@@ -8,9 +9,14 @@ function ProfileSelectPage({ user, setSelectedProfile, onLogout }) {
   // 로그인한 유저의 프로필 목록 가져오기
   useEffect(() => {
     const fetchProfiles = async () => {
-      const res = await fetch(`http://localhost:5000/user_profiles/${user.username}`);
-      const data = await res.json();
-      setProfiles(data);
+      try {
+        const response = await axios.get('http://localhost:8000/api/profiles/by_user/', {
+          params: { username: user.username }
+        });
+        setProfiles(response.data);
+      } catch (error) {
+        console.error('프로필 불러오기 오류:', error);
+      }
     };
     fetchProfiles();
   }, [user.username]);
@@ -31,21 +37,24 @@ function ProfileSelectPage({ user, setSelectedProfile, onLogout }) {
     const confirmDelete = window.confirm(`${profileName} 프로필을 삭제하시겠습니까?`);
     if (!confirmDelete) return;
   
-    const response = await fetch("http://localhost:5000/delete_profile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: user.username, profile_name: profileName }),
-    });
+    try {
+      const response = await axios.post("http://localhost:8000/api/delete_profile/", {
+        username: user.username,
+        profile_name: profileName,
+      });
   
-    const data = await response.json();
-    if (response.ok) {
-      // 삭제 후 목록 다시 불러오기
+      // 성공 시 프로필 목록에서 제거
       setProfiles(prev => prev.filter(p => p.name !== profileName));
-    } else {
-      alert(data.error || "삭제 실패");
+  
+    } catch (error) {
+      console.error('삭제 실패:', error);
+      if (error.response) {
+        alert(error.response.data.error || "삭제 실패");
+      } else {
+        alert("서버 연결 실패");
+      }
     }
   };
-  
 
   return (
     <div style={{ padding: "2rem", maxWidth: "600px", margin: "0 auto" }}>
