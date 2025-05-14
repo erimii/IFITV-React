@@ -19,5 +19,6 @@ urlpatterns = [
     path('api/recommend_with_detail/', recommend_with_detail),
     path('api/live_recommend/', live_recommend),
     path('api/preview_recommend_model/', preview_recommend_model),
+    path('recommendation/', include('recommendations.urls')),
     path('api/', include(router.urls)),
 ]

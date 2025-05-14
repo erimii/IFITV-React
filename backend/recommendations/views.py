@@ -7,8 +7,75 @@ from recommend_model import hybrid_recommend_with_reason, df
 import random
 import pandas as pd
 from utils import load_today_programs, is_future_program
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from contents.models import Content
+from .constants import subgenre_mapping
+from django.db.models import Q
 
-# 선호 장르 기반 콘텐츠 추천 -> 일단???완료
+
+
+# 장르에 해당하는 서브장르 가져오기
+def get_subgenres(request):
+    if request.method == 'GET':
+        return JsonResponse(subgenre_mapping, safe=False)
+
+# 장르 + 서브장르에 해당하는 컨텐츠 가져오기
+@api_view(['POST'])
+def get_filtered_contents(request):
+    data = request.data
+    selected = data.get('selected', {})
+
+    print("selected 데이터:", selected)
+
+
+    contents = Content.objects.none()
+
+    for genre, subgenres in selected.items():
+        if subgenres:
+            qs = Content.objects.filter(
+                genre=genre,
+                subgenres__name__in=subgenres
+            ).distinct()
+            print(f"장르: {genre} / 서브장르: {subgenres} / 결과 개수: {qs.count()}")
+            contents = contents.union(qs)
+
+    contents_list = list(contents.values(
+        'id', 'title', 'genre', 'description', 'cast', 'age_rating', 'thumbnail'
+    ))
+
+    print(f"최종 콘텐츠 개수: {contents.count()}")
+
+
+    return Response(contents_list)
+
+# 장르/서브장르 별 콘텐츠 출력
+@api_view(['POST'])
+def preview_contents_grouped(request):
+    selected = request.data.get('selected', {})
+
+    if not selected:
+        return Response({"error": "selected가 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+    contents_by_genre = {}
+
+    for genre, subgenres in selected.items():
+        if subgenres:
+            qs = Content.objects.filter(
+                genre=genre,
+                subgenres__name__in=subgenres
+            ).distinct().order_by('?')[:10]  # 랜덤 10개 샘플링
+            contents_by_genre[genre] = list(qs.values(
+                'id', 'title', 'genre', 'description', 'cast', 'age_rating', 'thumbnail'
+            ))
+        else:
+            contents_by_genre[genre] = []  # 서브장르 없으면 빈 리스트
+
+    return Response(contents_by_genre)
+
+ 
+# 선호 장르 기반 콘텐츠 추천
 @api_view(['POST'])
 def profile_recommend(request):
     username = request.data.get('username')
