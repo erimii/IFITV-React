@@ -9,57 +9,66 @@ function AddProfileForm() {
     name: "",
     age: "",
     gender: "",
-    preferred_genres: {},  // 장르별 서브장르 선택 결과
+    preferred_genres: {},  // 장르별 서브장르 이름 (화면용)
   });
 
-  const [subgenreMapping, setSussbgenreMapping] = useState({});
+  const [subgenreMapping, setSubgenreMapping] = useState({});  // { "예능": [{id, name}], ... }
+  const [selectedSubgenreIds, setSelectedSubgenreIds] = useState([]);  // 최종 id 리스트
 
-  // subgenre_mapping 불러오기
+  // ✅ 서브장르 리스트 가져오기 (id + name)
   useEffect(() => {
     axios.get('http://localhost:8000/recommendation/subgenres/')
       .then(res => {
-        setSussbgenreMapping(res.data);
+        setSubgenreMapping(res.data);
       })
       .catch(err => {
-        console.error("subgenre_mapping 불러오기 실패", err);
+        console.error("서브장르 불러오기 실패", err);
       });
   }, []);
 
-  const toggleSubgenre = (genre, subgenre) => {
-    setForm((prev) => {
-      const selectedSubs = prev.preferred_genres[genre] || [];
-  
-      const normalizedSub = String(subgenre).trim();
-  
-      const isSelected = selectedSubs.includes(normalizedSub);
-  
-      const updatedSubs = isSelected
-        ? selectedSubs.filter((s) => String(s).trim() !== normalizedSub)
-        : [...selectedSubs, normalizedSub];
-  
-      const updatedPreferredGenres = {
-        ...prev.preferred_genres,
-        [genre]: updatedSubs,
-      };
-  
-      const updatedForm = {
-        ...prev,
-        preferred_genres: updatedPreferredGenres,
-      };
-  
-      console.log("업데이트된 form:", updatedForm);
-  
-      return updatedForm;
-    });
-  };
-  
-  
-  
+  // ✅ 서브장르 토글 (name & id 둘 다 처리)
+  const toggleSubgenre = (genre, subgenreObj) => {
+    const { id: subgenreId, name: subgenreName } = subgenreObj;
 
+    // preferred_genres (name 기준)
+    setForm((prev) => {
+      const selectedNames = prev.preferred_genres[genre] || [];
+      const isSelected = selectedNames.includes(subgenreName);
+
+      const updatedNames = isSelected
+        ? selectedNames.filter((s) => s !== subgenreName)
+        : [...selectedNames, subgenreName];
+
+      return {
+        ...prev,
+        preferred_genres: {
+          ...prev.preferred_genres,
+          [genre]: updatedNames,
+        },
+      };
+    });
+
+    // selectedSubgenreIds (id 기준)
+    setSelectedSubgenreIds((prev) =>
+      prev.includes(subgenreId)
+        ? prev.filter((id) => id !== subgenreId)
+        : [...prev, subgenreId]
+    );
+  };
+
+  // ✅ 최종 제출 (id 리스트 포함해서 넘김)
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("최종 프로필 데이터:", form);
-    navigate("/select-content", { state: { profile: form } });
+
+    const profileData = {
+      ...form,
+      preferred_subgenres: selectedSubgenreIds,  // ✅ 서버로 넘길 id 리스트
+      liked_contents_ids: []  // 다음 페이지에서 채울 거니까 비워둠
+    };
+
+    console.log("최종 profileData:", profileData);
+
+    navigate("/select-content", { state: { profile: profileData } });
   };
 
   return (
@@ -94,18 +103,18 @@ function AddProfileForm() {
             <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
               {subgenres.map((sub) => (
                 <div
-                  key={sub}
+                  key={sub.id}
                   onClick={() => toggleSubgenre(genre, sub)}
                   style={{
                     padding: "0.5rem 1rem",
-                    border: (form.preferred_genres[genre] || []).includes(sub)
+                    border: (form.preferred_genres[genre] || []).includes(sub.name)
                       ? "2px solid #A50034"
                       : "1px solid #ccc",
                     borderRadius: "999px",
                     cursor: "pointer",
                   }}
                 >
-                  #{sub}
+                  #{sub.name}
                 </div>
               ))}
             </div>

@@ -12,11 +12,19 @@ class Content(models.Model):
     class Meta:
         db_table = 'contents'
 
-class Subgenre(models.Model):
+class Genre(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
     class Meta:
+        db_table = 'genres'
+
+class Subgenre(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE, related_name='subgenres')
+
+    class Meta:
         db_table = 'subgenres'
+        unique_together = ('genre', 'name')
 
 class ContentSubgenre(models.Model):
     content = models.ForeignKey(Content, on_delete=models.CASCADE)

@@ -8,7 +8,8 @@ function SelectContentPage({ user }) {
   const profile = location.state?.profile;
 
   const [contentsByGenre, setContentsByGenre] = useState({});
-  const [selectedTitles, setSelectedTitles] = useState([]);
+  const [selectedContentIds, setSelectedContentIds] = useState([]);  // ✅ id로 관리
+  const [selectedTitles, setSelectedTitles] = useState([]);  // ✅ UI 표시용
 
   const fetchContents = async () => {
     try {
@@ -26,14 +27,27 @@ function SelectContentPage({ user }) {
     fetchContents();
   }, [profile]);
 
-  const toggleContent = (title) => {
+  const toggleContent = (content) => {
+    const { id, title } = content;
+
+    setSelectedContentIds((prev) =>
+      prev.includes(id) ? prev.filter((cid) => cid !== id) : [...prev, id]
+    );
+
     setSelectedTitles((prev) =>
       prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title]
     );
   };
 
   const handleFinish = async () => {
-    const fullProfile = { ...profile, liked_contents: selectedTitles };
+    const fullProfile = {
+      ...profile,
+      liked_contents: selectedTitles,  // ✅ 여전히 타이틀은 넣고
+      liked_contents_ids: selectedContentIds  // ✅ id 리스트 추가
+    };
+
+    console.log("최종 profileData (select-content):", fullProfile);
+
     try {
       await axios.post("http://localhost:8000/api/add_profile/", {
         username: user.username,
@@ -63,9 +77,9 @@ function SelectContentPage({ user }) {
             {items.map((item) => (
               <div
                 key={item.id}
-                onClick={() => toggleContent(item.title)}
+                onClick={() => toggleContent(item)}
                 style={{
-                  border: selectedTitles.includes(item.title) ? "2px solid #A50034" : "1px solid #ccc",
+                  border: selectedContentIds.includes(item.id) ? "2px solid #A50034" : "1px solid #ccc",
                   borderRadius: "10px",
                   padding: "0.5rem",
                   width: "150px",

@@ -10,16 +10,29 @@ from utils import load_today_programs, is_future_program
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from contents.models import Content
+from contents.models import Content, Subgenre
 from .constants import subgenre_mapping
 from django.db.models import Q
 
 
 
 # 장르에 해당하는 서브장르 가져오기
+
+@api_view(['GET'])
 def get_subgenres(request):
-    if request.method == 'GET':
-        return JsonResponse(subgenre_mapping, safe=False)
+    subgenres = Subgenre.objects.all().values('id', 'name', 'genre__name')
+
+    genre_mapping = {}
+    for sub in subgenres:
+        genre_name = sub['genre__name']
+        if genre_name not in genre_mapping:
+            genre_mapping[genre_name] = []
+        genre_mapping[genre_name].append({
+            'id': sub['id'],
+            'name': sub['name']
+        })
+
+    return Response(genre_mapping)
 
 # 장르 + 서브장르에 해당하는 컨텐츠 가져오기
 @api_view(['POST'])
