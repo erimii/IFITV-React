@@ -14,6 +14,16 @@ function HorizontalSlider({ title, items, onCardClick }) {
     scrollRef.current.scrollLeft += 300;
   };
 
+  const formatAirtime = (airtime) => {
+    if (!airtime) return "";
+    const timePart = airtime.split(" ")[1] || airtime;  // "2025-05-15 16:30:00" 처리용
+    const [hour, minute] = timePart.split(":");
+    const hourNum = parseInt(hour, 10);
+    const ampm = hourNum >= 12 ? "오후" : "오전";
+    const displayHour = hourNum % 12 === 0 ? 12 : hourNum % 12;
+    return `${ampm} ${displayHour}:${minute}`;
+  };
+
   return (
     <div style={{ position: "relative", marginBottom: "2rem" }}>
       <h2 style={{ margin: "0 0 1rem 0" }}>{title}</h2>
@@ -34,7 +44,7 @@ function HorizontalSlider({ title, items, onCardClick }) {
         {items.map((item, idx) => (
           <div
             key={idx}
-            onClick={() => onCardClick(item.title)}
+            onClick={() => onCardClick(item.title, item.airtime)}
             style={{
               flex: "0 0 auto",
               width: "160px",
@@ -54,6 +64,11 @@ function HorizontalSlider({ title, items, onCardClick }) {
               }}
             />
             <p style={{ marginTop: "0.5rem", fontWeight: "bold" }}>{item.title}</p>
+            {item.airtime && (
+              <p style={{ marginTop: "0.2rem", color: "#555", fontSize: "0.85rem" }}>
+                {formatAirtime(item.airtime)}
+              </p>
+            )}
           </div>
         ))}
       </div>

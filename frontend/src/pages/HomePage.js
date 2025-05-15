@@ -79,9 +79,29 @@ function HomePage({ user, profile, onLogout }) {
     setSelectedContent(null);
   };
 
-  const handleLiveClick = (title) => {
-    alert(`🔔 "${title}" 바로 보러가기? 예약하기?`);
+  const handleLiveClick = (title, airtime) => {
+    const now = new Date();
+    let programTime;
+  
+    if (airtime.includes(" ")) {
+      // '2025-05-15 16:30:00' 같은 포맷
+      programTime = new Date(airtime);
+    } else {
+      // '16:30:00' 포맷 (오늘 날짜 기준으로 시간 세팅)
+      const [hour, minute, second] = airtime.split(":").map(Number);
+      programTime = new Date();
+      programTime.setHours(hour);
+      programTime.setMinutes(minute);
+      programTime.setSeconds(second || 0);
+    }
+  
+    if (programTime < now) {
+      alert(`🔔 "${title}" 보러가기!`);
+    } else {
+      alert(`📅 "${title}" 시청 예약하기!`);
+    }
   };
+  
 
   return (
     <div style={{ padding: '2rem' }}>
@@ -138,8 +158,9 @@ function HomePage({ user, profile, onLogout }) {
         <HorizontalSlider
           title={`📺 ${profile.name}님의 오늘 방송 추천`}
           items={livePrograms.map((item) => ({
-            title: item["프로그램명"],
-            thumbnail: item["썸네일"],
+            title: item["title"],
+            thumbnail: item["thumbnail"],
+            airtime: item["airtime"],
           }))}
           onCardClick={handleLiveClick}
         />

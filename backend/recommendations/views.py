@@ -6,7 +6,7 @@ from profiles.models import Profile, ProfileLikedContent
 from recommend_model import hybrid_recommend_with_reason, df
 import random
 import pandas as pd
-from utils import load_today_programs, is_future_program
+from utils import load_today_programs, is_current_or_future_program
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -178,7 +178,6 @@ def recommend_with_detail(request):
 # 편성표 기반 선호 추천
 @api_view(['POST'])
 def live_recommend(request):
-
     username = request.data.get('username')
     profile_name = request.data.get('profile_name')
 
@@ -193,29 +192,42 @@ def live_recommend(request):
     except Profile.DoesNotExist:
         return Response({"error": "프로필을 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 
-    preferred_genres = profile.preferred_genres
+    # preferred_genres dict → key + value 리스트로 펼치기
+    preferred_genres_dict = profile.preferred_genres
+    preferred_genres_list = list(set(
+        [k for k in preferred_genres_dict.keys()] +
+        [v for values in preferred_genres_dict.values() for v in values]
+    ))
 
+    print(f"@@@@@@@@@@@@@2{preferred_genres_list}")
+
+    # 오늘 방송 프로그램 로딩
     today_programs_df = load_today_programs()
 
-    clean_df = today_programs_df.dropna(subset=["서브장르", "장르"])
-
-    from datetime import datetime
-    matched_df = clean_df[
-        clean_df["방송 시간"].apply(is_future_program) &
-        (
-            clean_df["서브장르"].apply(lambda g: any(pg in g for pg in preferred_genres)) |
-            clean_df["장르"].apply(lambda g: any(pg in g for pg in preferred_genres))
-        )
+    # genre / subgenre 없는 행 제거
+    clean_df = today_programs_df.dropna(subset=["subgenre", "genre"]).copy()
+    clean_df = clean_df[
+        clean_df.apply(lambda row: is_current_or_future_program(row["airtime"], row["runtime"]), axis=1)
     ]
+
+    # genre / subgenre 중 하나라도 매칭되는 프로그램 필터링
+    genre_mask = clean_df["genre"].astype(str).apply(lambda g: any(pg in g for pg in preferred_genres_list))
+    subgenre_mask = clean_df["subgenre"].astype(str).apply(lambda g: any(pg in g for pg in preferred_genres_list))
+
+    matched_df = clean_df[genre_mask | subgenre_mask]
 
     if matched_df.empty:
         return Response([], status=status.HTTP_200_OK)
 
+    # 출연진은 아직 없으니 제외하고 반환할 컬럼 변경
     result = matched_df[[
-        "채널명", "방송 시간", "프로그램명", "장르", "서브장르", "출연진", "설명", "썸네일"
+        "airtime", "title", "genre", "subgenre", "desc", "thumbnail"
     ]].drop_duplicates().head(10).fillna("")
 
+    print(result[["title", "thumbnail"]])
+
     return Response(result.to_dict(orient="records"), status=status.HTTP_200_OK)
+
 
 # 프로필 생성 시 선호 장르 기반 콘텐츠 선택 후 추천
 @api_view(['POST'])
