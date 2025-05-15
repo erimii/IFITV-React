@@ -1,57 +1,61 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation  } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ContentModal from "../components/ContentModal";
 import HorizontalSlider from '../components/HorizontalSlider';
 
 function HomePage({ user, profile, onLogout }) {
   const navigate = useNavigate();
-  const location = useLocation();
-  const likedContents = location.state?.liked_contents || [];
+
   const [genreContents, setGenreContents] = useState([]);
   const [livePrograms, setLivePrograms] = useState([]);
-  const [personalized, setPersonalized] = useState([]);
-  const [results, setResults] = useState([]);
+  const [likedRecommendationsByGenre, setLikedRecommendationsByGenre] = useState({
+    드라마: [],
+    예능: [],
+    영화: []
+  });
+
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedContent, setSelectedContent] = useState(null);
+  const [results, setResults] = useState([]);
 
   useEffect(() => {
     const fetchRecommendations = async () => {
       if (!user || !profile) return;
 
+      setLoading(true);
+
       try {
-        // 1. 선호 장르 기반 콘텐츠
+        // 1. 선호 장르 기반 추천
         const res1 = await axios.post("http://localhost:8000/api/profile_recommend/", {
           username: user.username,
           profile_name: profile.name,
         });
         setGenreContents(Array.isArray(res1.data) ? res1.data : []);
 
-        // 2. 오늘 방송 추천
+        // 2. 실시간 방송 추천
         const res2 = await axios.post("http://localhost:8000/api/live_recommend/", {
           username: user.username,
           profile_name: profile.name,
         });
         setLivePrograms(Array.isArray(res2.data) ? res2.data : []);
 
-        // 3. liked_contents 기반 추천
-        const liked = profile.liked_contents || [];
-        if (liked.length > 0) {
-          const res3 = await axios.post("http://localhost:8000/api/initial_recommend/", {
-            titles: liked,
-          });
-          setPersonalized(Array.isArray(res3.data) ? res3.data : []);
-        }
+        // 3. liked 기반 추천 (profile_id 기반)
+        const res3 = await axios.post("http://localhost:8000/recommendation/liked_based_recommend/", {
+          profile_id: profile.id
+        });
+        setLikedRecommendationsByGenre(res3.data);
       } catch (error) {
         console.error("추천 불러오기 오류:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchRecommendations();
   }, [user, profile]);
 
-  // 콘텐츠 클릭 → 디테일 + 유사 콘텐츠 추천
   const handleClick = async (title) => {
     setLoading(true);
     try {
@@ -119,13 +123,16 @@ function HomePage({ user, profile, onLogout }) {
         onCardClick={handleClick}
       />
 
-      {personalized.length > 0 && (
-        <HorizontalSlider
-          title={`💖 ${profile.name}님이 좋아한 콘텐츠와 비슷한 추천`}
-          items={personalized}
-          onCardClick={handleClick}
-        />
-      )}
+      {Object.entries(likedRecommendationsByGenre).map(([genre, items]) => (
+        items.length > 0 && (
+          <HorizontalSlider
+            key={genre}
+            title={`💖 ${profile.name}님을 위한 ${genre} 추천`}
+            items={items}
+            onCardClick={handleClick}
+          />
+        )
+      ))}
 
       {livePrograms.length > 0 && (
         <HorizontalSlider

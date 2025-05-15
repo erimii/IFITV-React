@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import User
-from profiles.models import Profile
+from profiles.models import Profile, ProfileLikedContent
 from recommend_model import hybrid_recommend_with_reason, df
 import random
 import pandas as pd
@@ -17,7 +17,6 @@ from django.db.models import Q
 
 
 # 장르에 해당하는 서브장르 가져오기
-
 @api_view(['GET'])
 def get_subgenres(request):
     subgenres = Subgenre.objects.all().values('id', 'name', 'genre__name')
@@ -258,3 +257,54 @@ def preview_recommend_model(request):
 
     # 4. 10개만 반환
     return Response(recommended[:10], status=status.HTTP_200_OK)
+
+# profile_id로 좋아요한 콘텐츠 가져와서 장르 별로 묶기
+@api_view(['POST'])
+def liked_based_recommend(request):
+    profile_id = request.data.get('profile_id')
+
+    if not profile_id:
+        return Response({"error": "profile_id가 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        profile = Profile.objects.get(id=profile_id)
+    except Profile.DoesNotExist:
+        return Response({"error": "해당 profile_id의 Profile이 존재하지 않습니다."}, status=status.HTTP_404_NOT_FOUND)
+
+    # 1. profile_liked_contents에서 content_id 조회
+    liked_content_ids = ProfileLikedContent.objects.filter(profile=profile).values_list('content_id', flat=True)
+
+    if not liked_content_ids:
+        return Response({"error": "선호 콘텐츠가 없습니다."}, status=status.HTTP_200_OK)
+
+    # 2. contents 테이블에서 title, genre 조회
+    contents = Content.objects.filter(id__in=liked_content_ids)
+
+    # 3. genre별로 묶기
+    grouped = { "드라마": [], "예능": [], "영화": [] }
+    for content in contents:
+        if content.genre in grouped:
+            grouped[content.genre].append(content.title)
+
+    # 4. genre별 추천 모델 돌리기
+    results = { "드라마": [], "예능": [], "영화": [] }
+    for genre, titles in grouped.items():
+        titles = list(titles)
+        print(f"[DEBUG] {genre} titles: {titles}")
+
+        if len(titles) > 0:
+            try:
+                genre_results = []
+                for title in titles:
+                    rec_df = hybrid_recommend_with_reason(title, top_n=5)
+                    genre_results.extend(rec_df.to_dict(orient="records"))
+                
+                # 중복 제거하고 넣기
+                unique_df = pd.DataFrame(genre_results).drop_duplicates(subset="title").fillna("")
+                results[genre] = unique_df.to_dict(orient="records")
+
+            except Exception as e:
+                print(f"{genre} 추천 실패: {e}")
+
+
+    return Response(results, status=status.HTTP_200_OK)
