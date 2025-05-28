@@ -8,8 +8,8 @@ function SelectContentPage({ user }) {
   const profile = location.state?.profile;
 
   const [contentsByGenre, setContentsByGenre] = useState({});
-  const [selectedContentIds, setSelectedContentIds] = useState([]);  // ✅ id로 관리
-  const [selectedTitles, setSelectedTitles] = useState([]);  // ✅ UI 표시용
+  const [selectedContentIds, setSelectedContentIds] = useState([]);  // id로 관리
+  const [selectedTitles, setSelectedTitles] = useState([]);  // UI 표시용
 
   const fetchContents = async () => {
     try {
@@ -42,8 +42,8 @@ function SelectContentPage({ user }) {
   const handleFinish = async () => {
     const fullProfile = {
       ...profile,
-      liked_contents: selectedTitles,  // ✅ 여전히 타이틀은 넣고
-      liked_contents_ids: selectedContentIds  // ✅ id 리스트 추가
+      liked_contents: selectedTitles,
+      liked_contents_ids: selectedContentIds
     };
 
     console.log("최종 profileData (select-content):", fullProfile);

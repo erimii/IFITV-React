@@ -1,0 +1,24 @@
+.sidenav {
+    width: 120px;
+    background-color: #1f1f1f;
+    color: #aaa;
+    height: 100vh;
+    padding-top: 50px;
+  }
+  
+  .nav-item {
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .nav-item:hover {
+    color: #fff;
+  }
+  
+  .nav-item.active {
+    color: #fff;
+    background-color: #A50034;
+    font-weight: bold;
+  }
+  

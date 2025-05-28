@@ -3,9 +3,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ContentModal from "../components/ContentModal";
 import HorizontalSlider from '../components/HorizontalSlider';
+import SideNav from '../components/SideNav';
 
 function HomePage({ user, profile, onLogout }) {
   const navigate = useNavigate();
+
+  const [selectedGenre, setSelectedGenre] = useState('홈');
 
   const [genreContents, setGenreContents] = useState([]);
   const [livePrograms, setLivePrograms] = useState([]);
@@ -129,6 +132,11 @@ function HomePage({ user, profile, onLogout }) {
         </div>
       </div>
 
+      <div style={{ display: 'flex' }}>
+        <SideNav selectedGenre={selectedGenre} onSelect={setSelectedGenre} />
+      
+      <div style={{ padding: '2rem' }}>
+
       {loading && <p>추천 중입니다...</p>}
 
       <ContentModal
@@ -166,6 +174,9 @@ function HomePage({ user, profile, onLogout }) {
         />
       )}
     </div>
+    </div>
+    </div>
+
   );
 }
 
