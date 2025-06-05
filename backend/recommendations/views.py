@@ -13,8 +13,33 @@ import json
 from contents.models import Content, Subgenre
 from .constants import subgenre_mapping
 from django.db.models import Q
+from contents.models import Content 
+from django.core.paginator import Paginator
 
+#  VOD 전체 가져오기
+def all_contents(request):
+    page = int(request.GET.get('page', 1))
+    per_page = 30
 
+    contents = Content.objects.all()
+    paginator = Paginator(contents, per_page)
+    page_obj = paginator.get_page(page)
+
+    data = [
+        {
+            "title": c.title,
+            "description": c.description,
+            "thumbnail": c.thumbnail,
+            "genre": c.genre,
+            "subgenres": [s.name for s in c.subgenres.all()],
+        }
+        for c in page_obj
+    ]
+    return JsonResponse({
+        "results": data,
+        "has_next": page_obj.has_next(),
+        "next_page": page + 1 if page_obj.has_next() else None
+    })
 
 # 장르에 해당하는 서브장르 가져오기
 @api_view(['GET'])

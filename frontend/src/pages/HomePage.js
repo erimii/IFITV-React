@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef  } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ContentModal from "../components/ContentModal";
@@ -8,7 +8,15 @@ import SideNav from '../components/SideNav';
 function HomePage({ user, profile, onLogout }) {
   const navigate = useNavigate();
 
-  const [selectedGenre, setSelectedGenre] = useState('홈');
+  const [selectedMenu, setSelectedMenu] = useState('홈');
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const selectedMenuParam = queryParams.get('menu') || '홈';
+  const [vodContents, setVodContents] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasNext, setHasNext] = useState(true);
+  const loaderRef = useRef();
 
   const [genreContents, setGenreContents] = useState([]);
   const [livePrograms, setLivePrograms] = useState([]);
@@ -24,12 +32,62 @@ function HomePage({ user, profile, onLogout }) {
   const [results, setResults] = useState([]);
 
   useEffect(() => {
+    console.log("전체 VOD 콘텐츠 수:", genreContents.length);
+  }, [genreContents]);
+  
+  // 네브 바 선택 시 바뀌게
+  useEffect(() => {
+    const loadPage = async () => {
+      if (selectedMenuParam !== "VOD") return;
+      if (!hasNext) return;
+  
+      const res = await axios.get(`http://localhost:8000/recommendation/all_contents/?page=${page}`);
+      setVodContents(prev => [...prev, ...res.data.results]);
+      setHasNext(res.data.has_next);
+    };
+    loadPage();
+  }, [page, selectedMenuParam]);
+  
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasNext) {
+        setPage(prev => prev + 1);
+      }
+    });
+  
+    const target = loaderRef.current;
+  
+    if (target) {
+      observer.observe(target);
+    }
+  
+    return () => {
+      if (target) {
+        observer.unobserve(target); 
+      }
+    };
+  }, [hasNext, vodContents]);
+  
+
+  useEffect(() => {
+    if (selectedMenuParam === "VOD") {
+      setVodContents([]);  
+      setPage(1);             
+      setHasNext(true);      
+    }
+  }, [selectedMenuParam]);
+  
+  
+
+  useEffect(() => {
     const fetchRecommendations = async () => {
       if (!user || !profile) return;
 
       setLoading(true);
 
       try {
+
         // 1. 선호 장르 기반 추천
         const res1 = await axios.post("http://localhost:8000/api/profile_recommend/", {
           username: user.username,
@@ -57,7 +115,7 @@ function HomePage({ user, profile, onLogout }) {
     };
 
     fetchRecommendations();
-  }, [user, profile]);
+  }, [user, profile, location.search]);
 
   const handleClick = async (title) => {
     setLoading(true);
@@ -133,7 +191,7 @@ function HomePage({ user, profile, onLogout }) {
       </div>
 
       <div style={{ display: 'flex' }}>
-        <SideNav selectedGenre={selectedGenre} onSelect={setSelectedGenre} />
+        <SideNav selectedMenu={selectedMenu} onSelect={setSelectedMenu} />
       
       <div style={{ padding: '2rem' }}>
 
@@ -145,34 +203,64 @@ function HomePage({ user, profile, onLogout }) {
         onClose={handleCloseModal}
       />
 
-      <HorizontalSlider
-        title={`👇 ${profile.name}님의 선호 장르 기반 콘텐츠`}
-        items={genreContents}
-        onCardClick={handleClick}
-      />
-
-      {Object.entries(likedRecommendationsByGenre).map(([genre, items]) => (
-        items.length > 0 && (
+      {selectedMenuParam === "홈" && (
+        <>
           <HorizontalSlider
-            key={genre}
-            title={`💖 ${profile.name}님을 위한 ${genre} 추천`}
-            items={items}
+            title={`👇 ${profile.name}님의 선호 장르 기반 콘텐츠`}
+            items={genreContents}
             onCardClick={handleClick}
           />
-        )
-      ))}
 
-      {livePrograms.length > 0 && (
-        <HorizontalSlider
-          title={`📺 ${profile.name}님의 오늘 방송 추천`}
-          items={livePrograms.map((item) => ({
-            title: item["title"],
-            thumbnail: item["thumbnail"],
-            airtime: item["airtime"],
-          }))}
-          onCardClick={handleLiveClick}
-        />
+          {Object.entries(likedRecommendationsByGenre).map(([genre, items]) => (
+            items.length > 0 && (
+              <HorizontalSlider
+                key={genre}
+                title={`💖 ${profile.name}님을 위한 ${genre} 추천`}
+                items={items}
+                onCardClick={handleClick}
+              />
+            )
+          ))}
+
+          {livePrograms.length > 0 && (
+            <HorizontalSlider
+              title={`📺 ${profile.name}님의 오늘 방송 추천`}
+              items={livePrograms.map((item) => ({
+                title: item["title"],
+                thumbnail: item["thumbnail"],
+                airtime: item["airtime"],
+              }))}
+              onCardClick={handleLiveClick}
+            />
+          )}
+        </>
       )}
+
+      {selectedMenuParam === "VOD" && (
+        <>
+          <h2 style={{ fontWeight: "bold", marginBottom: "1rem" }}>전체 VOD 콘텐츠</h2>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+            gap: '1rem'
+          }}>
+            {vodContents.map((content, idx) => (
+              <div key={idx} style={{ cursor: 'pointer' }} onClick={() => handleClick(content.title)}>
+                <img
+                  src={content.thumbnail}
+                  alt={content.title}
+                  style={{ width: '100%', borderRadius: '8px' }}
+                />
+                <p style={{ marginTop: '0.5rem', fontWeight: 500 }}>{content.title}</p>
+              </div>
+            ))}
+          </div>
+          <div ref={loaderRef} style={{ height: "1px" }} />
+        </>
+      )}
+
+
+
     </div>
     </div>
     </div>
