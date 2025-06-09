@@ -134,7 +134,8 @@ function HomePage({ user, profile, onLogout }) {
       const res = await axios.post("http://localhost:8000/api/recommend_with_detail/", {
         title,
         top_n: 5,
-        alpha: 0.7
+        alpha: 0.7,
+        profile_id: profile.id
       });
       setSelectedContent(res.data.info);
       setResults(res.data.recommendations);
@@ -206,12 +207,13 @@ function HomePage({ user, profile, onLogout }) {
       
       <div style={{ padding: '2rem' }}>
 
-      {loading && <p>추천 중입니다...</p>}
+      {loading && <p>...loading...</p>}
 
       <ContentModal
         content={selectedContent}
         recommendations={results}
         onClose={handleCloseModal}
+        profile={profile}
       />
 
       {selectedMenuParam === "홈" && (

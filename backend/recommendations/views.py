@@ -173,10 +173,21 @@ def recommend_with_detail(request):
     top_n = request.data.get('top_n', 5)
     alpha = request.data.get('alpha', 0.7)
 
+    profile_id = request.data.get("profile_id")
+
     if not title:
         return Response({"error": "title은 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
+
+        content = Content.objects.filter(title=title).first()
+
+        # 해당 콘텐츠가 찜되어 있는지 확인
+        is_liked = ProfileLikedContent.objects.filter(
+            profile_id=profile_id,
+            content_id=content.id
+        ).exists()
+
         result_df = hybrid_recommend_with_reason(title, top_n=top_n, alpha=alpha)
 
         # 기준 콘텐츠 정보 가져오기
@@ -190,6 +201,7 @@ def recommend_with_detail(request):
             "age_rating": base.get("age_rating", ""),
             "genre": base.get("genre", ""),
             "subgenre": base.get("subgenre", ""),
+            "liked": is_liked,
         }
 
         return Response({

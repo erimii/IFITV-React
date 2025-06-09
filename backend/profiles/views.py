@@ -113,3 +113,25 @@ def get_my_list(request):
     ]
     return JsonResponse(data, safe=False)
 
+# 좋아요 기능
+@api_view(['POST'])
+def toggle_like(request):
+    profile_id = request.data.get('profile_id')
+    content_title = request.data.get('title')
+
+    try:
+        profile = Profile.objects.get(id=profile_id)
+        content = Content.objects.get(title=content_title)
+
+        liked, created = ProfileLikedContent.objects.get_or_create(profile=profile, content=content)
+
+        if not created:
+            liked.delete()
+            return JsonResponse({'status': 'removed'})
+        else:
+            return JsonResponse({'status': 'added'})
+
+    except Profile.DoesNotExist:
+        return JsonResponse({'error': 'Invalid profile'}, status=400)
+    except Content.DoesNotExist:
+        return JsonResponse({'error': 'Content not found'}, status=404)
