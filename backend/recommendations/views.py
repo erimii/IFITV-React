@@ -60,7 +60,7 @@ def get_subgenres(request):
 
 # 프로필 생성시 2. 선호 장르/서브장르 별 콘텐츠 출력
 @api_view(['POST'])
-def preview_contents_grouped(request):
+def sample_contents_by_genre(request):
     selected = request.data.get('selected', {})
 
     if not selected:

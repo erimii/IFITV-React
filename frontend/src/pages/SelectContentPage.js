@@ -13,7 +13,7 @@ function SelectContentPage({ user }) {
 
   const fetchContents = async () => {
     try {
-      const response = await axios.post("http://localhost:8000/recommendation/preview_contents/", {
+      const response = await axios.post("http://localhost:8000/recommendation/sample_contents/", {
         selected: profile.preferred_genres
       });
       console.log("콘텐츠 불러오기 성공:", response.data);
