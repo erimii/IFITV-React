@@ -40,7 +40,7 @@ function HomePage({ user, profile, onLogout }) {
   
       if (selectedMenuParam === "VOD") {
         if (!hasNext) return;
-        const res = await axios.get(`http://localhost:8000/recommendation/all_contents/?page=${page}`);
+        const res = await axios.get(`http://localhost:8000/recommendation/all_vod_contents/?page=${page}`);
         setVodContents(prev => [...prev, ...res.data.results]);
         setHasNext(res.data.has_next);
       }
@@ -100,7 +100,7 @@ function HomePage({ user, profile, onLogout }) {
       try {
 
         // 1. 선호 장르 기반 추천
-        const res1 = await axios.post("http://localhost:8000/api/profile_recommend/", {
+        const res1 = await axios.post("http://localhost:8000/recommendation/subgenre_based_recommend/", {
           username: user.username,
           profile_name: profile.name,
         });

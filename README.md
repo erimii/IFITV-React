@@ -20,7 +20,7 @@ React 프론트엔드와 Django 백엔드를 사용하여 멀티 프로필 기�
 ### Django 백엔드 (DRF 기반)
 - /api/signup, /api/login: 사용자 인증 및 프로필 관리 (DB 연동)
 - /api/add_profile: 사용자별 멀티 프로필 등록 (장르/나이/성별 등)
-- /api/profile_recommend: 프로필 선호 장르 기반 추천 콘텐츠 반환
+- /api/subgenre_based_recommend: 프로필 선호 장르 기반 추천 콘텐츠 반환
 - /api/live_recommend: 실시간 방송 편성표 기반 추천
 - /api/preview_recommend_model: 프로필 생성 시 장르 기반 대표 콘텐츠 추천
 - /api/initial_recommend: 대표 콘텐츠 기반 초기 추천

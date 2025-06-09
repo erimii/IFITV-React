@@ -3,7 +3,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from profiles.views import ProfileViewSet, add_profile, delete_profile, get_my_list, toggle_like
 from users.views import signup, login
-from recommendations.views import profile_recommend, initial_recommend, recommend_with_detail, live_recommend, preview_recommend_model
+from recommendations.views import recommend_with_detail, live_recommend
 
 router = DefaultRouter()
 router.register(r'profiles', ProfileViewSet)
@@ -16,11 +16,8 @@ urlpatterns = [
     path('api/delete_profile/', delete_profile),
     path('api/my_list/', get_my_list),
     path('api/toggle_like/', toggle_like),
-    path('api/profile_recommend/', profile_recommend),
-    path('api/initial_recommend/', initial_recommend),
     path('api/recommend_with_detail/', recommend_with_detail),
     path('api/live_recommend/', live_recommend),
-    path('api/preview_recommend_model/', preview_recommend_model),
     path('recommendation/', include('recommendations.urls')),
     path('api/', include(router.urls)),
 ]
