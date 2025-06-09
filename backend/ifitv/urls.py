@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from profiles.views import ProfileViewSet, add_profile, delete_profile
+from profiles.views import ProfileViewSet, add_profile, delete_profile, get_my_list
 from users.views import signup, login
 from recommendations.views import profile_recommend, initial_recommend, recommend_with_detail, live_recommend, preview_recommend_model
 
@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/login/', login),
     path('api/add_profile/', add_profile),
     path('api/delete_profile/', delete_profile),
+    path('api/my_list/', get_my_list),
     path('api/profile_recommend/', profile_recommend),
     path('api/initial_recommend/', initial_recommend),
     path('api/recommend_with_detail/', recommend_with_detail),

@@ -30,23 +30,34 @@ function HomePage({ user, profile, onLogout }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedContent, setSelectedContent] = useState(null);
   const [results, setResults] = useState([]);
+  const [myListContents, setMyListContents] = useState([]);
 
-  useEffect(() => {
-    console.log("전체 VOD 콘텐츠 수:", genreContents.length);
-  }, [genreContents]);
   
   // 네브 바 선택 시 바뀌게
   useEffect(() => {
-    const loadPage = async () => {
-      if (selectedMenuParam !== "VOD") return;
-      if (!hasNext) return;
+    const fetchData = async () => {
+      if (!profile) return;
   
-      const res = await axios.get(`http://localhost:8000/recommendation/all_contents/?page=${page}`);
-      setVodContents(prev => [...prev, ...res.data.results]);
-      setHasNext(res.data.has_next);
+      if (selectedMenuParam === "VOD") {
+        if (!hasNext) return;
+        const res = await axios.get(`http://localhost:8000/recommendation/all_contents/?page=${page}`);
+        setVodContents(prev => [...prev, ...res.data.results]);
+        setHasNext(res.data.has_next);
+      }
+  
+      if (selectedMenuParam === "My List") {
+        try {
+          const res = await axios.get(`http://localhost:8000/api/my_list/?profile_id=${profile.id}`);
+          setMyListContents(Array.isArray(res.data) ? res.data : []);
+        } catch (error) {
+          console.error("My List 불러오기 오류:", error);
+        }
+      }
     };
-    loadPage();
-  }, [page, selectedMenuParam]);
+  
+    fetchData();
+  }, [selectedMenuParam, page, profile]);
+  
   
 
   useEffect(() => {
@@ -258,6 +269,33 @@ function HomePage({ user, profile, onLogout }) {
           <div ref={loaderRef} style={{ height: "1px" }} />
         </>
       )}
+
+      {selectedMenuParam === "My List" && (
+        <>
+          <h2 style={{ fontWeight: "bold", marginBottom: "1rem" }}>💖 찜한 콘텐츠</h2>
+          {myListContents.length === 0 ? (
+            <p>아직 좋아요한 콘텐츠가 없습니다.</p>
+          ) : (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+              gap: '1rem'
+            }}>
+              {myListContents.map((content, idx) => (
+                <div key={idx} style={{ cursor: 'pointer' }} onClick={() => handleClick(content.title)}>
+                  <img
+                    src={content.thumbnail}
+                    alt={content.title}
+                    style={{ width: '100%', borderRadius: '8px' }}
+                  />
+                  <p style={{ marginTop: '0.5rem', fontWeight: 500 }}>{content.title}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
 
 
 

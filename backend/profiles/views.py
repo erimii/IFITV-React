@@ -1,12 +1,14 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.http import JsonResponse
 from .models import Profile
 from .serializers import ProfileSerializer
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view
 import json
-
+from profiles.models import Profile, ProfilePreferredSubgenre, ProfileLikedContent
+from contents.models import Content, Subgenre
 
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
@@ -22,13 +24,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(profiles, many=True)
         return Response(serializer.data)
 
-
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth.models import User
-from profiles.models import Profile, ProfilePreferredSubgenre, ProfileLikedContent
-from contents.models import Content, Subgenre
 
 @api_view(['POST'])
 def add_profile(request):
@@ -103,3 +98,18 @@ def delete_profile(request):
         return Response({"error": "해당 프로필을 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 
     return Response({"message": "프로필 삭제 완료"}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def get_my_list(request):
+    profile_id = request.GET.get('profile_id')
+    liked_contents = ProfileLikedContent.objects.filter(profile_id=profile_id).select_related('content')
+    data = [
+        {
+            'title': item.content.title,
+            'thumbnail': item.content.thumbnail,
+            'description': item.content.description,
+        }
+        for item in liked_contents
+    ]
+    return JsonResponse(data, safe=False)
+
