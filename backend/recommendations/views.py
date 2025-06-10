@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import User
 from profiles.models import Profile, ProfileLikedContent
-from recommend_model import hybrid_recommend_with_reason, df
+from recommend_model import hybrid_recommend_with_reason, df, fast_hybrid_recommend
 import random
 import pandas as pd
 from utils import load_today_programs, is_current_or_future_program
@@ -168,8 +168,10 @@ def live_recommend(request):
     return Response(result.to_dict(orient="records"), status=status.HTTP_200_OK)
 
 # 3. 좋아요한 콘텐츠 가져와서 추천 모델 돌리기(장르 별 추천 콘텐츠 나옴)
+import time
 @api_view(['POST'])
 def liked_based_recommend(request):
+    start = time.time()
     profile_id = request.data.get('profile_id')
 
     if not profile_id:
@@ -205,7 +207,7 @@ def liked_based_recommend(request):
             try:
                 genre_results = []
                 for title in titles:
-                    rec_df = hybrid_recommend_with_reason(title, top_n=5)
+                    rec_df = fast_hybrid_recommend(title, top_n=5)
                     genre_results.extend(rec_df.to_dict(orient="records"))
                 
                 unique_df = pd.DataFrame(genre_results).drop_duplicates(subset="title").fillna("")
@@ -213,7 +215,8 @@ def liked_based_recommend(request):
 
             except Exception as e:
                 print(f"{genre} 추천 실패: {e}")
-
+    end = time.time()
+    print(f"[TIME] liked_based_recommend took {end - start:.2f} seconds")
 
     return Response(results, status=status.HTTP_200_OK)
 
