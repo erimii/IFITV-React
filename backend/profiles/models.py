@@ -12,6 +12,7 @@ class Profile(models.Model):
 
     class Meta:
         db_table = 'profiles'
+        managed = False
 
 
 
@@ -22,6 +23,7 @@ class ProfilePreferredSubgenre(models.Model):
     class Meta:
         db_table = 'profile_preferred_subgenres'
         unique_together = ('profile', 'subgenre')
+        managed = False
 
 
 class ProfileLikedContent(models.Model):
@@ -31,3 +33,14 @@ class ProfileLikedContent(models.Model):
     class Meta:
         db_table = 'profile_liked_contents'
         unique_together = ('profile', 'content')
+        managed = False
+
+class WatchHistory(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    content = models.ForeignKey(Content, on_delete=models.CASCADE)
+    watched_at = models.DateTimeField(auto_now_add=True)
+    duration = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'watch_history'
+        managed = False
