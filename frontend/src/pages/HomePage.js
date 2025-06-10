@@ -31,6 +31,7 @@ function HomePage({ user, profile, onLogout }) {
   const [selectedContent, setSelectedContent] = useState(null);
   const [results, setResults] = useState([]);
   const [myListContents, setMyListContents] = useState([]);
+  const [watchedContentIds, setWatchedContentIds] = useState([]);
 
   
   // 네브 바 선택 시 바뀌게
@@ -57,6 +58,22 @@ function HomePage({ user, profile, onLogout }) {
   
     fetchData();
   }, [selectedMenuParam, page, profile]);
+
+  useEffect(() => {
+    const fetchWatchHistory = async () => {
+      if (!profile) return;
+      try {
+        const res = await axios.get(`http://localhost:8000/recommendation/watch_history/?profile_id=${profile.id}`);
+        const ids = res.data.map(item => item.content_id);
+        setWatchedContentIds(ids);
+      } catch (error) {
+        console.error("시청 이력 불러오기 실패:", error);
+      }
+    };
+  
+    fetchWatchHistory();
+  }, [profile]);
+  
   
   
 
@@ -88,8 +105,6 @@ function HomePage({ user, profile, onLogout }) {
       setHasNext(true);      
     }
   }, [selectedMenuParam]);
-  
-  
 
   useEffect(() => {
     const fetchRecommendations = async () => {
@@ -214,6 +229,8 @@ function HomePage({ user, profile, onLogout }) {
         recommendations={results}
         onClose={handleCloseModal}
         profile={profile}
+        watchedContentIds={watchedContentIds}
+        setWatchedContentIds={setWatchedContentIds}
       />
 
       {selectedMenuParam === "홈" && (

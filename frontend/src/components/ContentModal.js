@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import RecommendationCarousel from './RecommendationCarousel';
 
-function ContentModal({ content, recommendations, onClose, profile  }) {
+function ContentModal({ content, recommendations, onClose, profile, setWatchedContentIds, watchedContentIds   }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [liked, setLiked] = useState(false);
   const MAX_LENGTH = 200;
+
+  
 
   useEffect(() => {
     if (content) {
@@ -14,7 +16,8 @@ function ContentModal({ content, recommendations, onClose, profile  }) {
     }
   }, [content]);
   
-  if (!content) return null;  
+  if (!content) return null;
+  const isWatched = content && watchedContentIds.includes(content.id);
 
   const fullDesc = content.description || '설명 없음';
   const isLong = fullDesc.length > MAX_LENGTH;
@@ -24,7 +27,7 @@ function ContentModal({ content, recommendations, onClose, profile  }) {
     try {
       const res = await axios.post('http://localhost:8000/api/toggle_like/', {
         profile_id: profile.id,
-        title: content.title,
+        content_id: content.id
       });
 
       if (res.data.status === 'added') {
@@ -34,6 +37,21 @@ function ContentModal({ content, recommendations, onClose, profile  }) {
       }
     } catch (error) {
       console.error("찜 토글 오류:", error);
+    }
+  };
+
+  
+  const handleWatchComplete = async () => {
+    try {
+      await axios.post("http://localhost:8000/recommendation/save_watch_history/", {
+        profile_id: profile.id,
+        content_id: content.id,
+        duration: 300  // 선택값: 시청 시간 (초 단위)
+      });
+      alert("시청 기록이 저장되었습니다.");
+      setWatchedContentIds(prev => [...prev, content.id]);
+    } catch (error) {
+      console.error("시청 기록 저장 실패:", error);
     }
   };
 
@@ -47,6 +65,13 @@ function ContentModal({ content, recommendations, onClose, profile  }) {
 
           <div>
             <h2>{content.title}</h2>
+            {!isWatched  && (
+              <button onClick={handleWatchComplete}>
+                시청
+              </button>
+            )}
+            {isWatched  && <p>시청 완료</p>}
+
             <button onClick={handleToggleLike}>
               {liked ? "🤍" : "💖"}
             </button>
