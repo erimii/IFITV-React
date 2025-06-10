@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import User
 from profiles.models import Profile, ProfileLikedContent
-from recommend_model import hybrid_recommend_with_reason, df, fast_hybrid_recommend
+from recommend_model import multi_title_fast_hybrid_recommend, hybrid_recommend_with_reason, df, fast_hybrid_recommend
 import random
 import pandas as pd
 from utils import load_today_programs, is_current_or_future_program
@@ -199,25 +199,20 @@ def liked_based_recommend(request):
 
     # genre별 추천 모델 돌리기
     results = { "드라마": [], "예능": [], "영화": [] }
+
     for genre, titles in grouped.items():
         titles = list(titles)
         print(f"[DEBUG] {genre} titles: {titles}")
 
         if len(titles) > 0:
             try:
-                genre_results = []
-                for title in titles:
-                    rec_df = fast_hybrid_recommend(title, top_n=5)
-                    genre_results.extend(rec_df.to_dict(orient="records"))
-                
-                unique_df = pd.DataFrame(genre_results).drop_duplicates(subset="title").fillna("")
+                rec_df = multi_title_fast_hybrid_recommend(titles, top_n=5)
+                unique_df = rec_df.drop_duplicates(subset="title").fillna("")
                 results[genre] = unique_df.to_dict(orient="records")
-
             except Exception as e:
                 print(f"{genre} 추천 실패: {e}")
     end = time.time()
     print(f"[TIME] liked_based_recommend took {end - start:.2f} seconds")
-
     return Response(results, status=status.HTTP_200_OK)
 
 
@@ -243,7 +238,7 @@ def recommend_with_detail(request):
             content_id=content.id
         ).exists()
 
-        result_df = hybrid_recommend_with_reason(title, top_n=top_n, alpha=alpha)
+        result_df = multi_title_fast_hybrid_recommend(title, top_n=top_n, alpha=alpha)
 
         # 기준 콘텐츠 정보 가져오기
         from recommend_model import df  # df 로딩 위치 주의
