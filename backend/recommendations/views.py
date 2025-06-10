@@ -15,6 +15,7 @@ from .constants import subgenre_mapping
 from django.db.models import Q
 from contents.models import Content 
 from django.core.paginator import Paginator
+from profiles.models import WatchHistory
 
 #  VOD 전체 가져오기
 def all_vod_contents(request):
@@ -27,6 +28,7 @@ def all_vod_contents(request):
 
     data = [
         {
+            "id": c.id,
             "title": c.title,
             "description": c.description,
             "thumbnail": c.thumbnail,
@@ -108,7 +110,7 @@ def subgenre_based_recommend(request):
     if filtered_df.empty:
         return Response([], status=status.HTTP_200_OK)
 
-    sample_df = filtered_df[["title", "thumbnail"]].drop_duplicates().sample(
+    sample_df = filtered_df[["id", "title", "thumbnail"]].drop_duplicates().sample(
         n=min(10, len(filtered_df)), random_state=42
     )
 
@@ -244,6 +246,7 @@ def recommend_with_detail(request):
         from recommend_model import df  # df 로딩 위치 주의
         base = df[df["title"] == title].iloc[0]
         info = {
+            "id": int(base["id"]),
             "title": base["title"],
             "thumbnail": base.get("thumbnail", ""),
             "description": base.get("description", ""),
@@ -261,3 +264,38 @@ def recommend_with_detail(request):
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# 시청기록 저장
+@api_view(['POST'])
+def save_watch_history(request):
+    print("[DEBUG] request.data:", request.data) 
+    profile_id = request.data.get("profile_id")
+    content_id = request.data.get("content_id")
+    duration = request.data.get("duration")
+
+    if not profile_id or not content_title:
+        return Response({"error": "profile_id와 content_id는 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        profile = Profile.objects.get(id=profile_id)
+        content = Content.objects.get(id=content_id)
+    except Profile.DoesNotExist:
+        return Response({"error": "해당 프로필이 존재하지 않습니다."}, status=status.HTTP_404_NOT_FOUND)
+    except Content.DoesNotExist:
+        return Response({"error": "해당 콘텐츠가 존재하지 않습니다."}, status=status.HTTP_404_NOT_FOUND)
+
+    WatchHistory.objects.create(
+        profile=profile,
+        content=content,
+        duration=duration
+    )
+
+    return Response({"message": "시청 기록 저장 완료"}, status=status.HTTP_201_CREATED)
+
+# 특정 프로필의 시청한 콘텐츠 목록을 반환
+@api_view(['GET'])
+def watch_history_by_profile(request, profile_id):
+    watched = WatchHistory.objects.filter(profile_id=profile_id).values_list('content_id', flat=True)
+    return Response(list(watched), status=status.HTTP_200_OK)
+
+

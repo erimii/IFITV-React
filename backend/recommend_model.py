@@ -259,6 +259,7 @@ def multi_title_fast_hybrid_recommend(titles, top_n=5, alpha=0.7, genre_weight=0
     results = []
     for ((i, score), (genres, casts, descs)) in top_items:
         result = {
+            "id": int(df.at[i, "id"]),
             "title": df.at[i, "title"],
             "subgenre": df.at[i, "subgenre"],
             "thumbnail": df.at[i, "thumbnail"],

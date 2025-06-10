@@ -117,11 +117,11 @@ def get_my_list(request):
 @api_view(['POST'])
 def toggle_like(request):
     profile_id = request.data.get('profile_id')
-    content_title = request.data.get('title')
+    content_id = request.data.get('content_id')
 
     try:
         profile = Profile.objects.get(id=profile_id)
-        content = Content.objects.get(title=content_title)
+        content = Content.objects.get(id=content_id)
 
         liked, created = ProfileLikedContent.objects.get_or_create(profile=profile, content=content)
 

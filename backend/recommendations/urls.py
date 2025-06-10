@@ -7,4 +7,7 @@ urlpatterns = [
     path('subgenre_based_recommend/', views.subgenre_based_recommend),
     path('liked_based_recommend/', views.liked_based_recommend),
     path('all_vod_contents/', views.all_vod_contents),
+    path('save_watch_history/', views.save_watch_history),
+    path('watch_history/<int:profile_id>/', views.watch_history_by_profile),
+    
 ]
