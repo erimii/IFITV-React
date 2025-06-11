@@ -273,7 +273,7 @@ def save_watch_history(request):
     content_id = request.data.get("content_id")
     duration = request.data.get("duration")
 
-    if not profile_id or not content_title:
+    if not profile_id or not content_id:
         return Response({"error": "profile_id와 content_id는 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
     try:

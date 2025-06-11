@@ -67,8 +67,8 @@ function HomePage({ user, profile, onLogout }) {
     const fetchWatchHistory = async () => {
       if (!profile) return;
       try {
-        const res = await axios.get(`http://localhost:8000/recommendation/watch_history/?profile_id=${profile.id}`);
-        const ids = res.data.map(item => item.content_id);
+        const res = await axios.get(`http://localhost:8000/recommendation/watch_history/${profile.id}`);
+        const ids = res.data.map(id => Number(id));
         setWatchedContentIds(ids);
       } catch (error) {
         console.error("시청 이력 불러오기 실패:", error);
