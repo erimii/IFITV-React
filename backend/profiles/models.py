@@ -14,8 +14,6 @@ class Profile(models.Model):
         db_table = 'profiles'
         managed = False
 
-
-
 class ProfilePreferredSubgenre(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     subgenre = models.ForeignKey(Subgenre, on_delete=models.CASCADE)

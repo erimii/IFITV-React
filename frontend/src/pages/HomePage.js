@@ -29,34 +29,56 @@ function HomePage({ user, profile, onLogout }) {
   const [hasNext, setHasNext] = useState(true);
   const loaderRef = useRef();
   
-  // 네브 바 선택 시 바뀌게
+  // VOD 콘텐츠 가져오기
   useEffect(() => {
-    const fetchData = async () => {
-      if (!profile) return;
-  
-      if (selectedMenuParam === "VOD") {
-        if (!hasNext) return;
-        const res = await axios.get(`http://localhost:8000/recommendation/all_vod_contents/?page=${page}`);
-        setVodContents(prev => [...prev, ...res.data.results]);
-        setHasNext(res.data.has_next);
-      }
-  
-      if (selectedMenuParam === "My List") {
-        try {
-          const res = await axios.get(`http://localhost:8000/api/my_list/?profile_id=${profile.id}`);
-          const contents = Array.isArray(res.data) ? res.data : [];
-          setMyListContents(contents);
-          const likedIds = contents.map(c => c.id);
-          setLikedContentIds(likedIds);
-        } catch (error) {
-          console.error("My List 불러오기 오류:", error);
-        }
-      }
+    const fetchVOD = async () => {
+      if (!profile || selectedMenuParam !== "VOD" || !hasNext) return;
+      const res = await axios.get(`http://localhost:8000/recommendation/all_vod_contents/?page=${page}`);
+      setVodContents(prev => [...prev, ...res.data.results]);
+      setHasNext(res.data.has_next);
     };
-  
-    fetchData();
-  }, [selectedMenuParam, page, profile]);
+    fetchVOD();
+  }, [selectedMenuParam, page, profile, hasNext]);
 
+  // 좋아요 한 콘텐츠 가져오기
+  useEffect(() => {
+    const fetchMyList = async () => {
+      if (!profile || selectedMenuParam !== "My List") return;
+      const res = await axios.get(`http://localhost:8000/api/my_list/?profile_id=${profile.id}`);
+      const contents = Array.isArray(res.data) ? res.data : [];
+      setMyListContents(contents);
+      setLikedContentIds(contents.map(c => c.id));
+    };
+    fetchMyList();
+  }, [selectedMenuParam, profile]);
+
+  // 무한 스크롤
+  useEffect(() => {
+    if (selectedMenuParam !== "VOD") return;
+
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasNext) {
+        setPage(prev => prev + 1);
+      }
+    });
+
+    const target = loaderRef.current;
+    if (target) observer.observe(target);
+
+    return () => {
+      if (target) observer.unobserve(target);
+    };
+  }, [selectedMenuParam, hasNext]);
+
+  useEffect(() => {
+    if (selectedMenuParam === "VOD") {
+      setVodContents([]);  
+      setPage(1);             
+      setHasNext(true);      
+    }
+  }, [selectedMenuParam]);
+
+  // 시청 기록
   useEffect(() => {
     const fetchWatchHistory = async () => {
       if (!profile) return;
@@ -72,101 +94,59 @@ function HomePage({ user, profile, onLogout }) {
     fetchWatchHistory();
   }, [profile]);
 
+  // 홈 
   useEffect(() => {
-    const fetchLikedContents = async () => {
-      if (!profile) return;
-      try {
-        const res = await axios.get(`http://localhost:8000/api/my_list/?profile_id=${profile.id}`);
-        const ids = res.data.map(c => c.id);
-        setLikedContentIds(ids);
-      } catch (error) {
-        console.error("찜 목록 불러오기 실패:", error);
-      }
-    };
+    if (selectedMenuParam !== "홈" || !user || !profile) return;
   
-    fetchLikedContents();
-  }, [profile]);
-  
-  
-  
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasNext) {
-        setPage(prev => prev + 1);
-      }
-    });
-  
-    const target = loaderRef.current;
-  
-    if (target) {
-      observer.observe(target);
-    }
-  
-    return () => {
-      if (target) {
-        observer.unobserve(target); 
-      }
-    };
-  }, [hasNext, vodContents]);
-  
-
-  useEffect(() => {
-    if (selectedMenuParam === "VOD") {
-      setVodContents([]);  
-      setPage(1);             
-      setHasNext(true);      
-    }
-  }, [selectedMenuParam]);
-
-  useEffect(() => {
     const fetchRecommendations = async () => {
-      if (!user || !profile) return;
-
       setLoading(true);
-
       try {
-
-        // 1. 선호 장르 기반 추천
-        const res1 = await axios.post("http://localhost:8000/recommendation/subgenre_based_recommend/", {
-          username: user.username,
-          profile_name: profile.name,
-        });
-        setGenreContents(Array.isArray(res1.data) ? res1.data : []);
-
-        // 2. 실시간 방송 추천
-        const res2 = await axios.post("http://localhost:8000/api/live_recommend/", {
-          username: user.username,
-          profile_name: profile.name,
-        });
-        setLivePrograms(Array.isArray(res2.data) ? res2.data : []);
-
-        // 3. liked 기반 추천 (profile_id 기반)
-        const res3 = await axios.post("http://localhost:8000/recommendation/liked_based_recommend/", {
-          profile_id: profile.id
-        });
+        const [res1, res2, res3] = await Promise.all([
+          // 1. 선호 장르 기반 추천
+          axios.post("http://localhost:8000/recommendation/subgenre_based_recommend/", {
+            username: user.username,
+            profile_name: profile.name
+          }),
+          // 2. 실시간 방송 추천
+          axios.post("http://localhost:8000/api/live_recommend/", {
+            username: user.username,
+            profile_name: profile.name
+          }),
+          // 3. liked 기반 추천 (profile_id 기반)
+          axios.post("http://localhost:8000/recommendation/liked_based_recommend/", {
+            profile_id: profile.id
+          })
+        ]);
+        setGenreContents(res1.data || []);
+        setLivePrograms(res2.data || []);
         setLikedRecommendationsByGenre(res3.data);
-      } catch (error) {
-        console.error("추천 불러오기 오류:", error);
+      } catch (err) {
+        console.error("추천 오류:", err);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchRecommendations();
-  }, [user, profile, location.search]);
+  }, [selectedMenuParam, user, profile]);
 
+  // 콘텐츠 디테일 + 비슷한 콘텐츠 추가
+  const fetchDetailRecommendation = async (title, profileId) => {
+    const res = await axios.post("http://localhost:8000/api/recommend_with_detail/", {
+      title,
+      top_n: 5,
+      alpha: 0.7,
+      profile_id: profileId
+    });
+    return res.data;
+  };
+  
   const handleClick = async (title) => {
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:8000/api/recommend_with_detail/", {
-        title,
-        top_n: 5,
-        alpha: 0.7,
-        profile_id: profile.id
-      });
-      setSelectedContent(res.data.info);
-      setResults(res.data.recommendations);
+      const data = await fetchDetailRecommendation(title, profile.id);
+      setSelectedContent(data.info);
+      setResults(data.recommendations);
       setIsModalOpen(true);
     } catch (error) {
       console.error("상세 추천 오류:", error);
@@ -174,39 +154,35 @@ function HomePage({ user, profile, onLogout }) {
       setLoading(false);
     }
   };
+  
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedContent(null);
   };
 
-  const handleLiveClick = (title, airtime) => {
-    const now = new Date();
-    let programTime;
+  const parseAirtimeToDate = (airtime) => {
+    if (airtime.includes(" ")) return new Date(airtime);
   
-    if (airtime.includes(" ")) {
-      // '2025-05-15 16:30:00' 같은 포맷
-      programTime = new Date(airtime);
-    } else {
-      // '16:30:00' 포맷 (오늘 날짜 기준으로 시간 세팅)
-      const [hour, minute, second] = airtime.split(":").map(Number);
-      programTime = new Date();
-      programTime.setHours(hour);
-      programTime.setMinutes(minute);
-      programTime.setSeconds(second || 0);
-    }
-  
-    if (programTime < now) {
-      alert(`🔔 "${title}" 보러가기!`);
-    } else {
-      alert(`📅 "${title}" 시청 예약하기!`);
-    }
+    const [hour, minute, second] = airtime.split(":").map(Number);
+    const date = new Date();
+    date.setHours(hour);
+    date.setMinutes(minute);
+    date.setSeconds(second || 0);
+    return date;
   };
   
-
+  const handleLiveClick = (title, airtime) => {
+    const now = new Date();
+    const programTime = parseAirtimeToDate(airtime);
+  
+    alert(programTime < now
+      ? `🔔 "${title}" 보러가기!`
+      : `📅 "${title}" 시청 예약하기!`);
+  };
+  
   return (
     <div style={{ padding: '2rem' }}>
-      {/* 상단 바 */}
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
