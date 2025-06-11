@@ -7,33 +7,27 @@ import SideNav from '../components/SideNav';
 
 function HomePage({ user, profile, onLogout }) {
   const navigate = useNavigate();
-
-  const [selectedMenu, setSelectedMenu] = useState('홈');
-
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const selectedMenuParam = queryParams.get('menu') || '홈';
-  const [vodContents, setVodContents] = useState([]);
-  const [page, setPage] = useState(1);
-  const [hasNext, setHasNext] = useState(true);
-  const loaderRef = useRef();
 
+  const [vodContents, setVodContents] = useState([]);
+  const [myListContents, setMyListContents] = useState([]);
   const [genreContents, setGenreContents] = useState([]);
   const [livePrograms, setLivePrograms] = useState([]);
-  const [likedRecommendationsByGenre, setLikedRecommendationsByGenre] = useState({
-    드라마: [],
-    예능: [],
-    영화: []
-  });
+  const [likedRecommendationsByGenre, setLikedRecommendationsByGenre] = useState({ 드라마: [], 예능: [], 영화: [] });
 
-  const [loading, setLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedContent, setSelectedContent] = useState(null);
-  const [results, setResults] = useState([]);
-  const [myListContents, setMyListContents] = useState([]);
   const [likedContentIds, setLikedContentIds] = useState([]);
   const [watchedContentIds, setWatchedContentIds] = useState([]);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedContent, setSelectedContent] = useState(null);
+  const [results, setResults] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasNext, setHasNext] = useState(true);
+  const loaderRef = useRef();
   
   // 네브 바 선택 시 바뀌게
   useEffect(() => {
@@ -237,7 +231,10 @@ function HomePage({ user, profile, onLogout }) {
       </div>
 
       <div style={{ display: 'flex' }}>
-        <SideNav selectedMenu={selectedMenu} onSelect={setSelectedMenu} />
+      <SideNav
+        selectedMenu={selectedMenuParam}
+        onSelect={(menu) => navigate(`/home${menu === '홈' ? '' : `?menu=${menu}`}`)}
+      />
       
       <div style={{ padding: '2rem' }}>
 
@@ -335,9 +332,6 @@ function HomePage({ user, profile, onLogout }) {
           )}
         </>
       )}
-
-
-
 
     </div>
     </div>
