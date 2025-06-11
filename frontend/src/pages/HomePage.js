@@ -31,6 +31,7 @@ function HomePage({ user, profile, onLogout }) {
   const [selectedContent, setSelectedContent] = useState(null);
   const [results, setResults] = useState([]);
   const [myListContents, setMyListContents] = useState([]);
+  const [likedContentIds, setLikedContentIds] = useState([]);
   const [watchedContentIds, setWatchedContentIds] = useState([]);
 
   
@@ -49,7 +50,10 @@ function HomePage({ user, profile, onLogout }) {
       if (selectedMenuParam === "My List") {
         try {
           const res = await axios.get(`http://localhost:8000/api/my_list/?profile_id=${profile.id}`);
-          setMyListContents(Array.isArray(res.data) ? res.data : []);
+          const contents = Array.isArray(res.data) ? res.data : [];
+          setMyListContents(contents);
+          const likedIds = contents.map(c => c.id);
+          setLikedContentIds(likedIds);
         } catch (error) {
           console.error("My List 불러오기 오류:", error);
         }
@@ -72,6 +76,21 @@ function HomePage({ user, profile, onLogout }) {
     };
   
     fetchWatchHistory();
+  }, [profile]);
+
+  useEffect(() => {
+    const fetchLikedContents = async () => {
+      if (!profile) return;
+      try {
+        const res = await axios.get(`http://localhost:8000/api/my_list/?profile_id=${profile.id}`);
+        const ids = res.data.map(c => c.id);
+        setLikedContentIds(ids);
+      } catch (error) {
+        console.error("찜 목록 불러오기 실패:", error);
+      }
+    };
+  
+    fetchLikedContents();
   }, [profile]);
   
   
@@ -231,6 +250,8 @@ function HomePage({ user, profile, onLogout }) {
         profile={profile}
         watchedContentIds={watchedContentIds}
         setWatchedContentIds={setWatchedContentIds}
+        likedContentIds={likedContentIds}
+        setLikedContentIds={setLikedContentIds}
       />
 
       {selectedMenuParam === "홈" && (

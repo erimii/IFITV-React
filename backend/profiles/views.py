@@ -99,12 +99,14 @@ def delete_profile(request):
 
     return Response({"message": "프로필 삭제 완료"}, status=status.HTTP_200_OK)
 
+# my list 불러오기
 @api_view(['GET'])
 def get_my_list(request):
     profile_id = request.GET.get('profile_id')
     liked_contents = ProfileLikedContent.objects.filter(profile_id=profile_id).select_related('content')
     data = [
         {
+            'id': item.content.id,
             'title': item.content.title,
             'thumbnail': item.content.thumbnail,
             'description': item.content.description,

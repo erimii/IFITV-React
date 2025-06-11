@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import RecommendationCarousel from './RecommendationCarousel';
 
-function ContentModal({ content, recommendations, onClose, profile, setWatchedContentIds, watchedContentIds   }) {
+function ContentModal({ content, recommendations, onClose, profile, setWatchedContentIds, watchedContentIds, likedContentIds, setLikedContentIds}) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [liked, setLiked] = useState(false);
   const MAX_LENGTH = 200;
@@ -10,14 +10,17 @@ function ContentModal({ content, recommendations, onClose, profile, setWatchedCo
   
 
   useEffect(() => {
-    if (content) {
-      setIsExpanded(false);
-      setLiked(content.liked);
-    }
-  }, [content]);
+    if (!content) return;
+    if (!likedContentIds || likedContentIds.length === 0) return;
+  
+    setLiked(likedContentIds.includes(content.id));
+  }, [content, likedContentIds]);
+  
   
   if (!content) return null;
   const isWatched = content && watchedContentIds.includes(content.id);
+  const isLiked = likedContentIds.includes(content.id);
+
 
   const fullDesc = content.description || '설명 없음';
   const isLong = fullDesc.length > MAX_LENGTH;
@@ -32,8 +35,10 @@ function ContentModal({ content, recommendations, onClose, profile, setWatchedCo
 
       if (res.data.status === 'added') {
         setLiked(true);
+        setLikedContentIds(prev => [...prev, content.id]);
       } else if (res.data.status === 'removed') {
         setLiked(false);
+        setLikedContentIds(prev => prev.filter(id => id !== content.id));
       }
     } catch (error) {
       console.error("찜 토글 오류:", error);
@@ -73,7 +78,7 @@ function ContentModal({ content, recommendations, onClose, profile, setWatchedCo
             {isWatched  && <p>시청 완료</p>}
 
             <button onClick={handleToggleLike}>
-              {liked ? "🤍" : "💖"}
+              {liked ? "💖" : "🤍"}
             </button>
             <p><strong>출연진:</strong> {content.cast || '정보 없음'}</p>
             <p><strong>연령 등급:</strong> {content.age_rating || '정보 없음'}</p>
