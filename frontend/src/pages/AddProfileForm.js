@@ -1,21 +1,38 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation  } from "react-router-dom";
 import axios from "axios";
 
 function AddProfileForm() {
   const navigate = useNavigate();
 
+  // 사용된 제스처 가져오기
+  const location = useLocation();
+  const usedGestures = location.state?.usedGestures || [];
+
+  const allGestures = [
+    { value: "scissors", label: "✌️ scissors" },
+    { value: "rock", label: "✊ rock" },
+    { value: "paper", label: "🖐 paper" },
+    { value: "ok", label: "👌 ok" }
+  ];
+
+  // 중복 제거된 제스처 목록 만들기
+    const availableGestures = allGestures.filter(
+      (g) => !usedGestures.includes(g.value)
+    );
+
   const [form, setForm] = useState({
     name: "",
     age: "",
     gender: "",
+    gesture: "",
     preferred_genres: {},  // 장르별 서브장르 이름 (화면용)
   });
 
   const [subgenreMapping, setSubgenreMapping] = useState({});  // { "예능": [{id, name}], ... }
   const [selectedSubgenreIds, setSelectedSubgenreIds] = useState([]);  // 최종 id 리스트
 
-  // ✅ 서브장르 리스트 가져오기 (id + name)
+  // 서브장르 리스트 가져오기 (id + name)
   useEffect(() => {
     axios.get('http://localhost:8000/recommendation/subgenres/')
       .then(res => {
@@ -26,7 +43,7 @@ function AddProfileForm() {
       });
   }, []);
 
-  // ✅ 서브장르 토글 (name & id 둘 다 처리)
+  // 서브장르 토글 (name & id 둘 다 처리)
   const toggleSubgenre = (genre, subgenreObj) => {
     const { id: subgenreId, name: subgenreName } = subgenreObj;
 
@@ -56,13 +73,13 @@ function AddProfileForm() {
     );
   };
 
-  // ✅ 최종 제출 (id 리스트 포함해서 넘김)
+  // 최종 제출 (id 리스트 포함해서 넘김)
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const profileData = {
       ...form,
-      preferred_subgenres: selectedSubgenreIds,  // ✅ 서버로 넘길 id 리스트
+      preferred_subgenres: selectedSubgenreIds,  // 서버로 넘길 id 리스트
       liked_contents_ids: []  // 다음 페이지에서 채울 거니까 비워둠
     };
 
@@ -95,6 +112,19 @@ function AddProfileForm() {
           <option value="여">여</option>
           <option value="남">남</option>
         </select>
+
+        <select
+          value={form.gesture}
+          onChange={(e) => setForm({ ...form, gesture: e.target.value })}
+        >
+          <option value="">제스처 선택</option>
+          {availableGestures.map((g) => (
+            <option key={g.value} value={g.value}>
+              {g.label}
+            </option>
+          ))}
+        </select>
+
 
         <h4>선호 서브장르 선택</h4>
         {Object.entries(subgenreMapping).map(([genre, subgenres]) => (

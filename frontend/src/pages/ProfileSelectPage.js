@@ -21,6 +21,12 @@ function ProfileSelectPage({ user, setSelectedProfile, onLogout }) {
     fetchProfiles();
   }, [user.username]);
 
+  // 사용된 제스처 가져오기
+  const usedGestures = profiles
+    .map(p => p.gesture)
+    .filter(Boolean); // null 제거
+
+
   // 프로필 선택 → 홈으로 이동
   const handleSelect = (profile) => {
     setSelectedProfile(profile);
@@ -29,7 +35,7 @@ function ProfileSelectPage({ user, setSelectedProfile, onLogout }) {
 
   // 프로필 추가
   const handleAddProfile = async () => {
-    navigate("/add-profile");
+    navigate("/add-profile", { state: { usedGestures } });
   };
 
   // 프로필 삭제

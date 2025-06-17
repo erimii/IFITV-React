@@ -45,6 +45,7 @@ def add_profile(request):
             name=profile_data['name'],
             age=profile_data['age'],
             gender=profile_data['gender'],
+            gesture = profile_data['gesture'],
             preferred_genres=profile_data.get('preferred_genres', {}),
             liked_contents=profile_data.get('liked_contents', [])
         )

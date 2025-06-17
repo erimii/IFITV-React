@@ -28,6 +28,10 @@ function HomePage({ user, profile, onLogout }) {
   const [page, setPage] = useState(1);
   const [hasNext, setHasNext] = useState(true);
   const loaderRef = useRef();
+
+  useEffect(() => {
+    console.log("현재 프로필 정보:", profile);
+  }, [profile]);
   
   // VOD 콘텐츠 가져오기
   useEffect(() => {
@@ -196,9 +200,14 @@ function HomePage({ user, profile, onLogout }) {
           </p>
         </div>
 
-        <div style={{ display: "flex", gap: "1rem" }}>
+        <div style={{ display: "flex"}}>
           <button onClick={() => navigate("/select-profile")} style={subButtonStyle}>
-            프로필 변경
+          <span>
+            {profile.gesture === "scissors" && "✌️"}
+            {profile.gesture === "rock" && "✊"}
+            {profile.gesture === "paper" && "🖐"}
+            {profile.gesture === "ok" && "👌"}
+          </span>
           </button>
           <button onClick={onLogout} style={subButtonStyle}>
             로그아웃
@@ -317,7 +326,6 @@ function HomePage({ user, profile, onLogout }) {
 }
 
 const subButtonStyle = {
-  backgroundColor: "#ddd",
   padding: "0.5rem 1rem",
   borderRadius: "8px",
   border: "none",

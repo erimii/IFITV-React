@@ -7,6 +7,7 @@ class Profile(models.Model):
     name = models.CharField(max_length=100)
     age = models.IntegerField()
     gender = models.CharField(max_length=10)
+    gesture = models.CharField(max_length=20, null=True, blank=True)
     preferred_genres = models.JSONField()
     liked_contents = models.JSONField()
 
