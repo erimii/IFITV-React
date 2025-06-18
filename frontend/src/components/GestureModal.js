@@ -134,6 +134,7 @@ function GestureModal({profiles, onClose, onRecognized}) {
                 maxWidth: "100%",
                 height: "auto", 
                 borderRadius: "0.5rem",
+                display: isCameraActive ? "block" : "none",
               }}
           />
         )}
@@ -149,7 +150,6 @@ function GestureModal({profiles, onClose, onRecognized}) {
                 <button
                     key={p.id}
                     onClick={() => {
-                    if (cameraRef.current) cameraRef.current.stop();
                     onRecognized(p); // 수동 선택
                     onClose();
                     }}
@@ -161,7 +161,13 @@ function GestureModal({profiles, onClose, onRecognized}) {
                     background: "#f0f0f0",
                     }}
                 >
-                    {p.name} ({p.gesture && `✋${p.gesture}`})
+                    {p.name} ({p.gesture && (
+                        p.gesture === "rock" ? "✊" :
+                        p.gesture === "paper" ? "🖐" :
+                        p.gesture === "scissors" ? "✌️" :
+                        p.gesture === "ok" ? "👌" :
+                        "❓"
+                    )})
                 </button>
                 ))}
             </div>
