@@ -79,15 +79,11 @@ function GestureModal({profiles, onClose, onRecognized}) {
         // 👉 result가 unknown이면 무시하고 계속 인식 반복
         if (!data.result || data.result === "unknown") {
           console.warn("제스처 인식 실패: unknown");
-          return;
         }
   
         // 정상 인식 시 처리
         setGesture(data.result);
-        setIsCameraActive(false);
-        if (cameraRef.current) {
-          cameraRef.current.stop();
-        }
+
       })
       .catch((err) => {
         console.error("서버 통신 오류:", err);
@@ -109,6 +105,8 @@ function GestureModal({profiles, onClose, onRecognized}) {
       onClose(); 
     } else {
       console.log("⚠️ 제스처는 인식됐지만 매칭된 프로필 없음:", gesture);
+      setGesture("no_match");
+      return;
     }
   }, [gesture, profiles, isCameraActive]);
 
