@@ -4,8 +4,9 @@ import axios from 'axios';
 import ContentModal from "../components/ContentModal";
 import HorizontalSlider from '../components/HorizontalSlider';
 import SideNav from '../components/SideNav';
+import GestureModal from '../components/GestureModal';
 
-function HomePage({ user, profile, onLogout }) {
+function HomePage({ user, profile, profiles, setSelectedProfile, onLogout }) {
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -23,6 +24,7 @@ function HomePage({ user, profile, onLogout }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedContent, setSelectedContent] = useState(null);
   const [results, setResults] = useState([]);
+  const [isGestureModalOpen, setIsGestureModalOpen] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -201,7 +203,7 @@ function HomePage({ user, profile, onLogout }) {
         </div>
 
         <div style={{ display: "flex"}}>
-          <button onClick={() => navigate("/select-profile")} style={subButtonStyle}>
+          <button onClick={() => setIsGestureModalOpen(true)} style={subButtonStyle}>
           <span>
             {profile.gesture === "scissors" && "✌️"}
             {profile.gesture === "rock" && "✊"}
@@ -209,6 +211,17 @@ function HomePage({ user, profile, onLogout }) {
             {profile.gesture === "ok" && "👌"}
           </span>
           </button>
+
+          {isGestureModalOpen && (
+            <GestureModal
+              profiles={profiles}
+              onClose={() => setIsGestureModalOpen(false)}
+              onRecognized={(matchedProfile) => {
+                setSelectedProfile(matchedProfile);
+                navigate("/home");
+              }}
+            />
+          )}    
           <button onClick={onLogout} style={subButtonStyle}>
             로그아웃
           </button>

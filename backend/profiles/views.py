@@ -6,9 +6,10 @@ from .models import Profile
 from .serializers import ProfileSerializer
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view
-import json
 from profiles.models import Profile, ProfilePreferredSubgenre, ProfileLikedContent
 from contents.models import Content, Subgenre
+import numpy as np
+import pickle
 
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
@@ -24,7 +25,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(profiles, many=True)
         return Response(serializer.data)
 
-
+# 프로필 추가
 @api_view(['POST'])
 def add_profile(request):
     username = request.data.get('username')
@@ -79,7 +80,7 @@ def add_profile(request):
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
+# 프로필 삭제
 @api_view(['POST'])
 def delete_profile(request):
     username = request.data.get('username')
@@ -138,3 +139,33 @@ def toggle_like(request):
         return JsonResponse({'error': 'Invalid profile'}, status=400)
     except Content.DoesNotExist:
         return JsonResponse({'error': 'Content not found'}, status=404)
+
+# 손인식
+@api_view(['POST'])
+def predict_gesture(request):
+    joints = request.data.get("joints")
+    if not joints:
+        return Response({"error": "joints 값이 필요합니다."}, status=400)
+
+    try:
+        joint = np.array(joints)
+        v1 = joint[[0,1,2,3,0,5,6,7,0,9,10,11,0,13,14,15,0,17,18,19], :]
+        v2 = joint[[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20], :]
+        v = v2 - v1
+        v = v / np.linalg.norm(v, axis=1)[:, np.newaxis]
+
+        angle = np.arccos(np.einsum('nt,nt->n',
+                    v[[0,1,2,4,5,6,8,9,10,12,13,14,16,17,18],:], 
+                    v[[1,2,3,5,6,7,9,10,11,13,14,15,17,18,19],:]))
+        angle = np.degrees(angle)
+        X_pred = np.array([angle], dtype=np.float32)
+
+        with open("model/knn_model.pkl", "rb") as f:
+            knn = pickle.load(f)
+        gesture_index = int(knn.predict(X_pred)[0])
+        rsp = {0:'rock', 5 : 'paper', 9: 'scissors', 10:'ok'}
+        result = rsp.get(gesture_index, "unknown")
+        return Response({"result": result})
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)

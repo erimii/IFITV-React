@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import axios from 'axios';
 import LandingPage from './pages/LandingPage';
 import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
@@ -11,8 +12,8 @@ import SelectContentPage from './pages/SelectContentPage';
 function App() {
   const [user, setUser] = useState(null);
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const [profiles, setProfiles] = useState([]);
 
-  
   // 로그인 상태 확인
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -26,6 +27,18 @@ function App() {
     localStorage.removeItem("user");
     setUser(null);
   };
+  
+  // 프로필 목록 불러오기
+  useEffect(() => {
+    if (!user) return;
+  
+    axios.get("http://localhost:8000/api/profiles/by_user/", {
+      params: { username: user.username },
+    })
+    .then((res) => setProfiles(res.data))
+    .catch((err) => console.error("프로필 목록 불러오기 실패", err));
+  }, [user]);
+  
 
   return (
     <Router>
@@ -56,6 +69,8 @@ function App() {
               <HomePage
                 user={user}
                 profile={selectedProfile}
+                profiles={profiles}  
+                setSelectedProfile={setSelectedProfile}
                 onLogout={handleLogout}
               />
             ) : (
