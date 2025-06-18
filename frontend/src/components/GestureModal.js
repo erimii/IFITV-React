@@ -142,6 +142,31 @@ function GestureModal({profiles, onClose, onRecognized}) {
             ⚠️ 매칭된 프로필이 없습니다
         </div>
         )}
+        <div style={{ marginTop: "2rem" }}>
+            <h3>👤 프로필 수동 전환</h3>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", justifyContent: "center" }}>
+                {profiles.map((p) => (
+                <button
+                    key={p.id}
+                    onClick={() => {
+                    if (cameraRef.current) cameraRef.current.stop();
+                    onRecognized(p); // 수동 선택
+                    onClose();
+                    }}
+                    style={{
+                    padding: "0.5rem 1rem",
+                    borderRadius: "999px",
+                    border: "1px solid #aaa",
+                    cursor: "pointer",
+                    background: "#f0f0f0",
+                    }}
+                >
+                    {p.name} ({p.gesture && `✋${p.gesture}`})
+                </button>
+                ))}
+            </div>
+        </div>
+
       </div>
     </div>
   );
