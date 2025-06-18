@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate  } from 'react-router-dom';
 import axios from 'axios';
 import LandingPage from './pages/LandingPage';
 import SignupPage from './pages/SignupPage';
@@ -27,7 +27,6 @@ function App() {
     localStorage.removeItem("user");
     setUser(null);
   };
-  
   // 프로필 목록 불러오기
   useEffect(() => {
     if (!user) return;
@@ -43,9 +42,21 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+      <Route
+        path="/"
+        element={
+          <LandingPage
+            user={user}
+            profiles={profiles}
+            selectedProfile={selectedProfile}
+            setSelectedProfile={setSelectedProfile}
+          />
+        }
+      />
+
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage setUser={setUser} />} />
+
         <Route
           path="/select-profile"
           element={
