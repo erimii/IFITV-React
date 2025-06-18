@@ -5,6 +5,7 @@ import ContentModal from "../components/ContentModal";
 import HorizontalSlider from '../components/HorizontalSlider';
 import SideNav from '../components/SideNav';
 import GestureModal from '../components/GestureModal';
+import SettingsDropdown from '../components/SettingsDropdown';
 
 function HomePage({ user, profile, profiles, setSelectedProfile, onLogout }) {
   const navigate = useNavigate();
@@ -200,32 +201,35 @@ function HomePage({ user, profile, profiles, setSelectedProfile, onLogout }) {
           <p style={{ margin: 0 }}>
             현재 프로필: <strong style={{ color: "#A50034" }}>{profile.name}</strong>
           </p>
-        </div>
+          <div style={{ display: "flex"}}>
+            <button onClick={() => setIsGestureModalOpen(true)} style={subButtonStyle}>
+            <span>
+              {profile.gesture === "scissors" && "✌️"}
+              {profile.gesture === "rock" && "✊"}
+              {profile.gesture === "paper" && "🖐"}
+              {profile.gesture === "ok" && "👌"}
+            </span>
+            </button>
 
-        <div style={{ display: "flex"}}>
-          <button onClick={() => setIsGestureModalOpen(true)} style={subButtonStyle}>
-          <span>
-            {profile.gesture === "scissors" && "✌️"}
-            {profile.gesture === "rock" && "✊"}
-            {profile.gesture === "paper" && "🖐"}
-            {profile.gesture === "ok" && "👌"}
-          </span>
-          </button>
-
-          {isGestureModalOpen && (
-            <GestureModal
-              profiles={profiles}
-              onClose={() => setIsGestureModalOpen(false)}
-              onRecognized={(matchedProfile) => {
-                setSelectedProfile(matchedProfile);
-                navigate("/home");
-              }}
+            {isGestureModalOpen && (
+              <GestureModal
+                profiles={profiles}
+                onClose={() => setIsGestureModalOpen(false)}
+                onRecognized={(matchedProfile) => {
+                  setSelectedProfile(matchedProfile);
+                  navigate("/home");
+                }}
+              />
+            )}    
+            <SettingsDropdown
+              style={subButtonStyle}
+              onLogout={onLogout}
+              onEditProfile={() => navigate("/select-profile")}
             />
-          )}    
-          <button onClick={onLogout} style={subButtonStyle}>
-            로그아웃
-          </button>
+          </div>
         </div>
+
+        
       </div>
 
       <div style={{ display: 'flex' }}>
@@ -343,7 +347,8 @@ const subButtonStyle = {
   borderRadius: "8px",
   border: "none",
   cursor: "pointer",
-  fontWeight: "bold"
+  fontWeight: "bold",
+  backgroundColor:'white'
 };
 
 export default HomePage;
