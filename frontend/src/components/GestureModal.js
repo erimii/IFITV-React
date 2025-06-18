@@ -63,7 +63,7 @@ function GestureModal({profiles, onClose, onRecognized}) {
     return () => clearInterval(timer);
   }, [isCameraActive]);
   
-  // 제스처 결과 전송
+  // 손모양 좌표 전송
   const sendToServer = (joints) => {
     if (gesture) return;
   
@@ -82,7 +82,7 @@ function GestureModal({profiles, onClose, onRecognized}) {
           return;
         }
   
-        // 👌 정상 인식 시 처리
+        // 정상 인식 시 처리
         setGesture(data.result);
         setIsCameraActive(false);
         if (cameraRef.current) {
@@ -93,13 +93,24 @@ function GestureModal({profiles, onClose, onRecognized}) {
         console.error("서버 통신 오류:", err);
       });
   };
-  
 
-  // 다시 인식 버튼
-  const handleReset = () => {
-    setGesture("");
-    setIsCameraActive(true); // 카메라 재시작
-  };
+  // 손모양 인식 결과를 가지고 프로필 찾기
+  useEffect(() => {
+    
+    if (!gesture || gesture === "unknown") return;
+  
+    const matched = profiles.find((p) => p.gesture === gesture);
+    if (matched) {
+      setIsCameraActive(false);
+      if (cameraRef.current) {
+        cameraRef.current.stop();
+      }
+      onRecognized(matched);
+      onClose(); 
+    } else {
+      console.log("⚠️ 제스처는 인식됐지만 매칭된 프로필 없음:", gesture);
+    }
+  }, [gesture, profiles, isCameraActive]);
 
   return (
     <div style={modalStyle}>
@@ -127,14 +138,6 @@ function GestureModal({profiles, onClose, onRecognized}) {
                 borderRadius: "0.5rem",
               }}
           />
-        )}
-        <h2 style={{ marginTop: "1rem" }}>
-          {gesture ? `🎉 인식된 제스처: ${gesture}` : "제스처 인식 중..."}
-        </h2>
-        {gesture && (
-          <button onClick={handleReset} style={{ marginTop: "1rem", padding: "10px 20px", fontSize: "16px" }}>
-            다시 인식하기
-          </button>
         )}
       </div>
     </div>
