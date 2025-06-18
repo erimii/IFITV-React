@@ -104,7 +104,7 @@ function GestureModal({profiles, onClose, onRecognized}) {
       onRecognized(matched);
       onClose(); 
     } else {
-      console.log("⚠️ 제스처는 인식됐지만 매칭된 프로필 없음:", gesture);
+      console.log("제스처는 인식됐지만 매칭된 프로필 없음:", gesture);
       setGesture("no_match");
       return;
     }
@@ -136,6 +136,11 @@ function GestureModal({profiles, onClose, onRecognized}) {
                 borderRadius: "0.5rem",
               }}
           />
+        )}
+        {gesture && (
+        <div style={{ marginTop: "1rem", color: "red", fontWeight: "bold" }}>
+            ⚠️ 매칭된 프로필이 없습니다
+        </div>
         )}
       </div>
     </div>
