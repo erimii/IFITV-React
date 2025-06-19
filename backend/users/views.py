@@ -31,6 +31,9 @@ def login(request):
 
     user = authenticate(username=username, password=password)
 
+    if not User.objects.filter(username=username).exists():
+        return Response({"error": "회원가입 정보가 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
+
     if user is not None:
         return Response({"message": "로그인 성공!", "username": username})
     else:
