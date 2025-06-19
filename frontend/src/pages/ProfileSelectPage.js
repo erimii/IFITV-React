@@ -5,6 +5,8 @@ import axios from 'axios';
 function ProfileSelectPage({ user, setSelectedProfile, onLogout }) {
   const navigate = useNavigate();
   const [profiles, setProfiles] = useState([]);
+  const [editingProfile, setEditingProfile] = useState(null);  // 현재 수정 중인 프로필
+  const [editForm, setEditForm] = useState({ name: "", age: "", gender: "", gesture: "" });
 
   // 로그인한 유저의 프로필 목록 가져오기
   useEffect(() => {
@@ -21,10 +23,20 @@ function ProfileSelectPage({ user, setSelectedProfile, onLogout }) {
     fetchProfiles();
   }, [user.username]);
 
+  const gestureOptions = [
+    { value: "rock", label: "✊ 주먹" },
+    { value: "paper", label: "🖐 펼친손" },
+    { value: "scissors", label: "✌️ 가위" },
+    { value: "ok", label: "👌 OK" },
+  ];
+  
+
   // 사용된 제스처 가져오기
   const usedGestures = profiles
+    .filter(p => p.name !== editingProfile)
     .map(p => p.gesture)
-    .filter(Boolean); // null 제거
+    .filter(Boolean);
+
 
 
   // 프로필 선택 → 홈으로 이동
@@ -62,6 +74,26 @@ function ProfileSelectPage({ user, setSelectedProfile, onLogout }) {
     }
   };
 
+  //프로필 수정
+  const handleEdit = async (originalName) => {
+    try {
+      const response = await axios.patch("http://localhost:8000/api/edit_profile/", {
+        username: user.username,
+        original_name: originalName,
+        updated: editForm,
+      });
+  
+      // 수정 반영
+      setProfiles(prev =>
+        prev.map(p => (p.name === originalName ? { ...p, ...editForm } : p))
+      );
+      setEditingProfile(null);
+    } catch (error) {
+      console.error("수정 실패:", error);
+      alert("수정에 실패했습니다.");
+    }
+  };
+
   return (
     <div style={{ padding: "2rem", maxWidth: "600px", margin: "0 auto" }}>
       <div style={{
@@ -76,13 +108,64 @@ function ProfileSelectPage({ user, setSelectedProfile, onLogout }) {
       <div style={profileContainerStyle}>
         {profiles.map((profile, idx) => (
           <div key={idx} style={profileCardStyle}>
-            <div onClick={() => handleSelect(profile)} style={profileTextStyle}>
-              <strong>{profile.name}</strong><br />
-              나이: {profile.age} / 성별: {profile.gender}
-            </div>
+
             <button onClick={() => handleDelete(profile.name)} style={deleteButtonStyle}>
               🗑️
             </button>
+            <button
+              onClick={() => {
+                setEditingProfile(profile.name);
+                setEditForm({ name: profile.name, age: profile.age, gender: profile.gender, gesture: profile.gesture || "", });
+              }}
+              style={{ ...deleteButtonStyle, right: "2.5rem", color: "#555" }}
+            >
+              ✏️
+            </button>
+
+            {profile.name === editingProfile ? (
+              <div>
+                <input
+                  value={editForm.name}
+                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  placeholder="이름"
+                />
+                <input
+                  type="number"
+                  value={editForm.age}
+                  onChange={(e) => setEditForm({ ...editForm, age: e.target.value })}
+                  placeholder="나이"
+                />
+                <select
+                  value={editForm.gender}
+                  onChange={(e) => setEditForm({ ...editForm, gender: e.target.value })}
+                >
+                  <option value="남">남</option>
+                  <option value="여">여</option>
+                </select>
+                <select
+                  value={editForm.gesture}
+                  onChange={(e) => setEditForm({ ...editForm, gesture: e.target.value })}
+                >
+                  {gestureOptions
+                    .filter(option => !usedGestures.includes(option.value))  // 중복된 건 제외
+                    .map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                </select>
+
+                <button onClick={() => handleEdit(profile.name)}>저장</button>
+                <button onClick={() => setEditingProfile(null)}>취소</button>
+              </div>
+            ) : (
+              <div onClick={() => handleSelect(profile)} style={profileTextStyle}>
+                <strong>{profile.name}</strong><br />
+                나이: {profile.age} / 성별: {profile.gender} / 제스처:{" "}
+                {gestureOptions.find(opt => opt.value === profile.gesture)?.label || "❓"}
+              </div>
+            )}
+
           </div>
         ))}
       </div>

@@ -101,6 +101,26 @@ def delete_profile(request):
 
     return Response({"message": "프로필 삭제 완료"}, status=status.HTTP_200_OK)
 
+# 프로필 수정
+@api_view(["PATCH"])
+def edit_profile(request):
+    username = request.data.get("username")
+    original_name = request.data.get("original_name")
+    updated = request.data.get("updated")
+
+    profile = Profile.objects.filter(user__username=username, name=original_name).first()
+    if not profile:
+        return Response({"error": "프로필이 존재하지 않음"}, status=404)
+
+    profile.name = updated.get("name", profile.name)
+    profile.age = updated.get("age", profile.age)
+    profile.gender = updated.get("gender", profile.gender)
+    profile.gesture = updated.get("gesture", profile.gesture)
+
+    profile.save()
+    return Response({"message": "수정 완료"})
+
+
 # my list 불러오기
 @api_view(['GET'])
 def get_my_list(request):
