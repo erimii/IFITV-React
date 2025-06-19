@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from .models import Profile
 from .serializers import ProfileSerializer
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 from rest_framework.decorators import api_view
 from profiles.models import Profile, ProfilePreferredSubgenre, ProfileLikedContent
 from contents.models import Content, Subgenre
@@ -17,28 +18,29 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def by_user(self, request):
-        username = request.query_params.get('username')
-        if not username:
-            return Response({"error": "username 파라미터가 필요합니다."}, status=400)
+        user_id = request.query_params.get('user_id')
+        if not user_id:
+            return Response({"error": "user_id 파라미터가 필요합니다."}, status=400)
 
-        profiles = Profile.objects.filter(user__username=username)
+        profiles = Profile.objects.filter(user__id=user_id)
         serializer = self.get_serializer(profiles, many=True)
         return Response(serializer.data)
 
 # 프로필 추가
 @api_view(['POST'])
 def add_profile(request):
-    username = request.data.get('username')
+    user_id = request.data.get('user_id')
     profile_data = request.data.get('profile')
+    print("전체 request.data:", request.data)
 
     print('받은 profile_data:', profile_data)
 
-    if not username or not profile_data:
-        return Response({"error": "username과 profile 데이터가 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
+    if not user_id or not profile_data:
+        return Response({"error": "user_id과 profile 데이터가 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         # 1. 사용자 가져오기
-        user = User.objects.get(username=username)
+        user = User.objects.get(id=user_id)
 
         # 2. 프로필 생성
         profile = Profile.objects.create(
@@ -74,7 +76,7 @@ def add_profile(request):
         return Response({"message": "프로필 생성 및 연결 완료!"}, status=status.HTTP_201_CREATED)
 
     except User.DoesNotExist:
-        return Response({"error": "해당 username의 User가 존재하지 않습니다."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "해당 user_id의 User가 존재하지 않습니다."}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         print(f"프로필 생성 오류: {e}")
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -83,14 +85,14 @@ def add_profile(request):
 # 프로필 삭제
 @api_view(['POST'])
 def delete_profile(request):
-    username = request.data.get('username')
+    user_id = request.data.get('user_id')
     profile_name = request.data.get('profile_name')
 
-    if not username or not profile_name:
-        return Response({"error": "username과 profile_name은 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
+    if not user_id or not profile_name:
+        return Response({"error": "user_id과 profile_name은 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        user = User.objects.get(username=username)
+        user = User.objects.get(id=user_id)
     except User.DoesNotExist:
         return Response({"error": "사용자를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -104,11 +106,11 @@ def delete_profile(request):
 # 프로필 수정
 @api_view(["PATCH"])
 def edit_profile(request):
-    username = request.data.get("username")
+    user_id = request.data.get("user_id")
     original_name = request.data.get("original_name")
     updated = request.data.get("updated")
 
-    profile = Profile.objects.filter(user__username=username, name=original_name).first()
+    profile = Profile.objects.filter(user__id=user_id, name=original_name).first()
     if not profile:
         return Response({"error": "프로필이 존재하지 않음"}, status=404)
 

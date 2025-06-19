@@ -87,17 +87,13 @@ def sample_contents_by_genre(request):
 # 1. 선호 장르 기반 콘텐츠 추천
 @api_view(['POST'])
 def subgenre_based_recommend(request):
-    username = request.data.get('username')
-    profile_name = request.data.get('profile_name')
+    profile_id = request.data.get('profile_id')
 
-    if not username or not profile_name:
-        return Response({"error": "username과 profile_name은 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
+    if not profile_id:
+        return Response({"error": "profile_id는 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        user = User.objects.get(username=username)
-        profile = Profile.objects.get(user=user, name=profile_name)
-    except User.DoesNotExist:
-        return Response({"error": "사용자를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+        profile = Profile.objects.get(id=profile_id)
     except Profile.DoesNotExist:
         return Response({"error": "프로필을 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -119,39 +115,28 @@ def subgenre_based_recommend(request):
 # 2. 편성표 기반 선호 추천
 @api_view(['POST'])
 def live_recommend(request):
-    username = request.data.get('username')
-    profile_name = request.data.get('profile_name')
+    profile_id = request.data.get('profile_id')
 
-    if not username or not profile_name:
-        return Response({"error": "username과 profile_name은 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
+    if not profile_id:
+        return Response({"error": "profile_id는 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        user = User.objects.get(username=username)
-        profile = Profile.objects.get(user=user, name=profile_name)
-    except User.DoesNotExist:
-        return Response({"error": "사용자를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+        profile = Profile.objects.get(id=profile_id)
     except Profile.DoesNotExist:
         return Response({"error": "프로필을 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 
-    # preferred_genres dict → key + value 리스트로 펼치기
     preferred_genres_dict = profile.preferred_genres
     preferred_genres_list = list(set(
-        [k for k in preferred_genres_dict.keys()] +
+        list(preferred_genres_dict.keys()) +
         [v for values in preferred_genres_dict.values() for v in values]
     ))
 
-    print(f"@@@@@@@@@@@@@2{preferred_genres_list}")
-
-    # 오늘 방송 프로그램 로딩
     today_programs_df = load_today_programs()
-
-    # genre / subgenre 없는 행 제거
     clean_df = today_programs_df.dropna(subset=["subgenre", "genre"]).copy()
     clean_df = clean_df[
         clean_df.apply(lambda row: is_current_or_future_program(row["airtime"], row["runtime"]), axis=1)
     ]
 
-    # genre / subgenre 중 하나라도 매칭되는 프로그램 필터링
     genre_mask = clean_df["genre"].astype(str).apply(lambda g: any(pg in g for pg in preferred_genres_list))
     subgenre_mask = clean_df["subgenre"].astype(str).apply(lambda g: any(pg in g for pg in preferred_genres_list))
 
@@ -160,14 +145,10 @@ def live_recommend(request):
     if matched_df.empty:
         return Response([], status=status.HTTP_200_OK)
 
-    # 출연진은 아직 없으니 제외하고 반환할 컬럼 변경
-    result = matched_df[[
-        "airtime", "title", "genre", "subgenre", "desc", "thumbnail"
-    ]].drop_duplicates().head(10).fillna("")
-
-    print(result[["title", "thumbnail"]])
+    result = matched_df[["airtime", "title", "genre", "subgenre", "desc", "thumbnail"]].drop_duplicates().head(10).fillna("")
 
     return Response(result.to_dict(orient="records"), status=status.HTTP_200_OK)
+
 
 # 3. 좋아요한 콘텐츠 가져와서 추천 모델 돌리기(장르 별 추천 콘텐츠 나옴)
 import time

@@ -111,13 +111,11 @@ function HomePage({ user, profile, profiles, setSelectedProfile, onLogout }) {
         const [res1, res2, res3] = await Promise.all([
           // 1. 선호 장르 기반 추천
           axios.post("http://localhost:8000/recommendation/subgenre_based_recommend/", {
-            username: user.username,
-            profile_name: profile.name
+            profile_id: profile.id
           }),
           // 2. 실시간 방송 추천
           axios.post("http://localhost:8000/api/live_recommend/", {
-            username: user.username,
-            profile_name: profile.name
+            profile_id: profile.id
           }),
           // 3. liked 기반 추천 (profile_id 기반)
           axios.post("http://localhost:8000/recommendation/liked_based_recommend/", {

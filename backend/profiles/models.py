@@ -1,9 +1,9 @@
 from django.db import models
+from django.conf import settings
 from contents.models import Content, Subgenre
-from django.contrib.auth.models import User
 
 class Profile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='user_id', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     age = models.IntegerField()
     gender = models.CharField(max_length=10)

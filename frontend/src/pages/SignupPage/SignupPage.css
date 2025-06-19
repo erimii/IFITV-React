@@ -1,0 +1,129 @@
+.register-bg {
+  min-height: 100vh;
+  background: #232323; /* 배경색 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.register-container {
+  background: #232323; /* 배경색 */
+  border-radius: 18px;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.25);
+  padding: 48px 38px 36px 38px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 340px;
+  color: #fff; /* 글씨 흰색 */
+}
+
+.register-logo {
+  font-size: 2.7rem;
+  font-weight: bold;
+  color: #ff1e80; /* 글씨 흰색 */
+  margin-bottom: 32px;
+  letter-spacing: 2.5px;
+}
+
+.register-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: #fff; /* 글씨 흰색 */
+}
+
+.form-row {
+  display: flex;
+  gap: 18px;
+  color: #fff; /* 글씨 흰색 */
+}
+
+.form-error {
+  color: #ff1e80;
+  font-size: 0.98rem;
+  margin-top: 2px;
+  margin-bottom: -8px;
+}
+
+.register-gender-row {
+  display: flex;
+  gap: 14px;
+  margin-top: 4px;
+  color: #fff; /* 글씨 흰색 */
+  font-size: 1.05rem;
+  align-items: center;
+}
+
+.register-gender-row label {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  color: #fff; /* 글씨 흰색 */
+}
+
+.register-form input,
+.register-form select {
+  background: #444; /* 어두운 입력란 */
+  border: none;
+  border-radius: 8px;
+  padding: 13px 14px;
+  color: #fff; /* 글씨 흰색 */
+  font-size: 1.1rem;
+  outline: none;
+}
+
+.register-form input::placeholder {
+  color: #bbb;
+  opacity: 1;
+}
+
+.register-btn {
+  background: #ff1e80;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 13px 0;
+  font-size: 1.13rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+
+.register-btn:hover {
+  background: #e0146a;
+}
+
+.register-bottom {
+  margin-top: 28px;
+  color: #bbb;
+  font-size: 1rem;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.login-link {
+  color: #ff1e80;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.login-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}

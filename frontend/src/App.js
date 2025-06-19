@@ -27,12 +27,13 @@ function App() {
     localStorage.removeItem("user");
     setUser(null);
   };
+
   // 프로필 목록 불러오기
   useEffect(() => {
     if (!user) return;
   
     axios.get("http://localhost:8000/api/profiles/by_user/", {
-      params: { username: user.username },
+      params: { user_id: user.id },
     })
     .then((res) => setProfiles(res.data))
     .catch((err) => console.error("프로필 목록 불러오기 실패", err));
@@ -54,7 +55,7 @@ function App() {
         }
       />
 
-        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/signup" element={<SignupPage  setUser={setUser} />} />
         <Route path="/login" element={<LoginPage setUser={setUser} />} />
 
         <Route

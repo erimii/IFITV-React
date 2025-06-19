@@ -9,7 +9,7 @@ function LoginPage({ setUser }) {
   const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: ""
   });
 
@@ -45,10 +45,10 @@ function LoginPage({ setUser }) {
         <form className="login-form" onSubmit={handleLogin}>
           <input
             className="login-input"
-            name="username"
+            name="email"
             type="text"
-            placeholder="아이디"
-            value={formData.username}
+            placeholder="이메일"
+            value={formData.email}
             onChange={handleChange}
             autoFocus
             required

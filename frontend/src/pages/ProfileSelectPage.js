@@ -13,7 +13,7 @@ function ProfileSelectPage({ user, setSelectedProfile, onLogout }) {
     const fetchProfiles = async () => {
       try {
         const response = await axios.get('http://localhost:8000/api/profiles/by_user/', {
-          params: { username: user.username }
+          params: { user_id: user.id }
         });
         setProfiles(response.data);
       } catch (error) {
@@ -21,7 +21,7 @@ function ProfileSelectPage({ user, setSelectedProfile, onLogout }) {
       }
     };
     fetchProfiles();
-  }, [user.username]);
+  }, [user.id]);
 
   const gestureOptions = [
     { value: "rock", label: "✊ 주먹" },
@@ -47,7 +47,7 @@ function ProfileSelectPage({ user, setSelectedProfile, onLogout }) {
 
   // 프로필 추가
   const handleAddProfile = async () => {
-    navigate("/add-profile", { state: { usedGestures } });
+    navigate("/add-profile", { state: { usedGestures, user} });
   };
 
   // 프로필 삭제
@@ -57,7 +57,7 @@ function ProfileSelectPage({ user, setSelectedProfile, onLogout }) {
   
     try {
       const response = await axios.post("http://localhost:8000/api/delete_profile/", {
-        username: user.username,
+        user_id: user.id,
         profile_name: profileName,
       });
   
@@ -78,7 +78,7 @@ function ProfileSelectPage({ user, setSelectedProfile, onLogout }) {
   const handleEdit = async (originalName) => {
     try {
       const response = await axios.patch("http://localhost:8000/api/edit_profile/", {
-        username: user.username,
+        user_id: user.id,
         original_name: originalName,
         updated: editForm,
       });

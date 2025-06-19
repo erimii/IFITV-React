@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation  } from "react-router-dom";
 import axios from "axios";
 
-function AddProfileForm() {
+function AddProfileForm({user}) {
   const navigate = useNavigate();
+
+  console.log("user:", user);
 
   // 사용된 제스처 가져오기
   const location = useLocation();
@@ -79,6 +81,7 @@ function AddProfileForm() {
 
     const profileData = {
       ...form,
+      user_id: user.id,
       preferred_subgenres: selectedSubgenreIds,  // 서버로 넘길 id 리스트
       liked_contents_ids: []  // 다음 페이지에서 채울 거니까 비워둠
     };

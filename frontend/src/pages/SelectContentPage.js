@@ -46,11 +46,14 @@ function SelectContentPage({ user }) {
       liked_contents_ids: selectedContentIds
     };
 
-    console.log("최종 profileData (select-content):", fullProfile);
+    console.log("최종 전송 데이터:", {
+      user_id: user.id,
+      profile: fullProfile
+    });
 
     try {
       await axios.post("http://localhost:8000/api/add_profile/", {
-        username: user.username,
+        user_id: user.id,
         profile: fullProfile
       });
       navigate("/select-profile");
