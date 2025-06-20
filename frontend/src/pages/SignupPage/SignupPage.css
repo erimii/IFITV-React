@@ -21,7 +21,7 @@
 .register-logo {
   font-size: 2.7rem;
   font-weight: bold;
-  color: #ff1e80; /* 글씨 흰색 */
+  color: #ec008c; /* 글씨 흰색 */
   margin-bottom: 32px;
   letter-spacing: 2.5px;
 }
@@ -47,7 +47,7 @@
 }
 
 .form-error {
-  color: #ff1e80;
+  color: #ec008c;
   font-size: 0.98rem;
   margin-top: 2px;
   margin-bottom: -8px;
@@ -87,7 +87,7 @@
 }
 
 .register-btn {
-  background: #ff1e80;
+  background: #ec008c;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -113,7 +113,7 @@
 }
 
 .login-link {
-  color: #ff1e80;
+  color: #ec008c;
   background: none;
   border: none;
   font-size: 1rem;

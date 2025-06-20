@@ -5,7 +5,7 @@ import LandingPage from './pages/LandingPage';
 import SignupPage from './pages/SignupPage/SignupPage';
 import LoginPage from './pages/LoginPage/LoginPage';
 import HomePage from './pages/HomePage';
-import ProfileSelectPage from './pages/ProfileSelectPage';
+import ProfileSelectPage from './pages/ProfileSelectPage/ProfileSelectPage';
 import AddProfileForm from './pages/AddProfileForm';
 import SelectContentPage from './pages/SelectContentPage';
 
