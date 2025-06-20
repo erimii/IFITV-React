@@ -9,7 +9,7 @@ import HomePage from './pages/HomePage';
 
 import ProfileSelectPage from './pages/ProfileSelectPage/ProfileSelectPage';
 import CreateProfilePage from './pages/CreateProfilePage/CreateProfilePage';
-import AddProfileForm from './pages/AddProfileForm';
+import SelectSubgenresPage from './pages/SelectSubgenresPage/SelectSubgenresPage';
 import SelectContentPage from './pages/SelectContentPage';
 
 function App() {
@@ -75,7 +75,7 @@ function App() {
           }
         />
         <Route path="/create-profile" element={<CreateProfilePage  user={user} />} />
-        <Route path="/add-profile" element={<AddProfileForm user={user} />} />
+        <Route path="/add-profile" element={<SelectSubgenresPage user={user} />} />
         <Route path="/select-content" element={<SelectContentPage user={user} />} />
         <Route
           path="/home"

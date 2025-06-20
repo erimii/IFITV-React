@@ -6,7 +6,7 @@ function SelectContentPage({ user }) {
   const navigate = useNavigate();
   const location = useLocation();
   const profile = location.state?.profile;
-
+  console.log("최종 profile:", profile);
   const [contentsByGenre, setContentsByGenre] = useState({});
   const [selectedContentIds, setSelectedContentIds] = useState([]);  // id로 관리
   const [selectedTitles, setSelectedTitles] = useState([]);  // UI 표시용
@@ -14,7 +14,8 @@ function SelectContentPage({ user }) {
   const fetchContents = async () => {
     try {
       const response = await axios.post("http://localhost:8000/recommendation/sample_contents/", {
-        selected: profile.preferred_genres
+        selected: profile.preferred_genres,
+        profile_id: profile.id,
       });
       console.log("콘텐츠 불러오기 성공:", response.data);
       setContentsByGenre(response.data);
