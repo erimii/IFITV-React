@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 
-function GestureModal({profiles, onClose, onRecognized}) {
+function GestureModal({profiles, currentProfile, onClose, onRecognized}) {
   const videoRef = useRef(null);
   const cameraRef = useRef(null);
   const [gesture, setGesture] = useState("");

@@ -7,11 +7,13 @@ import SideNav from '../components/SideNav';
 import GestureModal from '../components/GestureModal';
 import SettingsDropdown from '../components/SettingsDropdown';
 
-function HomePage({ user, profile, profiles, setSelectedProfile, onLogout }) {
+function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const selectedMenuParam = queryParams.get('menu') || '홈';
+  const [profiles, setProfiles] = useState([]);
+
 
   const [vodContents, setVodContents] = useState([]);
   const [myListContents, setMyListContents] = useState([]);
@@ -31,10 +33,22 @@ function HomePage({ user, profile, profiles, setSelectedProfile, onLogout }) {
   const [page, setPage] = useState(1);
   const [hasNext, setHasNext] = useState(true);
   const loaderRef = useRef();
-
+  
+  // 프로필 최신 목록 불러오기
   useEffect(() => {
-    console.log("현재 프로필 정보:", profile);
-  }, [profile]);
+    const fetchProfiles = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/profiles/by_user/', {
+          params: { user_id: user.id }
+        });
+        setProfiles(response.data);
+      } catch (error) {
+        console.error('프로필 불러오기 오류:', error);
+      }
+    };
+    fetchProfiles();
+  }, [user.id]);
+  
   
   // VOD 콘텐츠 가져오기
   useEffect(() => {
@@ -212,6 +226,7 @@ function HomePage({ user, profile, profiles, setSelectedProfile, onLogout }) {
             {isGestureModalOpen && (
               <GestureModal
                 profiles={profiles}
+                currentProfile={profile} 
                 onClose={() => setIsGestureModalOpen(false)}
                 onRecognized={(matchedProfile) => {
                   setSelectedProfile(matchedProfile);
@@ -226,8 +241,6 @@ function HomePage({ user, profile, profiles, setSelectedProfile, onLogout }) {
             />
           </div>
         </div>
-
-        
       </div>
 
       <div style={{ display: 'flex' }}>

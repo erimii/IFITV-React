@@ -80,7 +80,7 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
         original_name: originalName,
         updated: editForm,
       });
-  
+
       // 수정 반영
       setProfiles(prev =>
         prev.map(p => (p.name === originalName ? { ...p, ...editForm } : p))
