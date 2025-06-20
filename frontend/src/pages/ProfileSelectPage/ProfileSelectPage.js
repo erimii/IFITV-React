@@ -45,7 +45,7 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
 
   // 프로필 추가
   const handleAddProfile = async () => {
-    navigate("/add-profile", { state: { usedGestures, user} });
+    navigate("/create-profile", { state: { usedGestures, user} });
   };
 
   // 프로필 삭제

@@ -1,0 +1,218 @@
+.new-profile-bg {
+    min-height: 100vh;
+    background: #232323;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 0;
+  }
+  
+  .new-profile-container {
+    width: 100%;
+    max-width: 540px;
+    background: #232323;
+    border-radius: 18px;
+    padding: 54px 42px 38px 42px;
+    box-shadow: 0 6px 32px rgba(0,0,0,0.16);
+    color: #fff;
+  }
+  
+  .new-profile-title {
+    font-size: 2.3rem;
+    font-weight: bold;
+    margin-bottom: 46px;
+    color: #fff;
+    letter-spacing: 1.5px;
+    text-align: center;
+  }
+  
+  .avatar-select-row {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    margin-bottom: 24px;
+    margin-top: 10px;
+  }
+  
+  .avatar-btn {
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    border: 3px solid #888;
+    background: #353535;
+    color: #fff;
+    font-size: 2.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border 0.18s, background 0.18s, color 0.18s, opacity 0.18s;
+    opacity: 1;
+    margin: 0;
+    padding: 0;
+  }
+  .avatar-btn.selected {
+    border: 3.5px solid #ec008c;
+    background: #232323;
+    color: #ec008c;
+  }
+  .avatar-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    border: 3px dashed #bbb;
+    background: #222;
+    color: #bbb;
+  }
+  .avatar-emoji {
+    font-size: 2.7rem;
+    line-height: 1;
+  }
+
+  .gesture-select-label {
+    font-size: 0.9rem;
+    color: #ccc;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  
+  
+  .new-profile-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    color: #fff;
+  }
+  
+  .new-profile-row {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 18px;
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .new-profile-row input,
+  .new-profile-row select {
+    font-size: 1.35rem;
+    padding: 16px 22px;
+    border-radius: 12px;
+    border: 2px solid #555;
+    background: #353535;
+    color: #fff;
+    outline: none;
+    transition: border 0.18s, box-shadow 0.18s;
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: left;      /* 항상 왼쪽 정렬 */
+  }
+  
+  .new-profile-row select {
+    text-align-last: left; /* 옵션도 왼쪽 정렬 (크롬/윈도우 등) */
+    min-width: 120px;
+    max-width: 180px;
+  }
+  
+  .new-profile-row input:focus,
+  .new-profile-row select:focus {
+    border: 2.5px solid #ec008c;
+    box-shadow: 0 0 0 3px rgba(255,30,128,0.14);
+  }
+  
+  .new-profile-btn-row {
+    display: flex;
+    gap: 24px;
+    width: 100%;
+    margin-top: 38px;
+  }
+  
+  .new-profile-prev-btn {
+    width: 50%;
+    background: #444;
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    padding: 18px 0;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.09);
+    letter-spacing: 1px;
+    pointer-events: auto;
+    opacity: 1;
+  }
+  .new-profile-prev-btn:hover,
+  .new-profile-prev-btn:focus {
+    background: #888;
+    color: #fff;
+  }
+  
+  .new-profile-next-btn {
+    width: 50%;
+    background: #ec008c;
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    padding: 18px 0;
+    cursor: pointer;
+    transition: background 0.18s;
+    box-shadow: 0 2px 10px rgba(255,30,128,0.10);
+    letter-spacing: 1px;
+  }
+  .new-profile-next-btn:disabled {
+    background: #888;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  
+  .new-profile-bottom {
+    margin-top: 44px;
+    text-align: center;
+    color: #bbb;
+    font-size: 1.18rem;
+  }
+  .new-profile-login-link {
+    background: none;
+    color: #ec008c;
+    border: none;
+    font-size: 1.18rem;
+    font-weight: bold;
+    margin-left: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.18s;
+  }
+  .new-profile-login-link:hover {
+    color: #ffd21e;
+  }
+  
+  @media (max-width: 600px) {
+    .new-profile-container {
+      max-width: 98vw;
+      padding: 22px 4vw;
+    }
+    .avatar-select-row {
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+    .new-profile-row {
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .new-profile-btn-row {
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 22px;
+    }
+    .new-profile-prev-btn,
+    .new-profile-next-btn {
+      width: 100%;
+      padding: 14px 0;
+      font-size: 1.13rem;
+    }
+  }
+  

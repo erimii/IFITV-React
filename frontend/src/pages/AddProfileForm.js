@@ -4,30 +4,10 @@ import axios from "axios";
 
 function AddProfileForm({user}) {
   const navigate = useNavigate();
-
-  console.log("user:", user);
-
-  // 사용된 제스처 가져오기
   const location = useLocation();
-  const usedGestures = location.state?.usedGestures || [];
-
-  const allGestures = [
-    { value: "scissors", label: "✌️ scissors" },
-    { value: "rock", label: "✊ rock" },
-    { value: "paper", label: "🖐 paper" },
-    { value: "ok", label: "👌 ok" }
-  ];
-
-  // 중복 제거된 제스처 목록 만들기
-    const availableGestures = allGestures.filter(
-      (g) => !usedGestures.includes(g.value)
-    );
+  const profile = location.state?.profile;
 
   const [form, setForm] = useState({
-    name: "",
-    age: "",
-    gender: "",
-    gesture: "",
     preferred_genres: {},  // 장르별 서브장르 이름 (화면용)
   });
 
@@ -93,41 +73,8 @@ function AddProfileForm({user}) {
 
   return (
     <div style={{ padding: "2rem" }}>
-      <h2>➕ 새 프로필 만들기</h2>
+      <h2>{profile.name}님 안녕하세요. 선호 서브장르를 선택해주세요</h2>
       <form onSubmit={handleSubmit}>
-        <input
-          placeholder="닉네임"
-          required
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-        />
-        <input
-          placeholder="나이"
-          required
-          value={form.age}
-          onChange={(e) => setForm({ ...form, age: e.target.value })}
-        />
-        <select
-          value={form.gender}
-          onChange={(e) => setForm({ ...form, gender: e.target.value })}
-        >
-          <option value="">성별 선택</option>
-          <option value="여">여</option>
-          <option value="남">남</option>
-        </select>
-
-        <select
-          value={form.gesture}
-          onChange={(e) => setForm({ ...form, gesture: e.target.value })}
-        >
-          <option value="">제스처 선택</option>
-          {availableGestures.map((g) => (
-            <option key={g.value} value={g.value}>
-              {g.label}
-            </option>
-          ))}
-        </select>
-
 
         <h4>선호 서브장르 선택</h4>
         {Object.entries(subgenreMapping).map(([genre, subgenres]) => (

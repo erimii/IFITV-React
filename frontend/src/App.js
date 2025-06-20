@@ -4,8 +4,11 @@ import axios from 'axios';
 import LandingPage from './pages/LandingPage';
 import SignupPage from './pages/SignupPage/SignupPage';
 import LoginPage from './pages/LoginPage/LoginPage';
+
 import HomePage from './pages/HomePage';
+
 import ProfileSelectPage from './pages/ProfileSelectPage/ProfileSelectPage';
+import CreateProfilePage from './pages/CreateProfilePage/CreateProfilePage';
 import AddProfileForm from './pages/AddProfileForm';
 import SelectContentPage from './pages/SelectContentPage';
 
@@ -65,13 +68,13 @@ function App() {
               <ProfileSelectPage
                 user={user}
                 setSelectedProfile={setSelectedProfile}
-                onLogout={handleLogout}
               />
             ) : (
               <Navigate to="/login" />
             )
           }
         />
+        <Route path="/create-profile" element={<CreateProfilePage  user={user} />} />
         <Route path="/add-profile" element={<AddProfileForm user={user} />} />
         <Route path="/select-content" element={<SelectContentPage user={user} />} />
         <Route
