@@ -67,7 +67,7 @@ function SelectSubgenresPage({user}) {
     navigate("/select-content", { state: { profile: profileData } });
   };
 
-  const onPrev = () => navigate("/select-profile");
+  const onPrev = () => navigate("/select-subgenres");
   const onGoToLogin = () => navigate("/");
 
   return (

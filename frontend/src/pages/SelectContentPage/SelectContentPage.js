@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from 'axios';
+import CarouselSelect from '../../components/CarouselSelect';
+import './SelectContentPage.css';
 
 function SelectContentPage({ user }) {
   const navigate = useNavigate();
@@ -63,56 +65,59 @@ function SelectContentPage({ user }) {
       alert("프로필 저장 실패");
     }
   };
+  const onPrev = () => navigate("/select-profile");
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h2>{profile.name}님의 취향 콘텐츠를 골라주세요!</h2>
+    <div className="select-content-bg">
+      <div className="select-content-container">
+      <h2 className="select-content-title">
+        <span className="highlight-name">{profile.name}</span> 님의 취향 콘텐츠를 골라주세요!
+      </h2>
 
       {Object.entries(contentsByGenre).map(([genre, items]) => (
-        <div key={genre} style={{ marginBottom: "2rem" }}>
-          <h3>
+        <div key={genre} className="content-category-block">
+          <div className="content-category-label">
             {genre} 
             {profile.preferred_genres[genre] && profile.preferred_genres[genre].length > 0 && (
               <span>({profile.preferred_genres[genre].join(', ')})</span>
             )}
-          </h3>
-
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-            {items.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => toggleContent(item)}
-                style={{
-                  border: selectedContentIds.includes(item.id) ? "2px solid #A50034" : "1px solid #ccc",
-                  borderRadius: "10px",
-                  padding: "0.5rem",
-                  width: "150px",
-                  cursor: "pointer"
-                }}
-              >
-                <img src={item.thumbnail} alt={item.title} style={{ width: "100%", borderRadius: "6px" }} />
-                <p style={{ fontWeight: "bold", marginTop: "0.5rem" }}>{item.title}</p>
-              </div>
-            ))}
           </div>
+
+          <CarouselSelect>
+              {items.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => toggleContent(item)}
+                  className={`content-card${selectedContentIds.includes(item.id) ? ' selected' : ''}`}
+                  style={{
+                    border: selectedContentIds.includes(item.id) ? "2px solid #A50034" : "1px solid #ccc",
+                  }}
+                >
+                  <img src={item.thumbnail} alt={item.title} style={{ width: "100%", borderRadius: "6px" }} />
+                  <div className="content-card-title">{item.title}</div>
+                </div>
+              ))}
+          </CarouselSelect>
         </div>
       ))}
 
-      <button
-        onClick={handleFinish}
-        style={{
-          backgroundColor: "#A50034",
-          color: "white",
-          padding: "0.5rem 1.2rem",
-          border: "none",
-          borderRadius: "8px",
-          fontWeight: "bold",
-          cursor: "pointer",
-          marginTop: "2rem"
-        }}
-      >
-        선택 완료 ➡️
-      </button>
+        <div className="select-content-btn-row">
+          <button
+            className="select-content-prev-btn"
+            onClick={onPrev}
+            type="button"
+          >
+            이전
+          </button>
+          <button
+            className="select-content-next-btn"
+            onClick={handleFinish}
+            type="button"
+          >
+            선택 완료
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

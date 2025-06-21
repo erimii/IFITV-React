@@ -206,13 +206,13 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
               <div className="profile-name">프로필 추가</div>
             </button>
           )}
-          {profiles.length >= 4 && (
-            <p style={{ color: "gray", fontSize: "0.9rem" }}>
-              ※ 최대 4개의 프로필까지 생성할 수 있어요.
-            </p>
-          )}
         </div>
-      </div>
+        {profiles.length >= 4 && (
+          <p style={{ color: "gray", fontSize: "0.9rem" }}>
+            ※ 최대 4개의 프로필까지 생성할 수 있어요.
+          </p>
+        )}
+    </div>
     </div>
   );
 }

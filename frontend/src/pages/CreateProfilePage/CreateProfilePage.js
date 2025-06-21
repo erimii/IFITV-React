@@ -33,7 +33,7 @@ function CreateProfilePage({user}) {
     };
 
     console.log("최종 profileData:", profileData);
-    navigate("/add-profile", { state: { profile: profileData } });
+    navigate("/select-subgenres", { state: { profile: profileData } });
   };
 
   return (

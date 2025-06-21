@@ -61,9 +61,9 @@
     transition: background 0.2s, color 0.2s, border-color 0.2s;
   }
   .genre-btn.selected {
-    background: #ff1e80;
+    background: #ec008c;
     color: #fff;
-    border-color: #ff1e80;
+    border-color: #ec008c;
   }
   .genre-btn:disabled:not(.selected) {
     opacity: 0.4;
@@ -96,7 +96,7 @@
   }
   
   .add-profile-next-btn {
-    background: #ff1e80;
+    background: #ec008c;
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -125,7 +125,7 @@
   }
   
   .login-link {
-    color: #ff1e80;
+    color: #ec008c;
     background: none;
     border: none;
     font-size: 1rem;

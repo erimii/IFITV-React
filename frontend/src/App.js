@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate  } from 'react-router-dom';
 import axios from 'axios';
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
+
 import LandingPage from './pages/LandingPage';
 import SignupPage from './pages/SignupPage/SignupPage';
 import LoginPage from './pages/LoginPage/LoginPage';
@@ -10,7 +13,7 @@ import HomePage from './pages/HomePage';
 import ProfileSelectPage from './pages/ProfileSelectPage/ProfileSelectPage';
 import CreateProfilePage from './pages/CreateProfilePage/CreateProfilePage';
 import SelectSubgenresPage from './pages/SelectSubgenresPage/SelectSubgenresPage';
-import SelectContentPage from './pages/SelectContentPage';
+import SelectContentPage from './pages/SelectContentPage/SelectContentPage';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -75,7 +78,7 @@ function App() {
           }
         />
         <Route path="/create-profile" element={<CreateProfilePage  user={user} />} />
-        <Route path="/add-profile" element={<SelectSubgenresPage user={user} />} />
+        <Route path="/select-subgenres" element={<SelectSubgenresPage user={user} />} />
         <Route path="/select-content" element={<SelectContentPage user={user} />} />
         <Route
           path="/home"
