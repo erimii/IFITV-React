@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import GestureModal from '../components/GestureModal';
+import GestureModal from '../components/GestureModal/GestureModal';
 import axios from 'axios';
 
 function LandingPage({ user, profiles, selectedProfile, setSelectedProfile }) {

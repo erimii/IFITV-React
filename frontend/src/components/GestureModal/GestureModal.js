@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
+import './GestureModal.css'
 
 function GestureModal({profiles, currentProfile, onClose, onRecognized}) {
   const videoRef = useRef(null);
@@ -111,31 +112,20 @@ function GestureModal({profiles, currentProfile, onClose, onRecognized}) {
   }, [gesture, profiles, isCameraActive]);
 
   return (
-    <div style={modalStyle}>
-      <div style={modalContentStyle}>
-        <button
-            onClick={onClose}
-            style={{
-                background: "transparent",
-                border: "none",
-                fontSize: "1.5rem",
-                cursor: "pointer",
-            }}
-            >
-            ✖
+    <div className="profile-switch-overlay">
+      <div className="profile-switch-modal">
+        <button onClick={onClose} className="profile-switch-close">
+          &times;
         </button>
-        <h1>프로필 전환</h1>
+        <div className="profile-switch-title">프로필 전환</div>
         {isCameraActive && (
           <video
             ref={videoRef}
             autoPlay
+            className="profile-switch-image-rect"
             style={{
-                width: "100%",
-                maxWidth: "100%",
-                height: "auto", 
-                borderRadius: "0.5rem",
-                display: isCameraActive ? "block" : "none",
-              }}
+              display: isCameraActive ? "block" : "none",
+            }}
           />
         )}
         {gesture && (
@@ -143,61 +133,41 @@ function GestureModal({profiles, currentProfile, onClose, onRecognized}) {
             ⚠️ 매칭된 프로필이 없습니다
         </div>
         )}
-        <div style={{ marginTop: "2rem" }}>
-            <h3>👤 프로필 수동 전환</h3>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", justifyContent: "center" }}>
-                {profiles.map((p) => (
+        <div className="profile-switch-desc">프로필 수동 전환</div>
+          <div className="profile-switch-list">
+            {profiles && profiles.length > 0 ? (
+              profiles.map((p) => (
                 <button
-                    key={p.id}
-                    onClick={() => {
-                    onRecognized(p); // 수동 선택
-                    onClose();
-                    }}
-                    style={{
-                    padding: "0.5rem 1rem",
-                    borderRadius: "999px",
-                    border: "1px solid #aaa",
-                    cursor: "pointer",
-                    background: "#f0f0f0",
-                    }}
+                  key={p.id}
+                  onClick={() => {
+                  onRecognized(p); // 수동 선택
+                  onClose();
+                  }}
+                  className="profile-switch-profile-btn"
                 >
-                    {p.name} ({p.gesture && (
+                  <div className="profile-switch-profile-item">
+                    <div className="profile-switch-avatar-circle">
+                      {p.gesture && (
                         p.gesture === "rock" ? "✊" :
                         p.gesture === "paper" ? "🖐" :
                         p.gesture === "scissors" ? "✌️" :
                         p.gesture === "ok" ? "👌" :
                         "❓"
-                    )})
-                </button>
-                ))}
-            </div>
-        </div>
+                      )}
+                    </div>
+                    <div className="profile-switch-name">{p.name}</div>
+                  </div>
+              </button>
+              ))
+            ) : (
+              <div style={{ color: "#888", fontSize: "1.2rem" }}>등록된 프로필이 없습니다.</div>
+            )}
+          </div>
 
       </div>
     </div>
   );
   
 }
-const modalStyle = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-  };
 
-const modalContentStyle = {
-background: "white",
-padding: "2rem",
-borderRadius: "1rem",
-width: "90%",
-maxWidth: "500px",
-textAlign: "center",
-};
-  
 export default GestureModal;

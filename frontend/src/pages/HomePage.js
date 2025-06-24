@@ -4,7 +4,7 @@ import axios from 'axios';
 import ContentModal from "../components/ContentModal";
 import HorizontalSlider from '../components/HorizontalSlider';
 import SideNav from '../components/SideNav';
-import GestureModal from '../components/GestureModal';
+import GestureModal from '../components/GestureModal/GestureModal';
 import SettingsDropdown from '../components/SettingsDropdown';
 
 function HomePage({ user, profile, setSelectedProfile, onLogout }) {
