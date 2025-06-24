@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef  } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import ContentModal from "../components/ContentModal";
+import ContentDetailModal from "../components/ContentDetailModal/ContentDetailModal";
 import HorizontalSlider from '../components/HorizontalSlider';
 import SideNav from '../components/SideNav';
 import GestureModal from '../components/GestureModal/GestureModal';
@@ -13,7 +13,6 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   const queryParams = new URLSearchParams(location.search);
   const selectedMenuParam = queryParams.get('menu') || '홈';
   const [profiles, setProfiles] = useState([]);
-
 
   const [vodContents, setVodContents] = useState([]);
   const [myListContents, setMyListContents] = useState([]);
@@ -253,7 +252,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
 
       {loading && <p>...loading...</p>}
 
-      <ContentModal
+      <ContentDetailModal
         content={selectedContent}
         recommendations={results}
         onClose={handleCloseModal}

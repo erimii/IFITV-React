@@ -1,0 +1,112 @@
+.carousel2-outer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .carousel2-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    background: #222;
+    color: #fff;
+    font-size: 2.2rem;
+    border: none;
+    border-radius: 50%;
+    padding: 0;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    outline: none;
+    opacity: 0.97;
+  }
+  .carousel2-arrow.left { left: 10px; }
+  .carousel2-arrow.right { right: 10px; }
+  .carousel2-arrow:hover:not(:disabled) { background: #ec008c; color: #fff; }
+  /* .carousel2-arrow:hover { opacity: 0.25; cursor: not-allowed; background: #222; color: #fff; box-shadow: none; } */
+  .carousel2-arrow svg {
+    width: 2.1rem;
+    height: 2.1rem;
+    display: block;
+  }
+  
+  .carousel2-inner {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    display: flex;
+    gap: 32px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .carousel2-card {
+    box-sizing: border-box;
+    flex: 0 0 calc(50% - 16px); /* 2개씩, gap의 절반씩 양쪽에 */
+    max-width: calc(50% - 16px);
+    background: #181818;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 8px 14px 8px;
+    margin: 0;
+    transition: box-shadow 0.18s, border 0.18s;
+    cursor: pointer;
+    height: 320px;
+  }
+  .carousel2-card:hover {
+    box-shadow: 0 4px 16px rgba(255,30,128,0.12);
+    border: 2px solid #ec008c;
+  }
+  
+  .carousel2-poster {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: #222;
+  }
+  
+  .carousel2-title {
+    font-weight: 500;
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 4px;
+    color: #fff;
+  }
+  
+  .carousel2-category {
+    font-size: 0.95rem;
+    color: #bbb;
+    text-align: center;
+  }
+  
+  .carousel2-no-image {
+    width: 100%;
+    height: 250px;
+    background: #333;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bbb;
+    font-size: 0.95rem;
+  }
