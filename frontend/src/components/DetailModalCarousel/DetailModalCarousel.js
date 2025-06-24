@@ -5,14 +5,14 @@ const DetailModalCarousel = ({ results }) => {
   const scrollRef = useRef(null);
   const [startIdx, setStartIdx] = useState(0);
   const [maxStartIdx, setMaxStartIdx] = useState(0);
-  const [cardCount, setCardCount] = useState(React.Results.count(results));
+  const [cardCount, setCardCount] = useState(results?.length || 0);
 
   // 카드 개수와 한 번에 보여줄 카드 개수 계산
   useEffect(() => {
-    setCardCount(React.Results.count(results));
-    // 2개씩 스크롤, 한 번에 2개 보여준다고 가정
-    setMaxStartIdx(Math.max(0, React.Results.count(results) - 2));
-  }, [results]);
+    const count = results?.length || 0;
+    setCardCount(count);
+    setMaxStartIdx(Math.max(0, count - 2));
+  }, [results]);  
 
   // 스크롤 함수
   const scroll = (direction) => {
@@ -51,19 +51,7 @@ const DetailModalCarousel = ({ results }) => {
         </svg>
       </button>
       <div className="carousel2-inner no-scrollbar" ref={scrollRef}>
-        {results.map((item, idx) => (
-          <div key={idx} style={{ textAlign: "center" }}>
-            <img
-              src={item.thumbnail || "https://via.placeholder.com/300x450"}
-              alt={item.title}
-              style={{ width: "300px", borderRadius: "8px", marginBottom: "1rem" }}
-            />
-            <h3>{item.title}</h3>
-            <p>{item.subgenre}</p>
-            <p style={{ fontStyle: "italic" }}>📌 {item["추천 근거"]}</p>
-
-          </div>
-        ))}
+        {results}
       </div>
       <button
         className="carousel2-arrow right"

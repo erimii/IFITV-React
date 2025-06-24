@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import RecommendationCarousel from '../RecommendationCarousel';
 import './ContentDetailModal.css'
 import DetailModalCarousel from '../DetailModalCarousel/DetailModalCarousel.js'
 
@@ -8,6 +7,8 @@ function ContentDetailModal({ content, recommendations, onClose, profile, setWat
   const [isExpanded, setIsExpanded] = useState(false);
   const [liked, setLiked] = useState(false);
   const MAX_LENGTH = 200;
+
+  console.log(recommendations)
 
   useEffect(() => {
     if (!content) return;
@@ -19,8 +20,6 @@ function ContentDetailModal({ content, recommendations, onClose, profile, setWat
   
   if (!content) return null;
   const isWatched = content && watchedContentIds.includes(content.id);
-  const isLiked = likedContentIds.includes(content.id);
-
 
   const fullDesc = content.description || '설명 없음';
   const isLong = fullDesc.length > MAX_LENGTH;
@@ -44,7 +43,6 @@ function ContentDetailModal({ content, recommendations, onClose, profile, setWat
       console.error("찜 토글 오류:", error);
     }
   };
-
   
   const handleWatchComplete = async () => {
     try {
@@ -99,12 +97,24 @@ function ContentDetailModal({ content, recommendations, onClose, profile, setWat
         <div className="modal-actions">
           <button className="play-btn">▶ Play</button>
           <button className="mylist-btn" onClick={handleToggleLike}>
-            + My List
+            {liked ? "추가됨": "+ My List"}
           </button>
         </div>
         <div className="related-titles">
           <h3>비슷한 {content.genre}</h3>
-          <RecommendationCarousel results={recommendations} />
+          <DetailModalCarousel
+            results={recommendations.map((item) => (
+              <div key={item.id} className="carousel2-card">
+                <img
+                  className="carousel2-poster"
+                  src={item.thumbnail || 'https://via.placeholder.com/300x450'}
+                  alt={item.title}
+                />
+                <div className="carousel2-title">{item.title}</div>
+                <div className="carousel2-category">{item.subgenre}</div>
+              </div>
+            ))}
+          />
         </div>
       </div>
     </div>
