@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useRef  } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import ContentDetailModal from "../components/ContentDetailModal/ContentDetailModal";
-import HorizontalSlider from '../components/HorizontalSlider';
-import SideNav from '../components/SideNav';
-import GestureModal from '../components/GestureModal/GestureModal';
-import SettingsDropdown from '../components/SettingsDropdown';
+import ContentDetailModal from "../../components/ContentDetailModal/ContentDetailModal";
+import HorizontalSlider from '../../components/HorizontalSlider';
+import SideNav from '../../components/SideNav';
+import SidebarHeader from '../../components/SidebarHeader/SidebarHeader';
+import GestureModal from '../../components/GestureModal/GestureModal';
+import SettingsDropdown from '../../components/SettingsDropdown';
+import './HomePage.css'
 
 function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   const navigate = useNavigate();
@@ -47,7 +49,6 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
     };
     fetchProfiles();
   }, [user.id]);
-  
   
   // VOD 콘텐츠 가져오기
   useEffect(() => {
@@ -172,7 +173,6 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
       setLoading(false);
     }
   };
-  
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -200,53 +200,35 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   };
   
   return (
-    <div style={{ padding: '2rem' }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '1rem'
-      }}>
-        <div>
-          <h1 style={{ marginBottom: '0.3rem' }}>🎬 IFITV 예능 추천기</h1>
-          <p style={{ margin: 0 }}>
-            현재 프로필: <strong style={{ color: "#A50034" }}>{profile.name}</strong>
-          </p>
-          <div style={{ display: "flex"}}>
-            <button onClick={() => setIsGestureModalOpen(true)} style={subButtonStyle}>
-            <span>
-              {profile.gesture === "scissors" && "✌️"}
-              {profile.gesture === "rock" && "✊"}
-              {profile.gesture === "paper" && "🖐"}
-              {profile.gesture === "ok" && "👌"}
-            </span>
-            </button>
+    <div className="home-page">
+      <SidebarHeader
+        currentProfile={profile}
+        currentUser={user}
+        profiles={profiles}
+        onLogout={onLogout}
+        setSelectedProfile={setSelectedProfile}
+        setCurrentProfileId={(id) => {}}
+      />
+      <div className="welcome-section">
+        <h1>
+          Welcome, {profile.name}!
+        </h1>
+        <p>Continue Watching where you left off</p>
+      </div>
 
-            {isGestureModalOpen && (
-              <GestureModal
-                profiles={profiles}
-                currentProfile={profile} 
-                onClose={() => setIsGestureModalOpen(false)}
-                onRecognized={(matchedProfile) => {
-                  setSelectedProfile(matchedProfile);
-                  navigate("/home");
-                }}
-              />
-            )}    
             <SettingsDropdown
               style={subButtonStyle}
               onLogout={onLogout}
               onEditProfile={() => navigate("/select-profile")}
             />
-          </div>
-        </div>
-      </div>
+
 
       <div style={{ display: 'flex' }}>
       <SideNav
         selectedMenu={selectedMenuParam}
         onSelect={(menu) => navigate(`/home${menu === '홈' ? '' : `?menu=${menu}`}`)}
       />
+      
       
       <div style={{ padding: '2rem' }}>
 

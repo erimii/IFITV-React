@@ -1,0 +1,262 @@
+.app-root-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #181818;
+  }
+  
+  .sidebar-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 150px;
+    background: #181818;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 0 18px 0;
+    border-right: 1px solid #232323;
+    box-sizing: border-box;
+    z-index: 100;
+  }
+  
+  .sidebar-logo {
+    text-decoration: none;
+    border: none;
+    outline: none;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ec008c;
+    margin: 0 0 18px 0;
+    letter-spacing: 1.5px;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin: 0 0 18px 0;
+    width: 100%;
+  }
+  
+  .sidebar-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.15rem;
+    font-weight: 500;
+    padding: 6px 0;
+    border-radius: 8px;
+    transition: background 0.2s, color 0.2s;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .sidebar-nav a.active,
+  .sidebar-nav a:hover {
+    background: #232332;
+    color: #ec008c;
+  }
+  
+  /* 세로 드롭다운 */
+  .sidebar-dropdown {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .dropdown-divider {
+    height: 1px;
+    background: #fff;
+    opacity: 0.2;
+    margin: 8px 0;
+    border: none;
+    width: 100%;
+    display: block;
+  }
+  
+  .sidebar-dropdown-menu {
+    position: fixed;
+    top: 0;
+    left: 150px; /* 사이드바 너비와 동일하게 */
+    height: 100vh;
+    width: 150px;
+    background: #181818;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 0 18px 0;
+    border-right: 1px solid #232323;
+    box-sizing: border-box;
+    z-index: 200;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.10);
+  }
+  
+  .sidebar-dropdown-item {
+    background: none;
+    border: none;
+    outline: none;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 0;
+    width: 100%;
+    text-align: center;
+    font-size: 1.15rem;
+    border-radius: 8px;
+    margin-bottom: 2px;
+    transition: background 0.18s, color 0.18s;
+    cursor: pointer;
+    box-shadow: none;
+    font-family: inherit;
+    appearance: none;
+  }
+  
+  .sidebar-dropdown-item:hover,
+  .sidebar-dropdown-item:active,
+  .sidebar-dropdown-item:focus {
+    background: #232332;
+    color: #ec008c;
+  }
+  
+  .settings-gear-btn {
+    background: none;
+    border: none;
+    color: #808080;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+  }
+  .settings-gear-btn:hover,
+  .settings-gear-btn:focus {
+    background: #232332;
+    color: #ec008c;
+  }
+  .settings-gear-icon {
+    width: 36px;
+    height: 36px;
+    display: block;
+    fill: #808080;
+    transition: fill 0.18s;
+  }
+  .settings-gear-btn:hover .settings-gear-icon,
+  .settings-gear-btn:focus .settings-gear-icon {
+    fill: #ec008c;
+  }
+  
+  .sidebar-search {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 0 18px 0;
+    position: relative;
+  }
+  
+  .search-icon {
+    font-size: 1.15rem;
+    opacity: 0.8;
+    cursor: pointer;
+  }
+  
+  .search-form {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 8px;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 6px 28px 6px 8px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: #222;
+    color: #fff;
+    font-size: 0.95rem;
+    outline: none;
+  }
+  
+  .search-close-btn {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+  }
+  
+  .sidebar-profile {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    align-items: center;
+    width: 100%;
+    text-align: center;
+  }
+
+
+
+
+.sidebar-gesture {
+  justify-content: center;
+  margin-top: auto;
+  padding-bottom: 1rem;
+}
+
+.gesture-button {
+  background: #333;
+  border: none;
+  width: 90px;
+  height: 90px;
+  font-size: 3rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 5px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gesture-button:hover {
+  background: #ec008c;
+}
+  
+.profile-name {
+font-size: 1.5rem;
+color: #ec008c;
+}
+  
+  /* ----------- 나머지 레이아웃 ----------- */
+  .main-content-area {
+    flex: 1;
+    min-width: 0;
+    background: #181818;
+    padding: 0;
+    overflow-x: hidden;
+    margin-left: 150px;
+  }
