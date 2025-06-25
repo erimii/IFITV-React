@@ -198,6 +198,7 @@ def fast_hybrid_recommend(title, top_n=5, alpha=0.7, genre_weight=0.1):
             "title": df.at[i, "title"],
             "subgenre": df.at[i, "subgenre"],
             "thumbnail": df.at[i, "thumbnail"],
+            "description": df.iloc[i]["description"],
             "추천 근거": ""
         }
         if genres:

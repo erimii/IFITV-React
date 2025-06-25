@@ -105,13 +105,23 @@ function ContentDetailModal({ content, recommendations, onClose, profile, setWat
           <DetailModalCarousel
             results={recommendations.map((item) => (
               <div key={item.id} className="carousel2-card">
+                <div className="carousel2-image-wrapper">
                 <img
                   className="carousel2-poster"
                   src={item.thumbnail || 'https://via.placeholder.com/300x450'}
                   alt={item.title}
+                  
                 />
                 <div className="carousel2-title">{item.title}</div>
-                <div className="carousel2-category">{item.subgenre}</div>
+                {/* 오버레이: 마우스 오버 시 노출 */}
+                <div className="carousel2-hover-info">
+                  <div className="carousel2-hover-title">{item.title}</div>
+                  <div className="carousel2-hover-subgenre">{item.subgenre}</div>
+                  <div className="carousel2-hover-desc">
+                    {item.description ? item.description : ''}
+                  </div>
+                </div>
+                </div>              
               </div>
             ))}
           />
