@@ -208,6 +208,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
         onLogout={onLogout}
         setSelectedProfile={setSelectedProfile}
         setCurrentProfileId={(id) => {}}
+        onEditProfile={() => navigate("/select-profile")}
       />
       <div className="welcome-section">
         <h1>
@@ -216,19 +217,11 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
         <p>Continue Watching where you left off</p>
       </div>
 
-            <SettingsDropdown
-              style={subButtonStyle}
-              onLogout={onLogout}
-              onEditProfile={() => navigate("/select-profile")}
-            />
-
-
       <div style={{ display: 'flex' }}>
       <SideNav
         selectedMenu={selectedMenuParam}
         onSelect={(menu) => navigate(`/home${menu === '홈' ? '' : `?menu=${menu}`}`)}
       />
-      
       
       <div style={{ padding: '2rem' }}>
 

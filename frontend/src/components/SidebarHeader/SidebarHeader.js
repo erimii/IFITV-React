@@ -37,7 +37,8 @@ const SidebarHeader = ({
   currentUser,
   profiles,
   setSelectedProfile,
-  setCurrentProfileId
+  setCurrentProfileId,
+  onEditProfile
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -312,24 +313,16 @@ const SidebarHeader = ({
             <div className="sidebar-dropdown-menu">
               <button
                 className="sidebar-dropdown-item"
-                onClick={() => {
-                  setSettingsDropdownOpen(false);
-                  onSwitchProfile?.();
-                }}
+                onClick={onEditProfile}
                 type="button"
-                style={{ textAlign: 'left', paddingLeft: 18 }}
               >
                 프로필 수정
               </button>
               <div className="dropdown-divider" />
               <button
                 className="sidebar-dropdown-item"
-                onClick={() => {
-                  setSettingsDropdownOpen(false);
-                  onLogout?.();
-                }}
+                onClick={onLogout}
                 type="button"
-                style={{ textAlign: 'left', paddingLeft: 18 }}
               >
                 로그아웃
               </button>
