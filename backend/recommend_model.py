@@ -136,6 +136,7 @@ def hybrid_recommend_with_reason(title, top_n=5, alpha=0.7, genre_weight=0.1):
             "title": df.iloc[i]["title"],
             "subgenre": df.iloc[i]["subgenre"],
             "thumbnail": df.iloc[i]["thumbnail"],
+            "description": df.iloc[i]["description"],
             "추천 근거": ""
         }
         if genres:
@@ -211,7 +212,7 @@ def fast_hybrid_recommend(title, top_n=5, alpha=0.7, genre_weight=0.1):
 
     return pd.DataFrame(results)
 
-def multi_title_fast_hybrid_recommend(titles, top_n=5, alpha=0.7, genre_weight=0.1):
+def multi_title_fast_hybrid_recommend(titles, top_n=10, alpha=0.7, genre_weight=0.1):
     base_indices = [title_to_index[title] for title in titles if title in title_to_index]
     if not base_indices:
         return pd.DataFrame([])

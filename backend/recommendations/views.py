@@ -189,7 +189,7 @@ def liked_based_recommend(request):
 
         if len(titles) > 0:
             try:
-                rec_df = multi_title_fast_hybrid_recommend(titles, top_n=5)
+                rec_df = multi_title_fast_hybrid_recommend(titles, top_n=10)
                 unique_df = rec_df.drop_duplicates(subset="title").fillna("")
                 results[genre] = unique_df.to_dict(orient="records")
             except Exception as e:
@@ -212,7 +212,6 @@ def recommend_with_detail(request):
         return Response({"error": "title은 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-
         content = Content.objects.filter(title=title).first()
 
         # 해당 콘텐츠가 찜되어 있는지 확인
@@ -221,7 +220,7 @@ def recommend_with_detail(request):
             content_id=content.id
         ).exists()
 
-        result_df = multi_title_fast_hybrid_recommend(title, top_n=top_n, alpha=alpha)
+        result_df = fast_hybrid_recommend(title, top_n=top_n, alpha=alpha)
 
         # 기준 콘텐츠 정보 가져오기
         from recommend_model import df  # df 로딩 위치 주의
