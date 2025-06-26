@@ -30,6 +30,8 @@ const GENRE_CATEGORIES = [
   { id: 'drama', name: 'Drama' }
 ];
 
+const menus = ['홈', 'LIVE', 'VOD', 'My List'];
+
 const SidebarHeader = ({
   onLogout,
   onSwitchProfile,
@@ -38,7 +40,9 @@ const SidebarHeader = ({
   profiles,
   setSelectedProfile,
   setCurrentProfileId,
-  onEditProfile
+  onEditProfile,
+  selectedMenu,
+  onSelect
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -48,7 +52,6 @@ const SidebarHeader = ({
   const [vodDropdownOpen, setVodDropdownOpen] = useState(false);
   const [genreDropdownOpen, setGenreDropdownOpen] = useState(false);
   const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
-  const [profileSwitchOpen, setProfileSwitchOpen] = useState(false);
 
   const [isGestureModalOpen, setIsGestureModalOpen] = useState(false);
 
@@ -104,80 +107,66 @@ const SidebarHeader = ({
     setTimeout(() => setGenreDropdownOpen(false), 0);
   };
 
-  const handleProfileEdit = () => {
-    setSettingsDropdownOpen(false);
-    onSwitchProfile?.();
-  };
-  const handleLogoutClick = () => {
-    setSettingsDropdownOpen(false);
-    onLogout?.();
-  };
-
-  // 프로필 아이콘 클릭 시 모달 열기
-  const handleProfileIconClick = () => {
-    setProfileSwitchOpen(true);
-  };
-
-  // 모달 닫기
-  const handleCloseProfileSwitch = () => {
-    setProfileSwitchOpen(false);
-  };
-
-  // 프로필 전환 핸들러
-  const handleSwitchProfile = (profile) => {
-    setSelectedProfile?.(profile);
-    setCurrentProfileId?.(profile.id);
-    setProfileSwitchOpen(false);
-    // 필요하다면 navigate('/') 등 추가
-  };
-
   return (
     <aside className="sidebar-header">
       <div className="sidebar-logo">
         IFITV
       </div>
-      <nav className="sidebar-nav">
-        <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Home</Link>
-        {/* Live 메뉴 드롭다운 */}
+      <nav className="sidebar-nav"> 
         <div
-          className="sidebar-dropdown"
-          onMouseEnter={() => setLiveDropdownOpen(true)}
-          onMouseLeave={() => setLiveDropdownOpen(false)}
+            className={`sidebar-dropdown-toggle ${selectedMenu === '홈' ? 'active' : ''}`}
+            onClick={() => onSelect('홈')}
         >
-          <Link to="/live" className={location.pathname.startsWith('/live') ? 'active' : ''}>
-            Live
-          </Link>
-          {liveDropdownOpen && (
-            <div className="sidebar-dropdown-menu">
-              {LIVE_CATEGORIES.map((category, idx) => (
-                <React.Fragment key={category.id}>
-                  <button
-                    className={
-                      'sidebar-dropdown-item' +
-                      (selectedLiveCategory === category.id ? ' active' : '')
-                    }
-                    onClick={() => handleLiveCategoryClick(category.id)}
-                    type="button"
-                  >
-                    {category.name}
-                  </button>
-                  {idx !== LIVE_CATEGORIES.length - 1 && (
-                    <div className="dropdown-divider" />
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
-          )}
+            Home
         </div>
+        {/* Live 메뉴 */}
+        <div
+            className="sidebar-dropdown"
+            onMouseEnter={() => setLiveDropdownOpen(true)}
+            onMouseLeave={() => setLiveDropdownOpen(false)}
+            >
+            <div
+                className={`sidebar-dropdown-toggle ${selectedMenu === 'LIVE' ? 'active' : ''}`}
+                onClick={() => onSelect('LIVE')}
+            >
+                Live
+            </div>
+
+            {liveDropdownOpen && (
+                <div className="sidebar-dropdown-menu">
+                {LIVE_CATEGORIES.map((category, idx) => (
+                    <React.Fragment key={category.id}>
+                    <button
+                        className={
+                        'sidebar-dropdown-item' +
+                        (selectedLiveCategory === category.id ? ' active' : '')
+                        }
+                        onClick={() => handleLiveCategoryClick(category.id)}
+                        type="button"
+                    >
+                        {category.name}
+                    </button>
+                    {idx !== LIVE_CATEGORIES.length - 1 && (
+                        <div className="dropdown-divider" />
+                    )}
+                    </React.Fragment>
+                ))}
+                </div>
+            )}
+        </div>
+
         {/* VOD 메뉴 드롭다운 */}
         <div
           className="sidebar-dropdown"
           onMouseEnter={() => setVodDropdownOpen(true)}
           onMouseLeave={() => setVodDropdownOpen(false)}
         >
-          <Link to="/vod" className={location.pathname.startsWith('/vod') ? 'active' : ''}>
+          <div
+            className={`sidebar-dropdown-toggle ${selectedMenu === 'VOD' ? 'active' : ''}`}
+            onClick={() => onSelect('VOD')}
+            >
             VOD
-          </Link>
+          </div>
           {vodDropdownOpen && (
             <div className="sidebar-dropdown-menu">
               {VOD_CATEGORIES.map((category, idx) => (
@@ -206,9 +195,12 @@ const SidebarHeader = ({
           onMouseEnter={() => setGenreDropdownOpen(true)}
           onMouseLeave={() => setGenreDropdownOpen(false)}
         >
-          <Link to="/genres" className={location.pathname.startsWith('/genres') ? 'active' : ''}>
+          <div
+            className={`sidebar-dropdown-toggle ${selectedMenu === 'Genres' ? 'active' : ''}`}
+            onClick={() => {}}
+            >
             Genres
-          </Link>
+          </div>
           {genreDropdownOpen && (
             <div className="sidebar-dropdown-menu">
               {GENRE_CATEGORIES.map((category, idx) => (
@@ -231,7 +223,12 @@ const SidebarHeader = ({
             </div>
           )}
         </div>
-        <Link to="/mylist" className={location.pathname === '/mylist' ? 'active' : ''}>My List</Link>
+        <div
+            className={`sidebar-dropdown-toggle ${selectedMenu === 'My List' ? 'active' : ''}`}
+            onClick={() => onSelect('My List')}
+        >
+            My List
+        </div>
       </nav>
       <div className="sidebar-search">
         <span

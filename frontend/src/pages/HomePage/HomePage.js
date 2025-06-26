@@ -5,16 +5,16 @@ import ContentDetailModal from "../../components/ContentDetailModal/ContentDetai
 import HorizontalSlider from '../../components/HorizontalSlider';
 import SideNav from '../../components/SideNav';
 import SidebarHeader from '../../components/SidebarHeader/SidebarHeader';
-import GestureModal from '../../components/GestureModal/GestureModal';
-import SettingsDropdown from '../../components/SettingsDropdown';
+
 import './HomePage.css'
 
 function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const selectedMenuParam = queryParams.get('menu') || '홈';
   const [profiles, setProfiles] = useState([]);
+  const [selectedMenuParam, setSelectedMenuParam] = useState("홈");
+  
 
   const [vodContents, setVodContents] = useState([]);
   const [myListContents, setMyListContents] = useState([]);
@@ -209,6 +209,8 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
         setSelectedProfile={setSelectedProfile}
         setCurrentProfileId={(id) => {}}
         onEditProfile={() => navigate("/select-profile")}
+        selectedMenu={selectedMenuParam}
+        onSelect={setSelectedMenuParam}
       />
       <div className="welcome-section">
         <h1>
@@ -218,11 +220,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
       </div>
 
       <div style={{ display: 'flex' }}>
-      <SideNav
-        selectedMenu={selectedMenuParam}
-        onSelect={(menu) => navigate(`/home${menu === '홈' ? '' : `?menu=${menu}`}`)}
-      />
-      
+
       <div style={{ padding: '2rem' }}>
 
       {loading && <p>...loading...</p>}
