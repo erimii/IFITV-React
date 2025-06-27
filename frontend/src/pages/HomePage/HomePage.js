@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ContentDetailModal from "../../components/ContentDetailModal/ContentDetailModal";
 import HorizontalSlider from '../../components/HorizontalSlider';
-import SideNav from '../../components/SideNav';
+import MyList from '../../components/MyList/MyList';
 import SidebarHeader from '../../components/SidebarHeader/SidebarHeader';
 
 import './HomePage.css'
@@ -203,27 +203,27 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
     <div className="home-page">
       <SidebarHeader
         currentProfile={profile}
-        currentUser={user}
         profiles={profiles}
         onLogout={onLogout}
         setSelectedProfile={setSelectedProfile}
-        setCurrentProfileId={(id) => {}}
         onEditProfile={() => navigate("/select-profile")}
         selectedMenu={selectedMenuParam}
         onSelect={setSelectedMenuParam}
       />
-      <div className="welcome-section">
-        <h1>
-          Welcome, {profile.name}!
-        </h1>
-        <p>Continue Watching where you left off</p>
-      </div>
+      {selectedMenuParam === "홈" && (
+        <div className="welcome-section">
+          <h1>
+            Welcome, {profile.name}!
+          </h1>
+          <p>Continue Watching where you left off</p>
+        </div>
+      )}
+      {selectedMenuParam === "My List" && <MyList myListContents={myListContents} onClick={handleClick} />}
+
 
       <div style={{ display: 'flex' }}>
 
-      <div style={{ padding: '2rem' }}>
-
-      {loading && <p>...loading...</p>}
+      <div>
 
       <ContentDetailModal
         content={selectedContent}
@@ -292,31 +292,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
         </>
       )}
 
-      {selectedMenuParam === "My List" && (
-        <>
-          <h2 style={{ fontWeight: "bold", marginBottom: "1rem" }}>💖 찜한 콘텐츠</h2>
-          {myListContents.length === 0 ? (
-            <p>아직 좋아요한 콘텐츠가 없습니다.</p>
-          ) : (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-              gap: '1rem'
-            }}>
-              {myListContents.map((content, idx) => (
-                <div key={idx} style={{ cursor: 'pointer' }} onClick={() => handleClick(content.title)}>
-                  <img
-                    src={content.thumbnail}
-                    alt={content.title}
-                    style={{ width: '100%', borderRadius: '8px' }}
-                  />
-                  <p style={{ marginTop: '0.5rem', fontWeight: 500 }}>{content.title}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      )}
+
 
     </div>
     </div>

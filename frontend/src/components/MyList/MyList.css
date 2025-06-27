@@ -1,0 +1,68 @@
+.mylist-page {
+    width: 100%;
+    min-height: 100vh;
+    padding: 40px 60px;
+    background: #111;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+  
+  .mylist-header {
+    color: #fff;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+    text-align: left;
+    padding-left: 2px;
+  }
+  
+  /* 카드 리스트 */
+  .mylist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr))
+  }
+  
+  
+  /* 카드 스타일 통일 (content-card) */
+  .content-card {
+    min-width: unset;
+    border-radius: 12px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+    transition: box-shadow 0.18s, border-color 0.18s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    padding: 12px 8px 8px 8px;
+    border: 1px solid #ccc;
+    background-color: #1a1a1a;
+    margin-bottom: 30px;
+  }
+  
+  .content-card:hover {
+    border: 2px solid #ec008c;
+    background-color: #ec008c;
+  }
+  
+  .content-card img {
+    width: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 6px;
+  }
+  
+  .content-card-title {
+    font-weight: 500;
+    font-size: 1rem;
+    text-align: center;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    width: 100%;
+  }
+  

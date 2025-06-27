@@ -30,16 +30,11 @@ const GENRE_CATEGORIES = [
   { id: 'drama', name: 'Drama' }
 ];
 
-const menus = ['홈', 'LIVE', 'VOD', 'My List'];
-
 const SidebarHeader = ({
   onLogout,
-  onSwitchProfile,
   currentProfile,
-  currentUser,
   profiles,
   setSelectedProfile,
-  setCurrentProfileId,
   onEditProfile,
   selectedMenu,
   onSelect
