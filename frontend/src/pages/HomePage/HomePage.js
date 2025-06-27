@@ -4,6 +4,7 @@ import axios from 'axios';
 import ContentDetailModal from "../../components/ContentDetailModal/ContentDetailModal";
 import HorizontalSlider from '../../components/HorizontalSlider';
 import MyList from '../../components/MyList/MyList';
+import VODList from '../../components/VODList/VODList';
 import SidebarHeader from '../../components/SidebarHeader/SidebarHeader';
 
 import './HomePage.css'
@@ -219,7 +220,8 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
         </div>
       )}
       {selectedMenuParam === "My List" && <MyList myListContents={myListContents} onClick={handleClick} />}
-
+      {selectedMenuParam === "VOD" && (<VODList vodContents={vodContents} onClick={handleClick} loaderRef={loaderRef} />
+)}
 
       <div style={{ display: 'flex' }}>
 
@@ -266,29 +268,6 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
               onCardClick={handleLiveClick}
             />
           )}
-        </>
-      )}
-
-      {selectedMenuParam === "VOD" && (
-        <>
-          <h2 style={{ fontWeight: "bold", marginBottom: "1rem" }}>전체 VOD 콘텐츠</h2>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-            gap: '1rem'
-          }}>
-            {vodContents.map((content, idx) => (
-              <div key={idx} style={{ cursor: 'pointer' }} onClick={() => handleClick(content.title)}>
-                <img
-                  src={content.thumbnail}
-                  alt={content.title}
-                  style={{ width: '100%', borderRadius: '8px' }}
-                />
-                <p style={{ marginTop: '0.5rem', fontWeight: 500 }}>{content.title}</p>
-              </div>
-            ))}
-          </div>
-          <div ref={loaderRef} style={{ height: "1px" }} />
         </>
       )}
 
