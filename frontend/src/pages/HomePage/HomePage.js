@@ -292,22 +292,11 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
         </>
       )}
 
-
-
     </div>
     </div>
     </div>
 
   );
 }
-
-const subButtonStyle = {
-  padding: "0.5rem 1rem",
-  borderRadius: "8px",
-  border: "none",
-  cursor: "pointer",
-  fontWeight: "bold",
-  backgroundColor:'white'
-};
 
 export default HomePage;

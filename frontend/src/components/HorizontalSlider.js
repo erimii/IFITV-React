@@ -26,7 +26,7 @@ function HorizontalSlider({ title, items, onCardClick }) {
 
   return (
     <div style={{ position: "relative", marginBottom: "2rem" }}>
-      <h2 style={{ margin: "0 0 1rem 0" }}>{title}</h2>
+      <h2 style={{ margin: "0 0 1rem 0", color:'white' }}>{title}</h2>
 
       {/* 슬라이드 영역 */}
       <div
@@ -63,7 +63,7 @@ function HorizontalSlider({ title, items, onCardClick }) {
                 boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
               }}
             />
-            <p style={{ marginTop: "0.5rem", fontWeight: "bold" }}>{item.title}</p>
+            <p style={{ marginTop: "0.5rem", fontWeight: "bold", color:'white' }}>{item.title}</p>
             {item.airtime && (
               <p style={{ marginTop: "0.2rem", color: "#555", fontSize: "0.85rem" }}>
                 {formatAirtime(item.airtime)}

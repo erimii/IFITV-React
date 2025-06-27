@@ -27,10 +27,10 @@ const MyList = ({ myListContents, onClick }) => {
             <div
               key={item.id}
               onClick={() => toggleContent(item)}
-              className={"content-card"}
+              className={"mylist-card"}
             >
               <img src={item.thumbnail} alt={item.title} />
-              <div className="content-card-title">{item.title}</div>
+              <div className="mylist-card-title">{item.title}</div>
             </div>
           ))}
         </div>
