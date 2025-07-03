@@ -10,7 +10,7 @@ from utils import load_today_programs, is_current_or_future_program
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from contents.models import Content, Subgenre
+from contents.models import Content, Subgenre, Genre
 from .constants import subgenre_mapping
 from django.db.models import Q
 from contents.models import Content 
@@ -21,8 +21,13 @@ from profiles.models import WatchHistory
 def all_vod_contents(request):
     page = int(request.GET.get('page', 1))
     per_page = 30
+    subgenre_id = request.GET.get('subgenre_id')
 
     contents = Content.objects.all()
+
+    if subgenre_id:
+        contents = contents.filter(subgenres__id=subgenre_id).distinct()
+
     paginator = Paginator(contents, per_page)
     page_obj = paginator.get_page(page)
 
@@ -42,6 +47,28 @@ def all_vod_contents(request):
         "has_next": page_obj.has_next(),
         "next_page": page + 1 if page_obj.has_next() else None
     })
+
+# home > vod > genre > subgenre 필터링위한 api
+@api_view(['GET'])
+def get_genres_with_subgenres(request):
+    genres = Genre.objects.prefetch_related('subgenres').all()
+
+    data = [
+        {
+            "id": genre.id,
+            "name": genre.name,
+            "subgenres": [
+                {
+                    "id": sub.id,
+                    "name": sub.name
+                }
+                for sub in genre.subgenres.all()
+            ]
+        }
+        for genre in genres
+    ]
+
+    return Response(data)
 
 # 프로필 생성 시 1. 장르에 해당하는 서브장르 가져오기
 @api_view(['GET'])

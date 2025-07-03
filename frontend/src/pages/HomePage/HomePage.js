@@ -35,6 +35,8 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   const [page, setPage] = useState(1);
   const [hasNext, setHasNext] = useState(true);
   const loaderRef = useRef();
+
+  const [selectedSubgenre, setSelectedSubgenre] = useState(null);
   
   // 프로필 최신 목록 불러오기
   useEffect(() => {
@@ -55,12 +57,15 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   useEffect(() => {
     const fetchVOD = async () => {
       if (!profile || selectedMenuParam !== "VOD" || !hasNext) return;
-      const res = await axios.get(`http://localhost:8000/recommendation/all_vod_contents/?page=${page}`);
+  
+      const subParam = selectedSubgenre ? `&subgenre_id=${selectedSubgenre.id}` : "";
+      const res = await axios.get(`http://localhost:8000/recommendation/all_vod_contents/?page=${page}${subParam}`);
       setVodContents(prev => [...prev, ...res.data.results]);
       setHasNext(res.data.has_next);
     };
     fetchVOD();
-  }, [selectedMenuParam, page, profile, hasNext]);
+  }, [selectedMenuParam, page, profile, hasNext, selectedSubgenre]);
+  
 
   // 좋아요 한 콘텐츠 가져오기
   useEffect(() => {
@@ -199,6 +204,15 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
       ? `🔔 "${title}" 보러가기!`
       : `📅 "${title}" 시청 예약하기!`);
   };
+
+  // vod - 서브장르 선택 시
+  const handleSubgenreSelect = (sub) => {
+    setSelectedMenuParam("VOD");
+    setSelectedSubgenre(sub);
+    setVodContents([]); // 초기화
+    setPage(1);
+    setHasNext(true);
+  };
   
   return (
     <div className="home-page">
@@ -210,6 +224,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
         onEditProfile={() => navigate("/select-profile")}
         selectedMenu={selectedMenuParam}
         onSelect={setSelectedMenuParam}
+        handleSubgenreSelect={handleSubgenreSelect}
       />
       {selectedMenuParam === "홈" && (
         <div className="welcome-section">
@@ -220,7 +235,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
         </div>
       )}
       {selectedMenuParam === "My List" && <MyList myListContents={myListContents} onClick={handleClick} />}
-      {selectedMenuParam === "VOD" && (<VODList vodContents={vodContents} onClick={handleClick} loaderRef={loaderRef} />
+      {selectedMenuParam === "VOD" && (<VODList vodContents={vodContents} onClick={handleClick} loaderRef={loaderRef} selectedSubgenre={selectedSubgenre} />
 )}
 
       <div style={{ display: 'flex' }}>

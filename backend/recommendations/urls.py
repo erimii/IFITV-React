@@ -9,5 +9,5 @@ urlpatterns = [
     path('all_vod_contents/', views.all_vod_contents),
     path('save_watch_history/', views.save_watch_history),
     path('watch_history/<int:profile_id>/', views.watch_history_by_profile),
-    
+    path('genres_with_subgenres/', views.get_genres_with_subgenres, name='get_genres_with_subgenres'),
 ]

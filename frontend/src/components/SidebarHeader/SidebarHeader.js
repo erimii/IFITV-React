@@ -29,7 +29,8 @@ const SidebarHeader = ({
   setSelectedProfile,
   onEditProfile,
   selectedMenu,
-  onSelect
+  onSelect,
+  handleSubgenreSelect,
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -43,21 +44,23 @@ const SidebarHeader = ({
   const [isGestureModalOpen, setIsGestureModalOpen] = useState(false);
 
  /* 후버 후버 구조를 위해,, */
-  const [subgenresByGenre, setSubgenresByGenre] = useState({});
+  const [subgenresByGenre, setSubgenresByGenre] = useState([]);
   const [hoveredGenre, setHoveredGenre] = useState(null);
 
   useEffect(() => {
-    const fetchSubgenres = async () => {
+    const fetchGenresWithSubgenres = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/recommendation/subgenres/");
-        setSubgenresByGenre(res.data);
-        console.log("서브장르 응답 확인", res.data);
+        const res = await axios.get("http://localhost:8000/recommendation/genres_with_subgenres/");
+        setSubgenresByGenre(res.data); // 변수 이름은 그대로 써도 되고, 바꾸고 싶으면 같이 수정
+        console.log("장르 + 서브장르 응답 확인", res.data);
       } catch (error) {
-        console.error("서브장르 가져오기 오류:", error);
+        console.error("장르 + 서브장르 가져오기 오류:", error);
       }
     };
-    fetchSubgenres();
+  
+    fetchGenresWithSubgenres();
   }, []);
+  
 
   const settingsRef = useRef();
 
@@ -181,31 +184,37 @@ const SidebarHeader = ({
               }}
             >
               <div className="sidebar-flyout-menu">
-                {Object.keys(subgenresByGenre).map((genreName) => (
+                {subgenresByGenre.map((genreObj) => (
                   <div
-                    key={genreName}
+                    key={genreObj.id}
                     className="sidebar-flyout-group"
-                    onMouseEnter={() => setHoveredGenre(genreName)}
+                    onMouseEnter={() => setHoveredGenre(genreObj.id)}
                   >
                     <button
                       className={`sidebar-flyout-item ${
-                        hoveredGenre === genreName ? 'active' : ''
+                        hoveredGenre === genreObj.id ? 'active' : ''
                       }`}
                     >
-                      {genreName}
+                      {genreObj.name}
                     </button>
                   </div>
                 ))}
               </div>
 
-              {/* 서브장르 영역도 wrapper 안에 같이 넣는다 */}
+              {/* 서브장르 영역도 wrapper 안에 같이 넣음 */}
               {hoveredGenre && (
                 <div className="sidebar-subgenre-menu">
-                  {subgenresByGenre[hoveredGenre]?.map((sub) => (
-                    <button key={sub.id} className="sidebar-flyout-item">
-                      {sub.name}
-                    </button>
-                  ))}
+                  {subgenresByGenre
+                    .find((g) => g.id === hoveredGenre)
+                    ?.subgenres.map((sub) => (
+                      <button
+                        key={sub.id}
+                        className="sidebar-flyout-item"
+                        onClick={() => handleSubgenreSelect(sub)}
+                      >
+                        {sub.name}
+                      </button>
+                    ))}
                 </div>
               )}
             </div>
