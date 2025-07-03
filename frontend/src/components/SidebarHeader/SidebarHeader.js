@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import GestureModal from '../GestureModal/GestureModal';
-
+import axios from 'axios';
 import './SidebarHeader.css';
 
 const LIVE_CATEGORIES = [
@@ -10,14 +10,6 @@ const LIVE_CATEGORIES = [
   { id: 'drama', name: 'Drama' },
   { id: 'sports', name: 'Sports' },
   { id: 'music', name: 'Music' },
-  { id: 'talkshow', name: 'Talk Show' }
-];
-
-const VOD_CATEGORIES = [
-  { id: 'all', name: 'All' },
-  { id: 'news', name: 'News' },
-  { id: 'drama', name: 'Drama' },
-  { id: 'sports', name: 'Sports' },
   { id: 'talkshow', name: 'Talk Show' }
 ];
 
@@ -49,6 +41,23 @@ const SidebarHeader = ({
   const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
 
   const [isGestureModalOpen, setIsGestureModalOpen] = useState(false);
+
+ /* 후버 후버 구조를 위해,, */
+  const [subgenresByGenre, setSubgenresByGenre] = useState({});
+  const [hoveredGenre, setHoveredGenre] = useState(null);
+
+  useEffect(() => {
+    const fetchSubgenres = async () => {
+      try {
+        const res = await axios.get("http://localhost:8000/recommendation/subgenres/");
+        setSubgenresByGenre(res.data);
+        console.log("서브장르 응답 확인", res.data);
+      } catch (error) {
+        console.error("서브장르 가져오기 오류:", error);
+      }
+    };
+    fetchSubgenres();
+  }, []);
 
   const settingsRef = useRef();
 
@@ -154,36 +163,60 @@ const SidebarHeader = ({
         <div
           className="sidebar-dropdown"
           onMouseEnter={() => setVodDropdownOpen(true)}
-          onMouseLeave={() => setVodDropdownOpen(false)}
+          onMouseLeave={() => {
+            setVodDropdownOpen(false);
+            setHoveredGenre(null); // 마우스 나가면 서브장르도 닫음
+          }}
         >
           <div
             className={`sidebar-dropdown-toggle ${selectedMenu === 'VOD' ? 'active' : ''}`}
             onClick={() => onSelect('VOD')}
-            >
+          >
             VOD
           </div>
+
           {vodDropdownOpen && (
-            <div className="sidebar-dropdown-menu">
-              {VOD_CATEGORIES.map((category, idx) => (
-                <React.Fragment key={category.id}>
-                  <button
-                    className={
-                      'sidebar-dropdown-item' +
-                      (selectedVodCategory === category.id ? ' active' : '')
-                    }
-                    onClick={() => handleVodCategoryClick(category.id)}
-                    type="button"
+            <div
+              className="vod-dropdown-wrapper"
+              onMouseLeave={() => {
+                setVodDropdownOpen(false);
+                setHoveredGenre(null);
+              }}
+            >
+              <div className="sidebar-dropdown-menu">
+                {Object.keys(subgenresByGenre).map((genreName) => (
+                  <div
+                    key={genreName}
+                    className="sidebar-dropdown-wrapper"
+                    onMouseEnter={() => setHoveredGenre(genreName)}
                   >
-                    {category.name}
-                  </button>
-                  {idx !== VOD_CATEGORIES.length - 1 && (
-                    <div className="dropdown-divider" />
-                  )}
-                </React.Fragment>
-              ))}
+                    <button
+                      className={`sidebar-dropdown-item ${
+                        hoveredGenre === genreName ? 'active' : ''
+                      }`}
+                    >
+                      {genreName}
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* 서브장르 영역도 wrapper 안에 같이 넣는다 */}
+              {hoveredGenre && (
+                <div className="sidebar-subgenre-menu">
+                  {subgenresByGenre[hoveredGenre]?.map((sub) => (
+                    <button key={sub.id} className="sidebar-dropdown-item">
+                      {sub.name}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
+
         </div>
+
+
         {/* Genres 메뉴 드롭다운 */}
         <div
           className="sidebar-dropdown"
@@ -253,31 +286,31 @@ const SidebarHeader = ({
 
       <div className="sidebar-profile">
         <div className="sidebar-gesture">
-            <button
-            onClick={() => setIsGestureModalOpen(true)}
-            className="gesture-button"
-            aria-label="프로필 제스처 전환"
-            >
-            <span>
-            {currentProfile?.gesture === "scissors" && "✌️"}
-            {currentProfile?.gesture === "rock" && "✊"}
-            {currentProfile?.gesture === "paper" && "🖐"}
-            {currentProfile?.gesture === "ok" && "👌"}
-            </span>
+          <button
+          onClick={() => setIsGestureModalOpen(true)}
+          className="gesture-button"
+          aria-label="프로필 제스처 전환"
+          >
+          <span>
+          {currentProfile?.gesture === "scissors" && "✌️"}
+          {currentProfile?.gesture === "rock" && "✊"}
+          {currentProfile?.gesture === "paper" && "🖐"}
+          {currentProfile?.gesture === "ok" && "👌"}
+          </span>
 
-            </button>
-            <div className="profile-name">{currentProfile.name}</div>
-            {isGestureModalOpen && (
-                <GestureModal
-                  profiles={profiles}
-                  currentProfile={currentProfile}
-                  onClose={() => setIsGestureModalOpen(false)}
-                  onRecognized={(matchedProfile) => {
-                    setSelectedProfile?.(matchedProfile);
-                    setIsGestureModalOpen(false);
-                    navigate("/home");
-                }}
-                />
+          </button>
+          <div className="profile-name">{currentProfile.name}</div>
+          {isGestureModalOpen && (
+              <GestureModal
+                profiles={profiles}
+                currentProfile={currentProfile}
+                onClose={() => setIsGestureModalOpen(false)}
+                onRecognized={(matchedProfile) => {
+                  setSelectedProfile?.(matchedProfile);
+                  setIsGestureModalOpen(false);
+                  navigate("/home");
+              }}
+              />
             )}
         </div>
 

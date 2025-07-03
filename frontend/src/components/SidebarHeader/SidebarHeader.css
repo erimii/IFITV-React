@@ -65,7 +65,7 @@
     cursor: pointer
   }
   
-  /* 세로 드롭다운 */
+  /* 가로 드롭다운 */
   .sidebar-dropdown {
     position: relative;
     width: 100%;
@@ -130,6 +130,79 @@
     background: #232332;
     color: #ec008c;
   }
+
+
+
+
+
+  .sidebar-dropdown-wrapper {
+    position: relative;
+    width: 100%;
+  }
+  
+  .sidebar-subgenre-menu {
+    position: fixed;
+    top: 0;
+    left: 300px; /* 사이드바 너비와 동일하게 */
+    height: 100vh;
+    width: 150px;
+    background: #181818;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 0 18px 0;
+    border-right: 1px solid #232323;
+    box-sizing: border-box;
+    z-index: 200;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.10);
+  }
+  
+  .sidebar-subgenre-menu button {
+    background: none;
+    border: none;
+    outline: none;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 0;
+    width: 100%;
+    text-align: center;
+    font-size: 1.15rem;
+    border-radius: 8px;
+    margin-bottom: 2px;
+    transition: background 0.18s, color 0.18s;
+    cursor: pointer;
+    box-shadow: none;
+    font-family: inherit;
+    appearance: none;
+    text-align: left;
+    padding-left: 18px;
+  }
+  
+  .sidebar-subgenre-menu button:hover {
+    background: #232332;
+    color: #ec008c;
+  }
+  
+  
+
+  .genre-dropdown-wrapper:hover .sidebar-dropdown-item {
+    background: #232332;
+    color: #ec008c;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
   
   .settings-gear-btn {
     background: none;
