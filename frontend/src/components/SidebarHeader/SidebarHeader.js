@@ -101,11 +101,6 @@ const SidebarHeader = ({
     setTimeout(() => setLiveDropdownOpen(false), 0);
   };
 
-  const handleVodCategoryClick = (id) => {
-    navigate(`/vod?category=${id}`);
-    setTimeout(() => setVodDropdownOpen(false), 0);
-  };
-
   const handleGenreCategoryClick = (id) => {
     navigate(`/genres?category=${id}`);
     setTimeout(() => setGenreDropdownOpen(false), 0);
@@ -161,7 +156,7 @@ const SidebarHeader = ({
 
         {/* VOD 메뉴 드롭다운 */}
         <div
-          className="sidebar-dropdown"
+          className="sidebar-flyout"
           onMouseEnter={() => setVodDropdownOpen(true)}
           onMouseLeave={() => {
             setVodDropdownOpen(false);
@@ -169,7 +164,9 @@ const SidebarHeader = ({
           }}
         >
           <div
-            className={`sidebar-dropdown-toggle ${selectedMenu === 'VOD' ? 'active' : ''}`}
+            className={`sidebar-flyout-toggle ${
+              selectedMenu === 'VOD' || vodDropdownOpen ? 'active' : ''
+            }`}
             onClick={() => onSelect('VOD')}
           >
             VOD
@@ -177,21 +174,21 @@ const SidebarHeader = ({
 
           {vodDropdownOpen && (
             <div
-              className="vod-dropdown-wrapper"
+              className="vod-flyout-wrapper"
               onMouseLeave={() => {
                 setVodDropdownOpen(false);
                 setHoveredGenre(null);
               }}
             >
-              <div className="sidebar-dropdown-menu">
+              <div className="sidebar-flyout-menu">
                 {Object.keys(subgenresByGenre).map((genreName) => (
                   <div
                     key={genreName}
-                    className="sidebar-dropdown-wrapper"
+                    className="sidebar-flyout-group"
                     onMouseEnter={() => setHoveredGenre(genreName)}
                   >
                     <button
-                      className={`sidebar-dropdown-item ${
+                      className={`sidebar-flyout-item ${
                         hoveredGenre === genreName ? 'active' : ''
                       }`}
                     >
@@ -205,7 +202,7 @@ const SidebarHeader = ({
               {hoveredGenre && (
                 <div className="sidebar-subgenre-menu">
                   {subgenresByGenre[hoveredGenre]?.map((sub) => (
-                    <button key={sub.id} className="sidebar-dropdown-item">
+                    <button key={sub.id} className="sidebar-flyout-item">
                       {sub.name}
                     </button>
                   ))}

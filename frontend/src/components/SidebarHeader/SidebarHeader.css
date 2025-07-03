@@ -131,10 +131,6 @@
     color: #ec008c;
   }
 
-
-
-
-
   .sidebar-dropdown-wrapper {
     position: relative;
     width: 100%;
@@ -183,14 +179,6 @@
     background: #232332;
     color: #ec008c;
   }
-  
-  
-
-  .genre-dropdown-wrapper:hover .sidebar-dropdown-item {
-    background: #232332;
-    color: #ec008c;
-  }
-
 
 
 
@@ -336,3 +324,145 @@ color: #ec008c;
     overflow-x: hidden;
     margin-left: 150px;
   }
+
+
+
+
+
+  /* flyout으로 다시 */
+  /* 사이드 플라이아웃 메뉴 */
+
+.sidebar-flyout {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sidebar-flyout-toggle {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.15rem;
+  font-weight: 500;
+  padding: 15px 0;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
+  text-align: center;
+  width: 100%;
+  cursor: pointer;
+}
+
+.sidebar-flyout-toggle.active {
+  background: #232332;
+  color: #ec008c;
+  cursor: pointer;
+}
+
+.sidebar-flyout-toggle:hover {
+  background: #303030;
+  color: #ec008c;
+  cursor: pointer;
+}
+
+.vod-flyout-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.sidebar-flyout-menu {
+  position: fixed;
+  top: 0;
+  left: 150px;
+  height: 100vh;
+  width: 150px;
+  background: #181818;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0 18px 0;
+  border-right: 1px solid #232323;
+  box-sizing: border-box;
+  z-index: 200;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.10);
+}
+
+.sidebar-flyout-item {
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 0;
+  width: 100%;
+  text-align: center;
+  font-size: 1.15rem;
+  border-radius: 8px;
+  margin-bottom: 2px;
+  transition: background 0.18s, color 0.18s;
+  cursor: pointer;
+  box-shadow: none;
+  font-family: inherit;
+  appearance: none;
+  text-align: left;
+  padding-left: 18px;
+}
+
+.sidebar-flyout-item:hover,
+.sidebar-flyout-item:active,
+.sidebar-flyout-item:focus,
+.sidebar-flyout-item.active {
+  background: #303030;
+  color: #ec008c;
+}
+
+.sidebar-flyout-group {
+  position: relative;
+  width: 100%;
+}
+
+.sidebar-subgenre-menu {
+  position: fixed;
+  top: 0;
+  left: 300px;
+  height: 100vh;
+  width: 150px;
+  background: #181818;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0 18px 0;
+  border-right: 1px solid #232323;
+  box-sizing: border-box;
+  z-index: 200;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.10);
+}
+
+.sidebar-subgenre-menu button {
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 0;
+  width: 100%;
+  text-align: center;
+  font-size: 1.15rem;
+  border-radius: 8px;
+  margin-bottom: 2px;
+  transition: background 0.18s, color 0.18s;
+  cursor: pointer;
+  box-shadow: none;
+  font-family: inherit;
+  appearance: none;
+  text-align: left;
+  padding-left: 18px;
+}
+
+.sidebar-subgenre-menu button:hover {
+  background: #303030;
+  color: #ec008c;
+}
