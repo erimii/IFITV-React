@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from contents.models import Content, Subgenre
+from contents.models import VodContent, Subgenre
 
 class Profile(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='user_id', on_delete=models.CASCADE)
@@ -25,21 +25,20 @@ class ProfilePreferredSubgenre(models.Model):
         managed = False
 
 
-class ProfileLikedContent(models.Model):
+class ProfileLikedVODContent(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    content = models.ForeignKey(Content, on_delete=models.CASCADE)
+    content = models.ForeignKey(VodContent, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'profile_liked_contents'
+        db_table = 'profile_liked_vod_contents'
         unique_together = ('profile', 'content')
         managed = False
 
-class WatchHistory(models.Model):
+class VODWatchHistory(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    content = models.ForeignKey(Content, on_delete=models.CASCADE)
-    watched_at = models.DateTimeField(auto_now_add=True)
-    duration = models.IntegerField(null=True, blank=True)
+    VOD_content = models.ForeignKey(VodContent, db_column='VOD_content_id', on_delete=models.CASCADE)
+    watched_at = models.DateTimeField()
+    watched_percent = models.IntegerField()
 
     class Meta:
-        db_table = 'watch_history'
-        managed = False
+        db_table = 'VOD_watch_history'

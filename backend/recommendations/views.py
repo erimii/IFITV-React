@@ -2,20 +2,19 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import User
-from profiles.models import Profile, ProfileLikedContent
-from recommend_model import multi_title_fast_hybrid_recommend, hybrid_recommend_with_reason, df, fast_hybrid_recommend
+from profiles.models import Profile, ProfileLikedVODContent
+from recommend_model import multi_title_fast_hybrid_recommend, df, fast_hybrid_recommend
 import random
 import pandas as pd
 from utils import load_today_programs, is_current_or_future_program
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from contents.models import Content, Subgenre, Genre
+from contents.models import VodContent, Subgenre, Genre
 from .constants import subgenre_mapping
 from django.db.models import Q
-from contents.models import Content 
 from django.core.paginator import Paginator
-from profiles.models import WatchHistory
+from profiles.models import VODWatchHistory
 
 #  VOD 전체 가져오기
 def all_vod_contents(request):
@@ -23,10 +22,10 @@ def all_vod_contents(request):
     per_page = 30
     subgenre_id = request.GET.get('subgenre_id')
 
-    contents = Content.objects.all()
+    contents = VodContent.objects.all()
 
     if subgenre_id:
-        contents = contents.filter(subgenres__id=subgenre_id).distinct()
+        contents = contents.filter(subgenre__id=subgenre_id).distinct()
 
     paginator = Paginator(contents, per_page)
     page_obj = paginator.get_page(page)
@@ -38,7 +37,7 @@ def all_vod_contents(request):
             "description": c.description,
             "thumbnail": c.thumbnail,
             "genre": c.genre,
-            "subgenres": [s.name for s in c.subgenres.all()],
+            "subgenre": [s.name for s in c.subgenre.all()],
         }
         for c in page_obj
     ]
@@ -99,9 +98,9 @@ def sample_contents_by_genre(request):
 
     for genre, subgenres in selected.items():
         if subgenres:
-            qs = Content.objects.filter(
+            qs = VodContent.objects.filter(
                 genre=genre,
-                subgenres__name__in=subgenres
+                subgenre__name__in=subgenres
             ).distinct().order_by('?')[:10]  # 랜덤 10개 샘플링
             contents_by_genre[genre] = list(qs.values(
                 'id', 'title', 'genre', 'description', 'cast', 'age_rating', 'thumbnail'
@@ -193,13 +192,13 @@ def liked_based_recommend(request):
         return Response({"error": "해당 profile_id의 Profile이 존재하지 않습니다."}, status=status.HTTP_404_NOT_FOUND)
 
     # profile_liked_contents에서 content_id 조회
-    liked_content_ids = ProfileLikedContent.objects.filter(profile=profile).values_list('content_id', flat=True)
+    liked_content_ids = ProfileLikedVODContent.objects.filter(profile=profile).values_list('content_id', flat=True)
 
     if not liked_content_ids:
         return Response({"error": "선호 콘텐츠가 없습니다."}, status=status.HTTP_200_OK)
 
     # contents 테이블에서 title, genre 조회
-    contents = Content.objects.filter(id__in=liked_content_ids)
+    contents = VodContent.objects.filter(id__in=liked_content_ids)
 
     # genre별로 묶기
     grouped = { "드라마": [], "예능": [], "영화": [] }
@@ -239,10 +238,10 @@ def recommend_with_detail(request):
         return Response({"error": "title은 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        content = Content.objects.filter(title=title).first()
+        content = VodContent.objects.filter(title=title).first()
 
         # 해당 콘텐츠가 찜되어 있는지 확인
-        is_liked = ProfileLikedContent.objects.filter(
+        is_liked = ProfileLikedVODContent.objects.filter(
             profile_id=profile_id,
             content_id=content.id
         ).exists()
@@ -285,13 +284,13 @@ def save_watch_history(request):
 
     try:
         profile = Profile.objects.get(id=profile_id)
-        content = Content.objects.get(id=content_id)
+        content = VodContent.objects.get(id=content_id)
     except Profile.DoesNotExist:
         return Response({"error": "해당 프로필이 존재하지 않습니다."}, status=status.HTTP_404_NOT_FOUND)
-    except Content.DoesNotExist:
+    except VodContent.DoesNotExist:
         return Response({"error": "해당 콘텐츠가 존재하지 않습니다."}, status=status.HTTP_404_NOT_FOUND)
 
-    WatchHistory.objects.create(
+    VODWatchHistory.objects.create(
         profile=profile,
         content=content,
         duration=duration
@@ -302,7 +301,7 @@ def save_watch_history(request):
 # 특정 프로필의 시청한 콘텐츠 목록을 반환
 @api_view(['GET'])
 def watch_history_by_profile(request, profile_id):
-    watched = WatchHistory.objects.filter(profile_id=profile_id).values_list('content_id', flat=True)
+    watched = VODWatchHistory.objects.filter(profile_id=profile_id).values_list('VOD_content_id', flat=True)
     return Response(list(watched), status=status.HTTP_200_OK)
 
 

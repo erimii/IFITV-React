@@ -7,8 +7,8 @@ from .serializers import ProfileSerializer
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from rest_framework.decorators import api_view
-from profiles.models import Profile, ProfilePreferredSubgenre, ProfileLikedContent
-from contents.models import Content, Subgenre
+from profiles.models import Profile, ProfilePreferredSubgenre, ProfileLikedVODContent
+from contents.models import VodContent, Subgenre
 import numpy as np
 import pickle
 
@@ -66,8 +66,8 @@ def add_profile(request):
         # 4. 좋아하는 콘텐츠 연결 (profile_liked_contents)
         liked_contents_ids = profile_data.get('liked_contents_ids', [])
         for content_id in liked_contents_ids:
-            content_obj = Content.objects.get(id=content_id)
-            ProfileLikedContent.objects.create(
+            content_obj = VodContent.objects.get(id=content_id)
+            ProfileLikedVODContent.objects.create(
                 profile=profile,
                 content=content_obj
             )
@@ -127,7 +127,7 @@ def edit_profile(request):
 @api_view(['GET'])
 def get_my_list(request):
     profile_id = request.GET.get('profile_id')
-    liked_contents = ProfileLikedContent.objects.filter(profile_id=profile_id).select_related('content')
+    liked_contents = ProfileLikedVODContent.objects.filter(profile_id=profile_id).select_related('content')
     data = [
         {
             'id': item.content.id,
@@ -147,9 +147,9 @@ def toggle_like(request):
 
     try:
         profile = Profile.objects.get(id=profile_id)
-        content = Content.objects.get(id=content_id)
+        content = VodContent.objects.get(id=content_id)
 
-        liked, created = ProfileLikedContent.objects.get_or_create(profile=profile, content=content)
+        liked, created = ProfileLikedVODContent.objects.get_or_create(profile=profile, content=content)
 
         if not created:
             liked.delete()
@@ -159,7 +159,7 @@ def toggle_like(request):
 
     except Profile.DoesNotExist:
         return JsonResponse({'error': 'Invalid profile'}, status=400)
-    except Content.DoesNotExist:
+    except VodContent.DoesNotExist:
         return JsonResponse({'error': 'Content not found'}, status=404)
 
 # 손인식
