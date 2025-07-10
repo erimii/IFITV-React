@@ -3,23 +3,30 @@
     margin-left: 150px;
   }
 
+  .home-content-wrapper {
+    padding: 20px 10px 0 40px;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    background: #000000;
+  }
+
 .welcome-section {
   margin-top: 0;
   padding-top: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
   padding-left: 60px; /* IFITV 배너와 동일하게 */
 }
 
 .welcome-section h1 {
-  margin: 0;
-  font-size: 2.6rem;
+  margin: 10px;
+  font-size: 3rem;
   font-weight: 500;
   color: #ec008c;
-  letter-spacing: 0.5px;
 }
 
 .welcome-section p {
-  margin: 6px 0 0 0;
+  margin: 6px 0 0 6px;
   color: #bbb;
   font-size: 1.15rem;
   font-weight: 500;

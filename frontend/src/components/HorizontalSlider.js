@@ -7,11 +7,11 @@ function HorizontalSlider({ title, items, onCardClick }) {
   const scrollRef = useRef(null);
 
   const scrollLeft = () => {
-    scrollRef.current.scrollLeft -= 300;
+    scrollRef.current.scrollLeft -= 400;
   };
 
   const scrollRight = () => {
-    scrollRef.current.scrollLeft += 300;
+    scrollRef.current.scrollLeft += 400;
   };
 
   const formatAirtime = (airtime) => {
@@ -47,7 +47,7 @@ function HorizontalSlider({ title, items, onCardClick }) {
             onClick={() => onCardClick(item.title, item.airtime)}
             style={{
               flex: "0 0 auto",
-              width: "160px",
+              width: "240px",
               cursor: "pointer",
               textAlign: "center",
             }}
@@ -57,7 +57,6 @@ function HorizontalSlider({ title, items, onCardClick }) {
               alt={item.title}
               style={{
                 width: "100%",
-                height: "220px",
                 objectFit: "cover",
                 borderRadius: "10px",
                 boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
@@ -65,7 +64,7 @@ function HorizontalSlider({ title, items, onCardClick }) {
             />
             <p style={{ marginTop: "0.5rem", fontWeight: "bold", color:'white' }}>{item.title}</p>
             {item.airtime && (
-              <p style={{ marginTop: "0.2rem", color: "#555", fontSize: "0.85rem" }}>
+              <p style={{color: "#555", fontSize: "0.85rem" }}>
                 {formatAirtime(item.airtime)}
               </p>
             )}

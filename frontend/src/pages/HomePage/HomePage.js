@@ -240,9 +240,9 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
       {selectedMenuParam === "VOD" && (<VODList vodContents={vodContents} onClick={handleClick} loaderRef={loaderRef} selectedSubgenre={selectedSubgenre} />
 )}
 
-      <div style={{ display: 'flex' }}>
-
       <div>
+
+      <div className="home-content-wrapper">
 
       <ContentDetailModal
         content={selectedContent}
@@ -258,7 +258,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
       {selectedMenuParam === "홈" && (
         <>
           <HorizontalSlider
-            title={`👇 ${profile.name}님의 선호 장르 기반 콘텐츠`}
+            title={`${profile.name}님의 선호 장르 기반 콘텐츠`}
             items={genreContents}
             onCardClick={handleClick}
           />
@@ -267,7 +267,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
             items.length > 0 && (
               <HorizontalSlider
                 key={genre}
-                title={`💖 ${profile.name}님을 위한 ${genre} 추천`}
+                title={`${profile.name}님을 위한 ${genre} 추천`}
                 items={items}
                 onCardClick={handleClick}
               />
@@ -276,7 +276,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
 
           {livePrograms.length > 0 && (
             <HorizontalSlider
-              title={`📺 ${profile.name}님의 오늘 방송 추천`}
+              title={`${profile.name}님의 오늘 방송 추천`}
               items={livePrograms.map((item) => ({
                 title: item["title"],
                 thumbnail: item["thumbnail"],
