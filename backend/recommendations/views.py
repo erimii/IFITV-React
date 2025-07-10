@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import User
-from profiles.models import Profile, ProfileLikedVODContent
+from profiles.models import Profile, ProfileLikedVODContent, ProfilePreferredSubgenre
 from recommend_model import multi_title_fast_hybrid_recommend, df, fast_hybrid_recommend
 import random
 import pandas as pd
@@ -10,11 +10,12 @@ from utils import load_today_programs, is_current_or_future_program
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from contents.models import VodContent, Subgenre, Genre
+from contents.models import VodContent, Subgenre, Genre, LiveContent
 from .constants import subgenre_mapping
 from django.db.models import Q
 from django.core.paginator import Paginator
 from profiles.models import VODWatchHistory
+from datetime import date, time
 
 #  VOD 전체 가져오기
 def all_vod_contents(request):
@@ -114,7 +115,6 @@ def sample_contents_by_genre(request):
 @api_view(['POST'])
 def subgenre_based_recommend(request):
     profile_id = request.data.get('profile_id')
-
     if not profile_id:
         return Response({"error": "profile_id는 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -123,20 +123,28 @@ def subgenre_based_recommend(request):
     except Profile.DoesNotExist:
         return Response({"error": "프로필을 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 
-    preferred_genres = profile.preferred_genres
+    # 선호 서브장르 ID 가져오기
+    preferred_ids = ProfilePreferredSubgenre.objects.filter(
+        profile=profile
+    ).values_list('subgenre_id', flat=True)
 
-    filtered_df = df[df["subgenre"].apply(
-        lambda sg: any(genre in sg for genre in preferred_genres)
-    )]
+    # VOD 콘텐츠 중 선호 서브장르와 매칭되는 콘텐츠
+    contents = VodContent.objects.filter(
+        subgenre__in=preferred_ids
+    ).distinct()
 
-    if filtered_df.empty:
-        return Response([], status=status.HTTP_200_OK)
+    sampled = random.sample(list(contents), min(10, contents.count()))
 
-    sample_df = filtered_df[["id", "title", "thumbnail"]].drop_duplicates().sample(
-        n=min(10, len(filtered_df)), random_state=42
-    )
+    data = [
+        {
+            "id": c.id,
+            "title": c.title,
+            "thumbnail": c.thumbnail,
+        }
+        for c in sampled
+    ]
 
-    return Response(sample_df.to_dict(orient="records"), status=status.HTTP_200_OK)
+    return Response(data)
 
 # 2. 편성표 기반 선호 추천
 @api_view(['POST'])
@@ -151,30 +159,44 @@ def live_recommend(request):
     except Profile.DoesNotExist:
         return Response({"error": "프로필을 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 
-    preferred_genres_dict = profile.preferred_genres
-    preferred_genres_list = list(set(
-        list(preferred_genres_dict.keys()) +
-        [v for values in preferred_genres_dict.values() for v in values]
-    ))
+    # 선호 서브장르 기반
+    preferred_subgenres = profile.preferred_subgenres.all()
+    preferred_names = set([s.name for s in preferred_subgenres] + [s.genre.name for s in preferred_subgenres])
 
-    today_programs_df = load_today_programs()
-    clean_df = today_programs_df.dropna(subset=["subgenre", "genre"]).copy()
-    clean_df = clean_df[
-        clean_df.apply(lambda row: is_current_or_future_program(row["airtime"], row["runtime"]), axis=1)
-    ]
+    # 해당 날짜의 편성표 불러오기
+    target_date = date(2025, 7, 12)
 
-    genre_mask = clean_df["genre"].astype(str).apply(lambda g: any(pg in g for pg in preferred_genres_list))
-    subgenre_mask = clean_df["subgenre"].astype(str).apply(lambda g: any(pg in g for pg in preferred_genres_list))
+    # 프로그램 필터링
+    programs = LiveContent.objects.filter(date=target_date)
 
-    matched_df = clean_df[genre_mask | subgenre_mask]
+    matched = []
+    for program in programs:
+        airtime_str = program.airtime.strftime('%H:%M:%S') if program.airtime else ""
+        runtime_minutes = program.runtime or 0
 
-    if matched_df.empty:
-        return Response([], status=status.HTTP_200_OK)
+        # 🔥 방송 중이거나 예정된 경우에만
+        if not is_current_or_future_program(airtime_str, runtime_minutes):
+            continue
 
-    result = matched_df[["airtime", "title", "genre", "subgenre", "desc", "thumbnail"]].drop_duplicates().head(10).fillna("")
+        # 장르 비교
+        subgenre_names = program.subgenre.split(',') if program.subgenre else []
+        genre_names = program.genre.split(',') if program.genre else []
 
-    return Response(result.to_dict(orient="records"), status=status.HTTP_200_OK)
+        if any(name.strip() in preferred_names for name in subgenre_names + genre_names):
+            matched.append({
+                "title": program.title,
+                "airtime": airtime_str,
+                "genre": ", ".join(genre_names),
+                "subgenre": ", ".join(subgenre_names),
+                "desc": program.description or "",
+                "thumbnail": program.thumbnail or "",
+            })
+    print(f"프로그램 개수: {len(programs)}")
+    print(f"선호 장르: {preferred_names}")
+    print(f"최종 추천 개수: {len(matched)}")
 
+
+    return Response(matched[:10], status=status.HTTP_200_OK)
 
 # 3. 좋아요한 콘텐츠 가져와서 추천 모델 돌리기(장르 별 추천 콘텐츠 나옴)
 import time

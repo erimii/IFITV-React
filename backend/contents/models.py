@@ -38,7 +38,7 @@ class VodContentSubgenre(models.Model):
 
 # 라이브 콘텐츠
 class LiveContent(models.Model):
-    channel_name = models.CharField(max_length=255, blank=True)
+    channel = models.CharField(max_length=255, blank=True)
     title = models.CharField(max_length=255)
     airtime = models.DateTimeField(null=True, blank=True)
     genre = models.CharField(max_length=100, blank=True)

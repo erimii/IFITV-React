@@ -224,7 +224,7 @@ const SidebarHeader = ({
 
 
         {/* Genres 메뉴 드롭다운 */}
-        <div
+        {/* <div
           className="sidebar-dropdown"
           onMouseEnter={() => setGenreDropdownOpen(true)}
           onMouseLeave={() => setGenreDropdownOpen(false)}
@@ -256,7 +256,9 @@ const SidebarHeader = ({
               ))}
             </div>
           )}
-        </div>
+        </div> */}
+
+
         <div
             className={`sidebar-dropdown-toggle ${selectedMenu === 'My List' ? 'active' : ''}`}
             onClick={() => onSelect('My List')}

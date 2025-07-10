@@ -142,6 +142,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
             profile_id: profile.id
           })
         ]);
+        console.log("📺 livePrograms 응답", res2.data);
         setGenreContents(res1.data || []);
         setLivePrograms(res2.data || []);
         setLikedRecommendationsByGenre(res3.data);
@@ -226,6 +227,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
         onSelect={setSelectedMenuParam}
         handleSubgenreSelect={handleSubgenreSelect}
       />
+
       {selectedMenuParam === "홈" && (
         <div className="welcome-section">
           <h1>

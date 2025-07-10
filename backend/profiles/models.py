@@ -11,6 +11,12 @@ class Profile(models.Model):
     preferred_genres = models.JSONField()
     liked_contents = models.JSONField()
 
+    preferred_subgenres = models.ManyToManyField(
+        'contents.Subgenre',
+        through='ProfilePreferredSubgenre',
+        related_name='preferred_by_profiles'
+    )
+
     class Meta:
         db_table = 'profiles'
         managed = False
