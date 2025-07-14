@@ -215,4 +215,16 @@
       font-size: 1.13rem;
     }
   }
-  
+
+
+/* Chrome, Safari, Edge 등 WebKit 계열 브라우저 */
+.new-profile-row input[type=number]::-webkit-inner-spin-button,
+.new-profile-row input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.new-profile-row input[type=number] {
+  -moz-appearance: textfield;
+}

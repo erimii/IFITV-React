@@ -34,7 +34,13 @@
     font-weight: bold;
     margin: 18px 0 10px 0;
     color: #fff;
+    line-height: 1.5;
   }
+
+  .highlight-name {
+    color: #ec008c;
+  }
+  
   
   .genre-category-label {
     font-size: 1.5rem;

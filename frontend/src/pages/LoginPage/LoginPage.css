@@ -1,98 +1,150 @@
 .login-bg {
-    min-height: 100vh;
-    background: #232323;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .login-container {
-    background: #232323;
-    border-radius: 18px;
-    box-shadow: 0 2px 24px rgba(0,0,0,0.25);
-    padding: 48px 38px 36px 38px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 340px;
-    color: #fff; /* 모든 텍스트 흰색 */
-  }
-  
-  .login-logo {
-    font-size: 2.7rem;
-    font-weight: bold;
-    color: #ec008c;
-    margin-bottom: 32px;
-    letter-spacing: 2.5px;
-  }
-  
-  .login-form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    color: #fff;
-  }
-  
-  .login-input {
-    background: #444;
-    border: none;
-    border-radius: 8px;
-    padding: 13px 14px;
-    color: #fff; /* 입력값 흰색 */
-    font-size: 1.1rem;
-    outline: none;
-  }
-  
-  .login-input::placeholder {
-    color: #bbb;
-    opacity: 1;
-  }
-  
-  .login-error {
-    color: #ec008c;
-    font-size: 1.05rem;
-    margin: 4px 0 -10px 0;
-  }
-  
-  .login-btn {
-    background: #ec008c;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 13px 0;
-    font-size: 1.13rem;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 8px;
-    transition: background 0.2s;
-  }
-  
-  .login-btn:hover {
-    background: #e0146a;
-  }
-  
-  .login-bottom {
-    margin-top: 28px;
-    color: #bbb;
-    font-size: 1rem;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-  
-  .register-link {
-    color: #ec008c;
-    background: none;
-    border: none;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    padding: 0;
-    transition: color 0.2s;
-  }
-  
-  .register-link:hover {
-    color: #fff;
-    text-decoration: underline;
-  }
+  min-height: 100vh;
+  background: #232323;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-container {
+  background: #232323;
+  border-radius: 18px;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.25);
+  padding: 48px 38px 36px 38px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 340px;
+  color: #fff;
+}
+
+.login-logo {
+  font-size: 2.7rem;
+  font-weight: bold;
+  color: #ff1e80;
+  margin-bottom: 32px;
+  letter-spacing: 2.5px;
+}
+
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  color: #fff;
+}
+
+.login-input {
+  background: #444;
+  border: none;
+  border-radius: 8px;
+  padding: 13px 14px;
+  color: #fff;
+  font-size: 1.1rem;
+  outline: none;
+}
+
+.login-input::placeholder {
+  color: #bbb;
+  opacity: 1;
+}
+
+.login-error {
+  color: #ff1e80;
+  font-size: 1.05rem;
+  margin: 4px 0 -10px 0;
+}
+
+.login-btn {
+  background: #ff1e80;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 13px 0;
+  font-size: 1.13rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+
+.login-btn:hover {
+  background: #e0146a;
+}
+
+.login-divider {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin: 22px 0 10px 0;
+  color: #bbb;
+  font-size: 1rem;
+}
+.login-divider span {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #444;
+  margin: 0 10px;
+  display: block;
+}
+
+/* 구글 로그인 버튼 너비 맞춤 */
+.login-google-wrap {
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 13px 0;
+  font-size: 1.13rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 0px;
+  transition: background 0.2s;
+}
+.login-google-wrap > div {
+  width: 100%;
+  min-width: 0;
+  display: flex !important;
+  justify-content: center !important;
+}
+.login-google-wrap button,
+.login-google-wrap iframe {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* 구글 버튼 내부 텍스트도 중앙 정렬 */
+.login-google-wrap span {
+  text-align: center !important;
+}
+
+.login-bottom {
+  margin-top: 28px;
+  color: #bbb;
+  font-size: 1rem;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.register-link {
+  color: #ff1e80;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.register-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}

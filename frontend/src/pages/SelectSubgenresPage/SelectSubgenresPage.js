@@ -75,7 +75,10 @@ function SelectSubgenresPage({user}) {
       <div className="add-profile-container">
         <form className="add-profile-form" onSubmit={handleSubmit}>
           <div className="add-profile-genres">
-            <div className="genres-title">안녕하세요 {profile.name}님! 선호 장르를 선택해주세요</div>
+          <div className="genres-title">
+            안녕하세요 <span className="highlight-name">{profile.name}</span>님! <br />선호 장르를 선택해주세요
+          </div>
+
             {Object.entries(subgenreMapping).map(([genre, subgenres]) => (
               <div key={genre}>
                 <div className="genre-category-label">{genre}</div>

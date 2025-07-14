@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './LoginPage.css';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 function LoginPage({ setUser }) {
   const navigate = useNavigate();
@@ -38,6 +39,17 @@ function LoginPage({ setUser }) {
     }
   };
 
+  const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID';
+  const handleGoogleSuccess = (credentialResponse) => {
+    // 구글 로그인 성공 시 JWT 토큰(credentialResponse.credential) 처리
+    console.log('Google 로그인 성공:', credentialResponse);
+    // 필요시 onLogin 호출하거나 별도 소셜 로그인 처리 로직 추가
+  };
+
+  const handleGoogleFailure = () => {
+    setError('Google 로그인에 실패했습니다.');
+  };
+
   return (
     <div className="login-bg">
       <div className="login-container">
@@ -69,8 +81,19 @@ function LoginPage({ setUser }) {
           <span>아직 회원이 아니신가요?</span>
           <button className="register-link" onClick={()=>{navigate("/signup")}}>회원가입</button>
         </div>
-        <div>
-          <p>######구글 로그인 넣기######</p>
+        <div className="login-google-wrap">
+          <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleFailure}
+              useOneTap={false}
+              text="signin_with"
+              shape="rectangular"
+              theme="outline"
+              logo_alignment="left"
+              width="100%"
+            />
+          </GoogleOAuthProvider>
         </div>
       </div>
     </div> 
