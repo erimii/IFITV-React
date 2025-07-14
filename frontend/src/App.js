@@ -4,6 +4,8 @@ import axios from 'axios';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 
+import SplashScreen from './components/SplashScreen/SplashScreen';
+
 import LandingPage from './pages/LandingPage';
 import SignupPage from './pages/SignupPage/SignupPage';
 import LoginPage from './pages/LoginPage/LoginPage';
@@ -15,10 +17,13 @@ import CreateProfilePage from './pages/CreateProfilePage/CreateProfilePage';
 import SelectSubgenresPage from './pages/SelectSubgenresPage/SelectSubgenresPage';
 import SelectContentPage from './pages/SelectContentPage/SelectContentPage';
 
+
 function App() {
   const [user, setUser] = useState(null);
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [profiles, setProfiles] = useState([]);
+
+  const [showSplash, setShowSplash] = useState(true);
 
   // 로그인 상태 확인
   useEffect(() => {
@@ -47,58 +52,68 @@ function App() {
   
 
   return (
-    <Router>
-      <Routes>
-      <Route
-        path="/"
-        element={
-          <LandingPage
-            user={user}
-            profiles={profiles}
-            selectedProfile={selectedProfile}
-            setSelectedProfile={setSelectedProfile}
+    <>
+      {showSplash ? (
+        <SplashScreen onFinish={() => setShowSplash(false)} />
+      ) : (
+        <Router>
+          <Routes>
+          <Route
+            path="/"
+            element={
+              user ? (
+                <LandingPage
+                  user={user}
+                  profiles={profiles}
+                  selectedProfile={selectedProfile}
+                  setSelectedProfile={setSelectedProfile}
+                />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
           />
-        }
-      />
 
-        <Route path="/signup" element={<SignupPage  setUser={setUser} />} />
-        <Route path="/login" element={<LoginPage setUser={setUser} />} />
+            <Route path="/signup" element={<SignupPage  setUser={setUser} />} />
+            <Route path="/login" element={<LoginPage setUser={setUser} />} />
 
-        <Route
-          path="/select-profile"
-          element={
-            user ? (
-              <ProfileSelectPage
-                user={user}
-                setSelectedProfile={setSelectedProfile}
-              />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
-        <Route path="/create-profile" element={<CreateProfilePage  user={user} />} />
-        <Route path="/select-subgenres" element={<SelectSubgenresPage user={user} />} />
-        <Route path="/select-content" element={<SelectContentPage user={user} />} />
-        <Route
-          path="/home"
-          element={
-            user && selectedProfile ? (
-              <HomePage
-                user={user}
-                profile={selectedProfile}
-                profiles={profiles}  
-                setSelectedProfile={setSelectedProfile}
-                onLogout={handleLogout}
-              />
-            ) : (
-              <Navigate to="/select-profile" />
-            )
-          }
-        />
+            <Route
+              path="/select-profile"
+              element={
+                user ? (
+                  <ProfileSelectPage
+                    user={user}
+                    setSelectedProfile={setSelectedProfile}
+                  />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+            <Route path="/create-profile" element={<CreateProfilePage  user={user} />} />
+            <Route path="/select-subgenres" element={<SelectSubgenresPage user={user} />} />
+            <Route path="/select-content" element={<SelectContentPage user={user} />} />
+            <Route
+              path="/home"
+              element={
+                user && selectedProfile ? (
+                  <HomePage
+                    user={user}
+                    profile={selectedProfile}
+                    profiles={profiles}  
+                    setSelectedProfile={setSelectedProfile}
+                    onLogout={handleLogout}
+                  />
+                ) : (
+                  <Navigate to="/select-profile" />
+                )
+              }
+            />
 
-      </Routes>
-    </Router>
+          </Routes>
+        </Router>
+      )}
+    </>
   );
 }
 

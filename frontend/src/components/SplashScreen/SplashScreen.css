@@ -1,0 +1,56 @@
+@keyframes fadeInScale {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+      letter-spacing: 0.1em;
+      text-shadow: none;
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.35);
+      letter-spacing: 0.5em;
+      text-shadow:
+        0 0 10px #ec008c,
+        0 0 20px #ec008c88,
+        0 0 40px #ec008c44;
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+      letter-spacing: 0.3em;
+      text-shadow:
+        2px 2px 4px rgba(0, 0, 0, 0.7),
+        0 0 15px #ec008c88,
+        0 0 30px #ec008c55;
+    }
+  }
+  
+  @keyframes fadeOut {
+    to {
+      opacity: 0;
+    }
+  }
+  
+  .splash {
+    position: fixed;
+    inset: 0;
+    background-color: #000;
+    color: #ec008c;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 5rem;
+    font-weight: 900;
+    font-family: 'Segoe UI', sans-serif;
+    letter-spacing: 0.3em;
+    z-index: 9999;
+    animation: fadeInScale 1.2s ease-out forwards;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+    perspective: 1000px;
+  }
+  
+  .fade-out {
+    animation: fadeOut 0.6s ease-in-out forwards;
+  }
+  
