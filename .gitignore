@@ -23,3 +23,8 @@ kobert_embedding_matrix.npy
 backend/data_crawling_live/
 
 profiles.json
+
+/frontend/build
+
+.env
+import_all.sh

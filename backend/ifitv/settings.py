@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -77,6 +77,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ifitv.wsgi.application'
 
+IS_DOCKER = os.environ.get("IS_DOCKER") == "1"
 # Database
 DATABASES = {
     'default': {
@@ -84,7 +85,9 @@ DATABASES = {
         'NAME': 'ifitv_db',
         'USER': 'root',
         'PASSWORD': 'rubi',
-        'HOST': 'localhost',
+        #'HOST': 'localhost',
+        #'HOST': 'host.docker.internal',
+        'HOST': 'db' if IS_DOCKER else 'localhost',
         'PORT': '3306',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",

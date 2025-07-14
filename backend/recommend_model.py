@@ -14,6 +14,7 @@ import torch
 
 # DB에서 contents 테이블 불러오기
 def load_contents():
+    # engine = create_engine('mysql+pymysql://root:rubi@db:3306/ifitv_db')
     engine = create_engine('mysql+pymysql://root:rubi@localhost:3306/ifitv_db')
     query = "SELECT * FROM vod_contents"
     df = pd.read_sql(query, con=engine)
