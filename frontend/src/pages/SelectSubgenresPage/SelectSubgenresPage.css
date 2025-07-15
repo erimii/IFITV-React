@@ -28,18 +28,39 @@
   .add-profile-genres {
     width: 100%;
   }
-  
+
   .genres-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: bold;
     margin: 18px 0 10px 0;
     color: #fff;
-    line-height: 1.5;
+    line-height: 1.8;
   }
 
   .highlight-name {
     color: #ec008c;
   }
+
+  .typing-text {
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+    line-height: 1.8;
+    white-space: pre-wrap;
+  }
+  
+  .fade-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s ease-in;
+  }
+  .fade-in {
+    opacity: 1;
+    transition: opacity 0.8s ease-in;
+  }
+  
+  
+  
   
   
   .genre-category-label {
