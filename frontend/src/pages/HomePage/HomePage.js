@@ -15,6 +15,8 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   const queryParams = new URLSearchParams(location.search);
   const [profiles, setProfiles] = useState([]);
   const [selectedMenuParam, setSelectedMenuParam] = useState("홈");
+
+  const [modalLoading, setModalLoading] = useState(false);
   
 
   const [vodContents, setVodContents] = useState([]);
@@ -167,17 +169,18 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
     return res.data;
   };
   
+  // 모달 키기
   const handleClick = async (title) => {
-    setLoading(true);
+    setModalLoading(true);
     try {
       const data = await fetchDetailRecommendation(title, profile.id);
       setSelectedContent(data.info);
       setResults(data.recommendations);
-      setIsModalOpen(true);
+      setIsModalOpen(true);   
     } catch (error) {
       console.error("상세 추천 오류:", error);
     } finally {
-      setLoading(false);
+      setModalLoading(false);
     }
   };
 
@@ -272,6 +275,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
         setWatchedContentIds={setWatchedContentIds}
         likedContentIds={likedContentIds}
         setLikedContentIds={setLikedContentIds}
+        loading={modalLoading}
       />
 
       {selectedMenuParam === "홈" && (
