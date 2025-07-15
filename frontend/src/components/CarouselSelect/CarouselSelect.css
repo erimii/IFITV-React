@@ -33,12 +33,12 @@
     opacity: 0.97;
   }
   .carousel-select-btn.left  { left: 4px; }
-  .carousel-select-btn.right { right: 16px; }
+  .carousel-select-btn.right { right: 35px; }
   .carousel-select-btn:hover:not(:disabled) { background: #ec008c; color: #fff; }
   .carousel-select-btn:disabled { opacity: 0.25; cursor: not-allowed; background: #222; color: #fff; box-shadow: none; }
   .carousel-select-btn svg {
-    width: 2.1rem;
-    height: 2.1rem;
+    width: 2rem;
+    height: 2rem;
     display: block;
   }
   

@@ -236,6 +236,25 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
           <p>Continue Watching where you left off</p>
         </div>
       )}
+      {selectedMenuParam === "홈" && loading && (
+        <>
+          <div className="home-skeleton-title" />
+          <div className="home-skeleton-row">
+            {[...Array(6)].map((_, idx) => (
+              <div className="home-skeleton-card" key={idx} />
+            ))}
+          </div>
+          <div className="home-skeleton-title" />
+          <div className="home-skeleton-row">
+            {[...Array(6)].map((_, idx) => (
+              <div className="home-skeleton-card" key={idx} />
+            ))}
+          </div>
+        </>
+      )}
+
+
+      
       {selectedMenuParam === "My List" && <MyList myListContents={myListContents} onClick={handleClick} />}
       {selectedMenuParam === "VOD" && (<VODList vodContents={vodContents} onClick={handleClick} loaderRef={loaderRef} selectedSubgenre={selectedSubgenre} />
 )}
