@@ -267,11 +267,29 @@ const SidebarHeader = ({
         </div>
       </nav>
       <div className="sidebar-search">
-        <span
-          className="search-icon"
-          onClick={() => setSearchOpen(v => !v)}
-          style={{ cursor: 'pointer' }}
-        >🔍</span>
+      <span
+        className="search-icon"
+        onClick={() => setSearchOpen(v => !v)}
+        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+        aria-label="검색 열기"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <circle cx="11" cy="11" r="7" />
+          <line x1="17" y1="17" x2="21" y2="21" />
+        </svg>
+      </span>
+
+
         {searchOpen && (
           <form className="search-form" onSubmit={handleSearchSubmit} style={{ position: 'relative' }}>
             <input

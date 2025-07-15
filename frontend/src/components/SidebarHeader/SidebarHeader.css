@@ -466,3 +466,15 @@ color: #ec008c;
   background: #303030;
   color: #ec008c;
 }
+
+
+.search-icon svg {
+  width: 30px;
+  height: 30px;
+  color: #fff;
+  transition: color 0.2s ease;
+}
+
+.search-icon:hover svg {
+  color: #ec008c;
+}
