@@ -84,11 +84,14 @@ function ContentDetailModal({
               <div className="modal-hero-content">
                 <h1 className="modal-hero-title">{content.title}</h1>
                 <div className="modal-genre-section">
+                  <span className="modal-section">{content.genre} -</span>
                   <span className="modal-genre">{content.subgenre}</span>
-                  <span className="modal-section">{content.genre}</span>
+                  <span className="modal-age">{content.age_rating || '정보 없음'}</span>
+
                 </div>
-                <p><strong>출연</strong> {content.cast || '정보 없음'}</p>
-                <p>{content.age_rating || '정보 없음'}</p>
+                <p className="modal-cast"><strong>출연</strong> {content.cast || '정보 없음'}</p>
+                
+
                 <p className="modal-hero-overview">
                   {displayDesc}
                   {isLong && (
@@ -100,14 +103,15 @@ function ContentDetailModal({
                     </span>
                   )}
                 </p>
+                <div className="modal-actions">
+                  <button className="play-btn">▶ Play</button>
+                  <button className="mylist-btn" onClick={handleToggleLike}>
+                    {liked ? "추가됨" : "+ My List"}
+                  </button>
+                </div>
               </div>
             </div>
-            <div className="modal-actions">
-              <button className="play-btn">▶ Play</button>
-              <button className="mylist-btn" onClick={handleToggleLike}>
-                {liked ? "추가됨" : "+ My List"}
-              </button>
-            </div>
+
             <div className="related-titles">
               <h3>비슷한 {content.genre}</h3>
               <DetailModalCarousel
@@ -119,7 +123,6 @@ function ContentDetailModal({
                         src={item.thumbnail || 'https://via.placeholder.com/300x450'}
                         alt={item.title}
                       />
-                      <div className="carousel2-title">{item.title}</div>
                       <div className="carousel2-hover-info">
                         <div className="carousel2-hover-title">{item.title}</div>
                         <div className="carousel2-hover-subgenre">{item.subgenre}</div>

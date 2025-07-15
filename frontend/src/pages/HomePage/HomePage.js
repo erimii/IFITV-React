@@ -278,7 +278,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
         loading={modalLoading}
       />
 
-      {selectedMenuParam === "홈" && (
+      {selectedMenuParam === "홈" && !loading && (
         <>
           <HorizontalSlider
             title={`${profile.name}님의 선호 장르 기반 콘텐츠`}
