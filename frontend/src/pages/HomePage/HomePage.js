@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef  } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ContentDetailModal from "../../components/ContentDetailModal/ContentDetailModal";
-import HorizontalSlider from '../../components/HorizontalSlider';
+import HorizontalSlider from '../../components/HorizontalSlider/HorizontalSlider';
 import MyList from '../../components/MyList/MyList';
 import VODList from '../../components/VODList/VODList';
 import SidebarHeader from '../../components/SidebarHeader/SidebarHeader';

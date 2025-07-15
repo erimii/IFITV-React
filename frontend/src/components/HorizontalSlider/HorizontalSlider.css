@@ -1,0 +1,91 @@
+.horizontal-slider-wrapper {
+    position: relative;
+    margin-bottom: 2rem;
+  }
+  
+  .horizontal-slider-title {
+    color: white;
+    font-size: 1.3rem;
+    margin-left: 20px;;
+  }
+  
+  .horizontal-slider-scroll {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    gap: 1rem;
+    padding: 1rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .horizontal-slider-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .content-card {
+    flex: 0 0 auto;
+    width: 240px;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .content-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 30, 128, 0.3);
+    z-index: 2;
+  }
+  
+  .content-card-image {
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .content-card-title {
+    margin-top: 0.3rem;
+    font-weight: bold;
+    color: white;
+  }
+  
+  .content-card-airtime {
+    color: #bbb;
+    font-size: 0.85rem;
+  }
+  
+  .slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  
+  .slider-arrow:hover {
+    background: #ec008c;
+    color: white;
+  }
+  
+  .slider-arrow.left {
+    left: 0;
+  }
+  
+  .slider-arrow.right {
+    right: 0;
+  }
+  
+
+
+

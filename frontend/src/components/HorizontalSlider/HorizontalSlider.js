@@ -1,7 +1,8 @@
 // src/components/HorizontalSlider.js
 import React, { useRef } from "react";
-const DEFAULT_THUMBNAIL = "/default_thumb.png";  // public 폴더 기준 경로
+import "./HorizontalSlider.css";  // 👈 CSS 분리 추천
 
+const DEFAULT_THUMBNAIL = "/default_thumb.png";
 
 function HorizontalSlider({ title, items, onCardClick }) {
   const scrollRef = useRef(null);
@@ -16,7 +17,7 @@ function HorizontalSlider({ title, items, onCardClick }) {
 
   const formatAirtime = (airtime) => {
     if (!airtime) return "";
-    const timePart = airtime.split(" ")[1] || airtime;  // "2025-05-15 16:30:00" 처리용
+    const timePart = airtime.split(" ")[1] || airtime;
     const [hour, minute] = timePart.split(":");
     const hourNum = parseInt(hour, 10);
     const ampm = hourNum >= 12 ? "오후" : "오전";
@@ -25,46 +26,24 @@ function HorizontalSlider({ title, items, onCardClick }) {
   };
 
   return (
-    <div style={{ position: "relative", marginBottom: "2rem" }}>
-      <h2 style={{ margin: "0 0 1rem 0", color:'white' }}>{title}</h2>
+    <div className="horizontal-slider-wrapper">
+      <h2 className="horizontal-slider-title">{title}</h2>
 
-      {/* 슬라이드 영역 */}
-      <div
-        ref={scrollRef}
-        style={{
-          display: "flex",
-          overflowX: "auto",
-          scrollBehavior: "smooth",
-          gap: "1rem",
-          paddingBottom: "0.5rem",
-          scrollbarWidth: "none",
-          msOverflowStyle: "none", 
-        }}
-      >
+      <div className="horizontal-slider-scroll" ref={scrollRef}>
         {items.map((item, idx) => (
           <div
             key={idx}
             onClick={() => onCardClick(item.title, item.airtime)}
-            style={{
-              flex: "0 0 auto",
-              width: "240px",
-              cursor: "pointer",
-              textAlign: "center",
-            }}
+            className="content-card"
           >
             <img
               src={item.thumbnail || DEFAULT_THUMBNAIL}
               alt={item.title}
-              style={{
-                width: "100%",
-                objectFit: "cover",
-                borderRadius: "10px",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-              }}
+              className="content-card-image"
             />
-            <p style={{ marginTop: "0.5rem", fontWeight: "bold", color:'white' }}>{item.title}</p>
+            <p className="content-card-title">{item.title}</p>
             {item.airtime && (
-              <p style={{color: "#555", fontSize: "0.85rem" }}>
+              <p className="content-card-airtime">
                 {formatAirtime(item.airtime)}
               </p>
             )}
@@ -72,18 +51,9 @@ function HorizontalSlider({ title, items, onCardClick }) {
         ))}
       </div>
 
-      <button
-        onClick={scrollLeft}
-        style={arrowStyle("left")}
-      >
-        ‹
-      </button>
-      <button
-        onClick={scrollRight}
-        style={arrowStyle("right")}
-      >
-        ›
-      </button>
+      <button onClick={scrollLeft} className="slider-arrow left">‹</button>
+      <button onClick={scrollRight} className="slider-arrow right">›</button>
+
     </div>
   );
 }
@@ -100,7 +70,7 @@ const arrowStyle = (side) => ({
   cursor: "pointer",
   width: "36px",
   height: "36px",
-  zIndex: 1,
+  zIndex: 5,
 });
 
 export default HorizontalSlider;
