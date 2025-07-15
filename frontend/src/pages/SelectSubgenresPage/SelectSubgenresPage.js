@@ -81,7 +81,7 @@ function SelectSubgenresPage({user}) {
       <div className="add-profile-container">
         <form className="add-profile-form" onSubmit={handleSubmit}>
 
-          {/* ✅ 타이핑 인삿말 */}
+          {/* 타이핑 인삿말 */}
           <div className="genres-title">
             {startTyping && !line1Done && (
               <TypingText
@@ -121,9 +121,20 @@ function SelectSubgenresPage({user}) {
             )}
           </div>
 
-          {/* 공간 확보용*/}
-          {!Object.keys(subgenreMapping).length && (
-            <div style={{ height: "550px" }} />
+          {/* 장르 데이터 없을 때 스켈레톤 출력 */}
+          {Object.keys(subgenreMapping).length === 0 && (
+            <div className="add-profile-genres">
+              {[...Array(5)].map((_, idx) => (
+                <div className="skeleton-genre-block" key={idx}>
+                  <div className="skeleton-genre-title" />
+                  <div className="skeleton-btn-row">
+                    {[...Array(6)].map((_, j) => (
+                      <div className="skeleton-btn" key={j} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
 
           {/* 장르 데이터 있을 때만 리스트 렌더링 */}

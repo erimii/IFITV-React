@@ -2,10 +2,11 @@
     display: flex;
     align-items: center;
     width: 100%;
-    margin-bottom: 8px;
+    margin: 0 20px 0 0;
     gap: 8px;
     justify-content: center;
     position: relative;
+    min-height: 350px;
   }
   
   /* 버튼: 고유 클래스명으로 변경 */
@@ -49,8 +50,8 @@
     overflow-x: auto;
     gap: 16px;
     scroll-behavior: smooth;
-    padding: 8px 0;
-    width: 100%;
+    padding: 10px 30px 10px 10px;
+    width: 98%;
     box-sizing: border-box;
   }
   
