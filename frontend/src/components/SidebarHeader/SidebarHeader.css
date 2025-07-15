@@ -366,6 +366,11 @@ color: #ec008c;
   cursor: pointer;
 }
 
+.sidebar-flyout-toggle.submenu-active {
+  background: #303030;  /* 진한 회색 말고 조금 더 연하게 */
+  color: #ec008c;
+}
+
 .vod-flyout-wrapper {
   position: relative;
   width: 100%;

@@ -253,6 +253,12 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
               <div className="home-skeleton-card" key={idx} />
             ))}
           </div>
+          <div className="home-skeleton-title" />
+          <div className="home-skeleton-row">
+            {[...Array(6)].map((_, idx) => (
+              <div className="home-skeleton-card" key={idx} />
+            ))}
+          </div>
         </>
       )}
 

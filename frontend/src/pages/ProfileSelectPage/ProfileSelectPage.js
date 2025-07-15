@@ -179,7 +179,7 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
                           });
                         }}
                       >
-                        ✏️
+                        🖊
                       </button>
                     )}
                   </div>

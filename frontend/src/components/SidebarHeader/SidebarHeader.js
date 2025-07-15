@@ -4,24 +4,6 @@ import GestureModal from '../GestureModal/GestureModal';
 import axios from 'axios';
 import './SidebarHeader.css';
 
-const LIVE_CATEGORIES = [
-  { id: 'all', name: 'All' },
-  { id: 'news', name: 'News' },
-  { id: 'drama', name: 'Drama' },
-  { id: 'sports', name: 'Sports' },
-  { id: 'music', name: 'Music' },
-  { id: 'talkshow', name: 'Talk Show' }
-];
-
-const GENRE_CATEGORIES = [
-  { id: 'all', name: 'All' },
-  { id: 'variety', name: 'Variety' },
-  { id: 'documentary', name: 'Documentary' },
-  { id: 'reality', name: 'Reality' },
-  { id: 'entertainment', name: 'Entertainment' },
-  { id: 'drama', name: 'Drama' }
-];
-
 const SidebarHeader = ({
   onLogout,
   currentProfile,
@@ -75,21 +57,6 @@ const SidebarHeader = ({
     return () => document.removeEventListener('mousedown', handleClick);
   }, [settingsDropdownOpen]);
 
-  const liveParams = new URLSearchParams(location.pathname.startsWith('/live') ? location.search : '');
-  const selectedLiveCategory = location.pathname.startsWith('/live')
-    ? (liveParams.get('category') || 'all')
-    : null;
-
-  const vodParams = new URLSearchParams(location.pathname.startsWith('/vod') ? location.search : '');
-  const selectedVodCategory = location.pathname.startsWith('/vod')
-    ? (vodParams.get('category') || 'all')
-    : null;
-
-  const genreParams = new URLSearchParams(location.pathname.startsWith('/genres') ? location.search : '');
-  const selectedGenreCategory = location.pathname.startsWith('/genres')
-    ? (genreParams.get('category') || 'all')
-    : null;
-
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
@@ -99,65 +66,33 @@ const SidebarHeader = ({
     }
   };
 
-  const handleLiveCategoryClick = (id) => {
-    navigate(`/live?category=${id}`);
-    setTimeout(() => setLiveDropdownOpen(false), 0);
-  };
-
-  const handleGenreCategoryClick = (id) => {
-    navigate(`/genres?category=${id}`);
-    setTimeout(() => setGenreDropdownOpen(false), 0);
-  };
-
   return (
     <aside className="sidebar-header">
       <div className="sidebar-logo">
         IFITV
       </div>
+
       <nav className="sidebar-nav"> 
         <div
-            className={`sidebar-dropdown-toggle ${selectedMenu === '홈' ? 'active' : ''}`}
+            className={`sidebar-flyout-toggle ${selectedMenu === '홈' ? 'active' : ''}`}
             onClick={() => onSelect('홈')}
         >
             Home
         </div>
+
         {/* Live 메뉴 */}
         <div
-            className="sidebar-dropdown"
-            onMouseEnter={() => setLiveDropdownOpen(true)}
-            onMouseLeave={() => setLiveDropdownOpen(false)}
-            >
-            <div
-                className={`sidebar-dropdown-toggle ${selectedMenu === 'LIVE' ? 'active' : ''}`}
-                onClick={() => onSelect('LIVE')}
-            >
-                Live
-            </div>
-
-            {liveDropdownOpen && (
-                <div className="sidebar-dropdown-menu">
-                {LIVE_CATEGORIES.map((category, idx) => (
-                    <React.Fragment key={category.id}>
-                    <button
-                        className={
-                        'sidebar-dropdown-item' +
-                        (selectedLiveCategory === category.id ? ' active' : '')
-                        }
-                        onClick={() => handleLiveCategoryClick(category.id)}
-                        type="button"
-                    >
-                        {category.name}
-                    </button>
-                    {idx !== LIVE_CATEGORIES.length - 1 && (
-                        <div className="dropdown-divider" />
-                    )}
-                    </React.Fragment>
-                ))}
-                </div>
-            )}
+          className="sidebar-flyout"
+        >
+          <div
+            className={`sidebar-flyout-toggle ${selectedMenu === 'LIVE' ? 'active' : ''}`}
+            onClick={() => onSelect('LIVE')}
+          >
+            Live
+          </div>
         </div>
 
-        {/* VOD 메뉴 드롭다운 */}
+        {/* VOD */}
         <div
           className="sidebar-flyout"
           onMouseEnter={() => setVodDropdownOpen(true)}
@@ -168,12 +103,14 @@ const SidebarHeader = ({
         >
           <div
             className={`sidebar-flyout-toggle ${
-              selectedMenu === 'VOD' || vodDropdownOpen ? 'active' : ''
+              selectedMenu === 'VOD' ? 'active' : vodDropdownOpen || hoveredGenre ? 'submenu-active' : ''
             }`}
             onClick={() => onSelect('VOD')}
           >
             VOD
           </div>
+
+
 
           {vodDropdownOpen && (
             <div
@@ -210,6 +147,7 @@ const SidebarHeader = ({
                       <button
                         key={sub.id}
                         className="sidebar-flyout-item"
+                        style={{ fontSize: '0.95rem' }}
                         onClick={() => handleSubgenreSelect(sub)}
                       >
                         {sub.name}
@@ -222,50 +160,16 @@ const SidebarHeader = ({
 
         </div>
 
-
-        {/* Genres 메뉴 드롭다운 */}
-        {/* <div
-          className="sidebar-dropdown"
-          onMouseEnter={() => setGenreDropdownOpen(true)}
-          onMouseLeave={() => setGenreDropdownOpen(false)}
-        >
-          <div
-            className={`sidebar-dropdown-toggle ${selectedMenu === 'Genres' ? 'active' : ''}`}
-            onClick={() => {}}
-            >
-            Genres
-          </div>
-          {genreDropdownOpen && (
-            <div className="sidebar-dropdown-menu">
-              {GENRE_CATEGORIES.map((category, idx) => (
-                <React.Fragment key={category.id}>
-                  <button
-                    className={
-                      'sidebar-dropdown-item' +
-                      (selectedGenreCategory === category.id ? ' active' : '')
-                    }
-                    onClick={() => handleGenreCategoryClick(category.id)}
-                    type="button"
-                  >
-                    {category.name}
-                  </button>
-                  {idx !== GENRE_CATEGORIES.length - 1 && (
-                    <div className="dropdown-divider" />
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
-          )}
-        </div> */}
-
-
         <div
-            className={`sidebar-dropdown-toggle ${selectedMenu === 'My List' ? 'active' : ''}`}
+            className={`sidebar-flyout-toggle ${selectedMenu === 'My List' ? 'active' : ''}`}
             onClick={() => onSelect('My List')}
         >
             My List
         </div>
+
       </nav>
+
+
       <div className="sidebar-search">
       <span
         className="search-icon"
@@ -305,7 +209,7 @@ const SidebarHeader = ({
               className="search-close-btn"
               onClick={() => setSearchOpen(false)}
               aria-label="검색창 닫기"
-            >✖️</button>
+            >x</button>
           </form>
         )}
       </div>
