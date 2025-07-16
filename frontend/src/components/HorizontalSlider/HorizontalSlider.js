@@ -9,11 +9,11 @@ function HorizontalSlider({ title, items, onCardClick }) {
   const cleanTitle = (raw) => raw.replace(/\[\d+\]/g, "").trim();
 
   const scrollLeft = () => {
-    scrollRef.current.scrollLeft -= 400;
+    scrollRef.current.scrollLeft -= 700;
   };
 
   const scrollRight = () => {
-    scrollRef.current.scrollLeft += 400;
+    scrollRef.current.scrollLeft += 700;
   };
 
   const formatAirtime = (airtime) => {

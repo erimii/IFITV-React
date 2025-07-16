@@ -13,8 +13,8 @@
     display: flex;
     overflow-x: auto;
     scroll-behavior: smooth;
-    gap: 1rem;
-    padding: 1rem;
+    gap: 3rem;
+    padding: 3rem;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
@@ -25,7 +25,7 @@
   
   .select-card {
     flex: 0 0 auto;
-    width: 240px;
+    width: 270px;
     cursor: pointer;
     text-align: center;
     transition: transform 0.25s ease;
@@ -35,7 +35,7 @@
   }
   
   .select-card:hover {
-    transform: scale(1.05);
+    transform: scale(1.2);
     z-index: 2;
   }
   
