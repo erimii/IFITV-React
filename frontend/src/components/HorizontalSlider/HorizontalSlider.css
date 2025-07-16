@@ -28,7 +28,10 @@
     width: 240px;
     cursor: pointer;
     text-align: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    will-change: transform;
+    overflow: hidden;
+    border-radius: 10px;
   }
   
   .content-card:hover {
@@ -40,9 +43,10 @@
   .content-card-image {
     width: 100%;
     object-fit: cover;
+    transition: transform 0.25s ease, border-radius 0.25s ease;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   }
+  
   
   .content-card-title {
     margin-top: 0.3rem;

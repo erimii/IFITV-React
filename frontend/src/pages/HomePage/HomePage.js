@@ -17,6 +17,9 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   const [selectedMenuParam, setSelectedMenuParam] = useState("홈");
 
   const [modalLoading, setModalLoading] = useState(false);
+  const [vodLoading, setVodLoading] = useState(false);
+  const [myListLoading, setMyListLoading] = useState(false);
+
   
 
   const [vodContents, setVodContents] = useState([]);
@@ -60,26 +63,45 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
     const fetchVOD = async () => {
       if (!profile || selectedMenuParam !== "VOD" || !hasNext) return;
   
-      const subParam = selectedSubgenre ? `&subgenre_id=${selectedSubgenre.id}` : "";
-      const res = await axios.get(`http://localhost:8000/recommendation/all_vod_contents/?page=${page}${subParam}`);
-      setVodContents(prev => [...prev, ...res.data.results]);
-      setHasNext(res.data.has_next);
+      setVodLoading(true); // 로딩 시작
+      try {
+        const subParam = selectedSubgenre ? `&subgenre_id=${selectedSubgenre.id}` : "";
+        const res = await axios.get(`http://localhost:8000/recommendation/all_vod_contents/?page=${page}${subParam}`);
+        setVodContents(prev => [...prev, ...res.data.results]);
+        setHasNext(res.data.has_next);
+      } catch (error) {
+        console.error("VOD 불러오기 실패:", error);
+      } finally {
+        setVodLoading(false); // 로딩 종료
+      }
     };
     fetchVOD();
   }, [selectedMenuParam, page, profile, hasNext, selectedSubgenre]);
+  
   
 
   // 좋아요 한 콘텐츠 가져오기
   useEffect(() => {
     const fetchMyList = async () => {
       if (!profile || selectedMenuParam !== "My List") return;
-      const res = await axios.get(`http://localhost:8000/api/my_list/?profile_id=${profile.id}`);
-      const contents = Array.isArray(res.data) ? res.data : [];
-      setMyListContents(contents);
-      setLikedContentIds(contents.map(c => c.id));
+
+      setMyListLoading(true); // 로딩 시작
+
+      try {
+        const res = await axios.get(`http://localhost:8000/api/my_list/?profile_id=${profile.id}`);
+        const contents = Array.isArray(res.data) ? res.data : [];
+        setMyListContents(contents);
+        setLikedContentIds(contents.map(c => c.id));
+      } catch (error) {
+        console.error("My List 불러오기 실패:", error);
+      } finally {
+        setMyListLoading(false); // 로딩 종료
+      }
     };
+
     fetchMyList();
   }, [selectedMenuParam, profile]);
+
 
   // 무한 스크롤
   useEffect(() => {
@@ -264,8 +286,8 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
 
 
       
-      {selectedMenuParam === "My List" && <MyList myListContents={myListContents} onClick={handleClick} />}
-      {selectedMenuParam === "VOD" && (<VODList vodContents={vodContents} onClick={handleClick} loaderRef={loaderRef} selectedSubgenre={selectedSubgenre} />
+      {selectedMenuParam === "My List" && <MyList myListContents={myListContents} onClick={handleClick} isLoading={myListLoading}/>}
+      {selectedMenuParam === "VOD" && (<VODList vodContents={vodContents} onClick={handleClick} loaderRef={loaderRef} selectedSubgenre={selectedSubgenre} isLoading={vodLoading} />
 )}
 
       <div>

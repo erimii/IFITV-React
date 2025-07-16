@@ -1,7 +1,7 @@
 import React from "react";
 import './VODList.css'
 
-const VODList = ({ vodContents, onClick, loaderRef, selectedSubgenre }) => {
+const VODList = ({ vodContents, onClick, loaderRef, selectedSubgenre, isLoading }) => {
   return (
     <div className="vod-page-container">
       <h2 className="vod-category-title">
@@ -14,17 +14,32 @@ const VODList = ({ vodContents, onClick, loaderRef, selectedSubgenre }) => {
           gap: "1rem",
         }}
       >
-        {vodContents.map((content, idx) => (
-          <div key={idx} style={{ cursor: "pointer" }} onClick={() => onClick(content.title)}>
-            <img
-              src={content.thumbnail}
-              alt={content.title}
-              style={{ width: "100%", borderRadius: "8px" }}
-            />
-            <p style={{ marginTop: "0.5rem", fontWeight: 500, color:'#fff' }}>{content.title}</p>
-          </div>
-        ))}
+        {isLoading
+          ? Array.from({ length: 30 }).map((_, idx) => (
+              <div key={idx} className="vod-skeleton-card">
+                <div className="vod-skeleton-thumb" />
+                <div className="vod-skeleton-title" />
+              </div>
+            ))
+          : vodContents.map((content, idx) => (
+            <div
+              key={idx}
+              className="vod-thumbnail-card"
+              style={{ cursor: "pointer" }}
+              onClick={() => onClick(content.title)}
+            >
+              <img
+                src={content.thumbnail}
+                alt={content.title}
+                style={{ width: "100%", borderRadius: "8px" }}
+              />
+              <p className="vod-title">{content.title}</p>
+
+            </div>
+          
+            ))}
       </div>
+
       <div ref={loaderRef} style={{ height: "1px" }} />
     </div>
   );

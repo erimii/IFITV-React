@@ -14,3 +14,56 @@
     text-align: left;
     padding-left: 2px;
   }
+
+  .vod-title {
+    margin-top: 0.5rem;
+    color: #fff;
+    font-size: 1rem;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  
+
+  .vod-thumbnail-card {
+    position: relative;
+    transition: transform 0.25s ease;
+  }
+  
+  .vod-thumbnail-card:hover {
+    transform: scale(1.05);
+    z-index: 2;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  }
+  
+  
+
+
+
+  /* 스켈레톤 */
+.vod-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.vod-skeleton-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.vod-skeleton-thumb {
+  width: 100%;
+  aspect-ratio: 2 / 3; /* 썸네일 비율 고정 */
+  background-color: #2a2a2a;
+  border-radius: 8px;
+}
+
+.vod-skeleton-title {
+  width: 80%;
+  height: 0.8rem;
+  margin-top: 0.5rem;
+  background-color: #3a3a3a;
+  border-radius: 4px;
+}

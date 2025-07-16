@@ -1,65 +1,62 @@
 .mylist-page {
-    width: 100%;
-    min-height: 100vh;
-    padding: 40px 60px;
-    background: #111;
-    box-sizing: border-box;
-    overflow-x: hidden;
-  }
-  
-  .mylist-header {
-    color: #fff;
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 24px;
-    letter-spacing: 1px;
-    text-align: left;
-    padding-left: 2px;
-  }
-  
-  /* 카드 리스트 */
-  .mylist-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr))
-  }
-  
-  
-  /* 카드 스타일 통일 (content-card) */
-  .mylist-card {
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    cursor: pointer;
-    transition: box-shadow 0.18s, border-color 0.18s;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-    border: 1px solid;
-    margin-bottom: 30px;
-    margin-right: 30px;
-    overflow: hidden;
-    background: linear-gradient(180deg, #232323 0%, #181818 100%);
-  }
-  
-  .mylist-card:hover {
-    border: 3px solid #ec008c;
-  }
-  
-  .mylist-card img {
-    width: 100%;
-    object-fit: cover;
-    display: block;
-  }
-  
-  .mylist-card-title {
-    font-weight: 500;
-    font-size: 1rem;
-    text-align: center;
-    color: #fff;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-    width: 100%;
-    padding: 10px 0;
-  }
-  
+  padding: 40px 60px;
+  background: #111;
+  min-height: 90vh;
+}
+
+.mylist-header {
+  color: #fff;
+  font-size: 1.7rem;
+  font-weight: bold;
+  margin-bottom: 18px;
+  letter-spacing: 1px;
+  text-align: left;
+  padding-left: 2px;
+}
+
+.mylist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.vod-thumbnail-card {
+  position: relative;
+  transition: transform 0.25s ease;
+}
+
+.vod-thumbnail-card:hover {
+  transform: scale(1.05);
+  z-index: 2;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+}
+
+.vod-title {
+  margin-top: 0.5rem;
+  color: #fff;
+  font-size: 1rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 스켈레톤 */
+.vod-skeleton-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.vod-skeleton-thumb {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  background-color: #2a2a2a;
+  border-radius: 8px;
+}
+
+.vod-skeleton-title {
+  width: 80%;
+  height: 0.8rem;
+  margin-top: 0.5rem;
+  background-color: #3a3a3a;
+  border-radius: 4px;
+}
