@@ -5,6 +5,7 @@ import ContentDetailModal from "../../components/ContentDetailModal/ContentDetai
 import HorizontalSlider from '../../components/HorizontalSlider/HorizontalSlider';
 import MyList from '../../components/MyList/MyList';
 import VODList from '../../components/VODList/VODList';
+import Live from '../../components/Live/Live';
 import SidebarHeader from '../../components/SidebarHeader/SidebarHeader';
 
 import './HomePage.css'
@@ -19,6 +20,8 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   const [modalLoading, setModalLoading] = useState(false);
   const [vodLoading, setVodLoading] = useState(false);
   const [myListLoading, setMyListLoading] = useState(false);
+  const [liveLoading, setLiveLoading] = useState(false);
+
 
   
 
@@ -42,6 +45,8 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   const loaderRef = useRef();
 
   const [selectedSubgenre, setSelectedSubgenre] = useState(null);
+  const [groupedLiveContents, setGroupedLiveContents] = useState({});
+
   
   // 프로필 최신 목록 불러오기
   useEffect(() => {
@@ -77,6 +82,25 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
     };
     fetchVOD();
   }, [selectedMenuParam, page, profile, hasNext, selectedSubgenre]);
+  
+  // Live 콘텐츠 가져오기
+  useEffect(() => {
+    if (selectedMenuParam !== "Live" || !profile) return;
+    setLiveLoading(true)
+  
+    const fetchLiveContents = async () => {
+      try {
+        const res = await axios.get("http://localhost:8000/recommendation/api/live_by_broadcaster/");
+        setGroupedLiveContents(res.data);
+      } catch (error) {
+        console.error("실시간 콘텐츠 불러오기 실패:", error.message, error.response?.data);
+      } finally {
+        setLiveLoading(false)
+      }
+    };
+  
+    fetchLiveContents();
+  }, [selectedMenuParam, profile]);
   
   
 
@@ -205,7 +229,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
       setModalLoading(false);
     }
   };
-
+  // 모달 끄기
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedContent(null);
@@ -283,10 +307,10 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
           </div>
         </>
       )}
-
-
       
       {selectedMenuParam === "My List" && <MyList myListContents={myListContents} onClick={handleClick} isLoading={myListLoading}/>}
+      {selectedMenuParam === "Live" && <Live groupedLiveContents={groupedLiveContents} onClick={handleClick} isLoading={liveLoading}/>}
+
       {selectedMenuParam === "VOD" && (<VODList vodContents={vodContents} onClick={handleClick} loaderRef={loaderRef} selectedSubgenre={selectedSubgenre} isLoading={vodLoading} />
 )}
 

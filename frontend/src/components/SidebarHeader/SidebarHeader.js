@@ -33,7 +33,7 @@ const SidebarHeader = ({
     const fetchGenresWithSubgenres = async () => {
       try {
         const res = await axios.get("http://localhost:8000/recommendation/genres_with_subgenres/");
-        setSubgenresByGenre(res.data); // 변수 이름은 그대로 써도 되고, 바꾸고 싶으면 같이 수정
+        setSubgenresByGenre(res.data);
         console.log("장르 + 서브장르 응답 확인", res.data);
       } catch (error) {
         console.error("장르 + 서브장르 가져오기 오류:", error);
@@ -80,13 +80,13 @@ const SidebarHeader = ({
             Home
         </div>
 
-        {/* Live 메뉴 */}
+        {/* Live */}
         <div
           className="sidebar-flyout"
         >
           <div
-            className={`sidebar-flyout-toggle ${selectedMenu === 'LIVE' ? 'active' : ''}`}
-            onClick={() => onSelect('LIVE')}
+            className={`sidebar-flyout-toggle ${selectedMenu === 'Live' ? 'active' : ''}`}
+            onClick={() => onSelect('Live')}
           >
             Live
           </div>
@@ -109,9 +109,6 @@ const SidebarHeader = ({
           >
             VOD
           </div>
-
-
-
           {vodDropdownOpen && (
             <div
               className="vod-flyout-wrapper"

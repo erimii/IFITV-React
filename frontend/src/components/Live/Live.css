@@ -1,0 +1,51 @@
+.home-skeleton-title {
+    width: 220px;
+    height: 28px;
+    background: #333;
+    border-radius: 4px;
+    margin: 30px 60px;
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+  
+  .home-skeleton-row {
+    display: flex;
+    gap: 16px;
+    margin-left: 60px;
+    margin-bottom: 32px;
+    flex-wrap: nowrap;
+    overflow-x: hidden;
+  }
+  
+  .home-skeleton-card {
+    width: 250px;
+    height: 400px;
+    background: #222;
+    border-radius: 10px;
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+  
+  @keyframes pulse {
+    0% { opacity: 0.9; }
+    50% { opacity: 0.5; }
+    100% { opacity: 0.9; }
+  }
+
+
+  
+  .live-page {
+    padding: 40px 60px;
+    background: #111;
+    min-height: 90vh;
+  }
+  
+  .live-header {
+    color: #fff;
+    font-size: 1.7rem;
+    font-weight: bold;
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+    text-align: left;
+    padding-left: 2px;
+  }
+
+  

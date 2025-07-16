@@ -15,7 +15,8 @@ from .constants import subgenre_mapping
 from django.db.models import Q
 from django.core.paginator import Paginator
 from profiles.models import VODWatchHistory
-from datetime import date, time
+from datetime import date, time, datetime
+from collections import defaultdict
 
 #  VOD 전체 가져오기
 def all_vod_contents(request):
@@ -47,6 +48,47 @@ def all_vod_contents(request):
         "has_next": page_obj.has_next(),
         "next_page": page + 1 if page_obj.has_next() else None
     })
+
+# Live 전체 가져오기
+@api_view(['GET'])
+def live_contents_by_broadcaster(request):
+    target_date = date(2025, 7, 12)  # 고정 날짜
+
+    programs = LiveContent.objects.filter(date=target_date).order_by('airtime')
+
+    grouped = defaultdict(list)
+    broadcaster_first = {}
+
+    for p in programs:
+        if not p.channel:
+            continue
+
+        airtime_str = p.airtime.strftime('%H:%M:%S') if p.airtime else ""
+        runtime_minutes = p.runtime or 0
+
+        if not is_current_or_future_program(airtime_str, runtime_minutes):
+            continue
+
+        # 첫 번째만 is_live True
+        is_first = p.channel not in broadcaster_first
+        if is_first:
+            broadcaster_first[p.channel] = True
+
+        grouped[p.channel].append({
+            "id": p.id,
+            "channel": p.channel,
+            "title": p.title,
+            "thumbnail": p.thumbnail,
+            "airtime": airtime_str,
+            "genre": p.genre,
+            "subgenre": p.subgenre,
+            "description": p.description,
+            "is_live": is_first,
+        })
+
+    return Response(grouped, status=200)
+
+
 
 # home > vod > genre > subgenre 필터링위한 api
 @api_view(['GET'])
@@ -245,7 +287,6 @@ def liked_based_recommend(request):
     end = time.time()
     print(f"[TIME] liked_based_recommend took {end - start:.2f} seconds")
     return Response(results, status=status.HTTP_200_OK)
-
 
 # 컨텐츠 클릭 시 디테일 + 해당 콘텐츠 기반 다른 콘텐츠 추천(모달에서)
 @api_view(['POST'])

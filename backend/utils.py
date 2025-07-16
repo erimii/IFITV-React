@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from datetime import datetime
+from datetime import datetime, date
 from django.conf import settings
 
 def load_today_programs():
@@ -28,3 +28,13 @@ def is_current_or_future_program(airtime_str, runtime_minutes):
     except:
         return True  # 파싱 실패 시 포함
 
+
+def is_currently_airing(airtime_str, runtime_minutes):
+    if not airtime_str or not runtime_minutes:
+        return False
+
+    now = datetime.now().time()
+    airtime = datetime.strptime(airtime_str, '%H:%M:%S').time()
+    end_time = (datetime.combine(date.today(), airtime) + timedelta(minutes=runtime_minutes)).time()
+
+    return airtime <= now <= end_time
