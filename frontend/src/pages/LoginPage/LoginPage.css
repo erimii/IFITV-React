@@ -1,13 +1,12 @@
 /* focused */
-.focused input,
-.focused button {
+.login-section.focused input,
+.login-section.focused button {
   outline: 2px solid #ec008c;
   transform: scale(1.05);
   transition: transform 0.2s ease, outline 0.2s ease;
   z-index: 2;
   border-radius: 8px;
 }
-
 
 
 .login-bg {

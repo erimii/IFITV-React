@@ -1,3 +1,12 @@
+/* focused */
+.profile-section.focused {
+  outline: none !important;
+  transform: scale(1.2);
+  transition: transform 0.4s ease;
+  border-radius: 10px;
+}
+
+/* skeleton */
 .skeleton-profile-card {
   width: 100px;
   height: 100px;
@@ -39,7 +48,7 @@
 
 .profile-list {
   display: flex;
-  gap: 48px;
+  gap: 70px;
   flex-wrap: wrap;
   justify-content: center;
 }

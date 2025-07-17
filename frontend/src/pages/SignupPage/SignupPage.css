@@ -1,3 +1,14 @@
+/* focused */
+.signup-section.focused input,
+.signup-section.focused button {
+  outline: 2px solid #ec008c;
+  transform: scale(1.05);
+  transition: transform 0.2s ease, outline 0.2s ease;
+  z-index: 2;
+  border-radius: 8px;
+}
+
+
 .register-bg {
   min-height: 100vh;
   background: #232323; /* 배경색 */

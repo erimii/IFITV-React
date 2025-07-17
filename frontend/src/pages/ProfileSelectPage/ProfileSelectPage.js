@@ -1,7 +1,11 @@
+// src/pages/ProfileSelectPage.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './ProfileSelectPage.css';
+
+import Focusable from '../../components/Focusable/Focusable';
+import { useFocus } from '../../context/FocusContext';
 
 function ProfileSelectPage({ user, setSelectedProfile }) {
   const navigate = useNavigate();
@@ -9,6 +13,12 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
   const [loading, setLoading] = useState(true);
   const [editingProfile, setEditingProfile] = useState(null);
   const [editForm, setEditForm] = useState({ name: "", age: "", gender: "", gesture: "" });
+  const { setSection, setIndex } = useFocus();
+
+  useEffect(() => {
+    setSection('profile');
+    setIndex(0);
+  }, []);
 
   useEffect(() => {
     const fetchProfiles = async () => {
@@ -43,7 +53,7 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
     navigate("/home");
   };
 
-  const handleAddProfile = async () => {
+  const handleAddProfile = () => {
     navigate("/create-profile", { state: { usedGestures, user } });
   };
 
@@ -91,110 +101,119 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
             ))
           ) : (
             <>
-              {profiles.map((profile) => (
-                <div key={profile.id} className="profile-card">
-                  <button
-                    className="profile-avatar-btn"
-                    onClick={() => {
-                      if (editingProfile === profile.name) return;
-                      handleSelect(profile);
-                    }}
-                    aria-label={`프로필 ${profile.name} 선택`}
-                    tabIndex={editingProfile === profile.name ? -1 : 0}
-                  >
-                    <div className="profile-avatar">
-                      {profile.gesture
-                        ? gestureOptions.find((opt) => opt.value === profile.gesture)?.label
-                        : "✊"}
-                    </div>
-                  </button>
+              {profiles.map((profile, idx) => (
+                <Focusable sectionKey="profile" index={idx} key={profile.id}>
+                  <div className="profile-card">
+                    <button
+                      className="profile-avatar-btn"
+                      onClick={() => {
+                        if (editingProfile === profile.name) return;
+                        handleSelect(profile);
+                      }}
+                      aria-label={`프로필 ${profile.name} 선택`}
+                      tabIndex={editingProfile === profile.name ? -1 : 0}
+                    >
+                      <div className="profile-avatar">
+                        {profile.gesture
+                          ? gestureOptions.find((opt) => opt.value === profile.gesture)?.label
+                          : "✊"}
+                      </div>
+                    </button>
 
-                  <input
-                    type="text"
-                    className="profile-name-input"
-                    value={
-                      editingProfile === profile.name ? editForm.name : profile.name
-                    }
-                    onChange={(e) =>
-                      setEditForm((prev) => ({ ...prev, name: e.target.value }))
-                    }
-                    maxLength={6}
-                    placeholder="프로필 이름"
-                    disabled={editingProfile !== profile.name}
-                  />
+                    <input
+                      type="text"
+                      className="profile-name-input"
+                      value={
+                        editingProfile === profile.name ? editForm.name : profile.name
+                      }
+                      onChange={(e) =>
+                        setEditForm((prev) => ({ ...prev, name: e.target.value }))
+                      }
+                      maxLength={6}
+                      placeholder="프로필 이름"
+                      disabled={editingProfile !== profile.name}
+                      tabIndex={-1}
+                    />
 
-                  <div className="profile-edit-actions">
-                    {editingProfile === profile.name ? (
-                      <>
-                        <div className="avatar-emoji-list">
-                          {gestureOptions.map((av) => {
-                            const isUsed =
-                              usedGestures.includes(av.value) &&
-                              av.value !== profile.gesture;
-                            const isSelected = editForm.gesture === av.value;
-                            return (
-                              <button
-                                key={av.value}
-                                type="button"
-                                className={`avatar-emoji-btn${isSelected ? " selected" : ""}`}
-                                onClick={() =>
-                                  !isUsed &&
-                                  setEditForm((prev) => ({
-                                    ...prev,
-                                    gesture: av.value,
-                                  }))
-                                }
-                                disabled={isUsed}
-                                title={isUsed ? "다른 프로필에서 사용 중" : av.label}
-                              >
-                                {av.label}
-                              </button>
-                            );
-                          })}
-                        </div>
+                    <div className="profile-edit-actions">
+                      {editingProfile === profile.name ? (
+                        <>
+                          <div className="avatar-emoji-list">
+                            {gestureOptions.map((av) => {
+                              const isUsed =
+                                usedGestures.includes(av.value) &&
+                                av.value !== profile.gesture;
+                              const isSelected = editForm.gesture === av.value;
+                              return (
+                                <button
+                                  key={av.value}
+                                  type="button"
+                                  className={`avatar-emoji-btn${isSelected ? " selected" : ""}`}
+                                  onClick={() =>
+                                    !isUsed &&
+                                    setEditForm((prev) => ({
+                                      ...prev,
+                                      gesture: av.value,
+                                    }))
+                                  }
+                                  disabled={isUsed}
+                                  title={isUsed ? "다른 프로필에서 사용 중" : av.label}
+                                  tabIndex={-1}
+                                >
+                                  {av.label}
+                                </button>
+                              );
+                            })}
+                          </div>
 
-                        <button
-                          className="profile-delete-btn"
-                          onClick={() => handleDelete(profile.name)}
-                        >
-                          🗑
-                        </button>
+                          <button
+                            className="profile-delete-btn"
+                            onClick={() => handleDelete(profile.name)}
+                            tabIndex={-1}
+                          >
+                            🗑
+                          </button>
+                          <button
+                            className="profile-edit-btn"
+                            onClick={() => handleEdit(profile.name)}
+                            tabIndex={-1}
+                          >
+                            ✔
+                          </button>
+                        </>
+                      ) : (
                         <button
                           className="profile-edit-btn"
-                          onClick={() => handleEdit(profile.name)}
+                          onClick={() => {
+                            setEditingProfile(profile.name);
+                            setEditForm({
+                              name: profile.name,
+                              age: profile.age,
+                              gender: profile.gender,
+                              gesture: profile.gesture || "",
+                            });
+                          }}
+                          tabIndex={-1}
                         >
-                          ✔
+                          🖊
                         </button>
-                      </>
-                    ) : (
-                      <button
-                        className="profile-edit-btn"
-                        onClick={() => {
-                          setEditingProfile(profile.name);
-                          setEditForm({
-                            name: profile.name,
-                            age: profile.age,
-                            gender: profile.gender,
-                            gesture: profile.gesture || "",
-                          });
-                        }}
-                      >
-                        🖊
-                      </button>
-                    )}
+                      )}
+                    </div>
                   </div>
-                </div>
+                </Focusable>
               ))}
 
               {profiles.length < 4 && (
-                <button
-                  className="profile-card add-profile-btn"
-                  onClick={handleAddProfile}
-                  aria-label="프로필 추가"
-                >
-                  <div className="profile-avatar add-avatar">+</div>
-                  <div className="profile-name">프로필 추가</div>
-                </button>
+                <Focusable sectionKey="profile" index={profiles.length}>
+                  <button
+                    className="profile-card add-profile-btn"
+                    onClick={handleAddProfile}
+                    aria-label="프로필 추가"
+                  >
+                    <div className="profile-avatar add-avatar">+</div>
+                    <div className="profile-name">프로필 추가</div>
+                  </button>
+                </Focusable>
               )}
             </>
           )}

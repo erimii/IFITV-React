@@ -16,7 +16,7 @@ function Focusable({ sectionKey, index, children }) {
   return (
     <div
       ref={ref}
-      className={`focusable-wrapper ${isFocused ? "focused" : ""}`}
+      className={`focusable-wrapper ${sectionKey}-section ${isFocused ? "focused" : ""}`}
     >
       {children}
     </div>
