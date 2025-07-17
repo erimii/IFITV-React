@@ -1,17 +1,26 @@
-// src/pages/SignupPage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './SignupPage.css';
 
-function SignupPage({setUser}) {
+import Focusable from '../../components/Focusable/Focusable';
+import { useFocus } from '../../context/FocusContext';
+
+function SignupPage({ setUser }) {
   const navigate = useNavigate();
   const [error, setError] = useState("");
+  const { setSection, setIndex } = useFocus();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     passwordConfirm: ""
   });
+
+  useEffect(() => {
+    setSection("signup");
+    setIndex(0);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,12 +45,14 @@ function SignupPage({setUser}) {
         password: formData.password
       });
       localStorage.setItem("user", JSON.stringify(response.data));
-      setUser(response.data);  // 상태 업데이트
+      setUser(response.data);
       navigate("/select-profile");
     } catch (error) {
       console.error('회원가입 오류:', error);
       if (error.response) {
         alert(error.response.data.error || "회원가입 실패");
+        console.log(error.response.data);
+
       } else {
         alert("서버 연결 오류");
       }
@@ -55,46 +66,56 @@ function SignupPage({setUser}) {
         <form className="register-form" onSubmit={handleSubmit} autoComplete="off">
           <div className="form-group">
             <label htmlFor="email">이메일<span>*</span></label>
-            <input
-              id="email"
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
+            <Focusable sectionKey="signup" index={0}>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </Focusable>
           </div>
           <div className="form-group">
             <label htmlFor="password">비밀번호<span>*</span></label>
-            <input
-              id="password"
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
+            <Focusable sectionKey="signup" index={1}>
+              <input
+                id="password"
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+            </Focusable>
           </div>
           <div className="form-group">
             <label htmlFor="passwordConfirm">비밀번호 확인<span>*</span></label>
-            <input
-              id="passwordConfirm"
-              type="password"
-              name="passwordConfirm"
-              value={formData.passwordConfirm}
-              onChange={handleChange}
-              required
-            />
+            <Focusable sectionKey="signup" index={2}>
+              <input
+                id="passwordConfirm"
+                type="password"
+                name="passwordConfirm"
+                value={formData.passwordConfirm}
+                onChange={handleChange}
+                required
+              />
+            </Focusable>
           </div>
 
           {error && <div className="form-error">{error}</div>}
 
-          <button className="register-btn" type="submit">회원가입</button>
+          <Focusable sectionKey="signup" index={3}>
+            <button className="register-btn" type="submit">회원가입</button>
+          </Focusable>
         </form>
 
         <div className="register-bottom">
           <span>이미 계정이 있으신가요?</span>
-          <button className="login-link" onClick={() => navigate("/login")}>로그인</button>
+          <Focusable sectionKey="signup" index={4}>
+            <button className="login-link" onClick={() => navigate("/login")}>로그인</button>
+          </Focusable>
         </div>
       </div>
     </div>
