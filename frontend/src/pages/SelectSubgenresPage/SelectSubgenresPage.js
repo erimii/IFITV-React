@@ -1,18 +1,24 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useLocation  } from "react-router-dom";
+// SelectSubgenresPage.js
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import './SelectSubgenresPage.css';
 import TypingText from "../../components/TypingText";
+import Focusable from "../../components/Focusable/Focusable";
+import { useFocus } from "../../context/FocusContext";
 
-function SelectSubgenresPage({user}) {
+function SelectSubgenresPage({ user }) {
   const navigate = useNavigate();
   const location = useLocation();
   const profile = location.state?.profile;
 
-  const [form, setForm] = useState({ preferred_genres: {} });
-  const [subgenreMapping, setSubgenreMapping] = useState({});  // { "예능": [{id, name}], ... }
-  const [selectedSubgenreIds, setSelectedSubgenreIds] = useState([]);  // 최종 id 리스트
+  const { setSection, setIndex, index } = useFocus();
+  const containerRef = useRef();
 
+  const [form, setForm] = useState({ preferred_genres: {} });
+  const [subgenreMapping, setSubgenreMapping] = useState({});
+  const [flatSubgenres, setFlatSubgenres] = useState([]);
+  const [selectedSubgenreIds, setSelectedSubgenreIds] = useState([]);
   const MAX_SELECT = 10;
 
   const [line1Done, setLine1Done] = useState(false);
@@ -20,23 +26,42 @@ function SelectSubgenresPage({user}) {
   const [typingDone, setTypingDone] = useState(false);
   const [startTyping, setStartTyping] = useState(false);
 
-  // ✅ 페이지 진입하자마자 타이핑 시작
   useEffect(() => {
+    setSection("select-subgenres");
+    setIndex(0);
     setStartTyping(true);
   }, []);
 
-  // ✅ 장르 데이터는 따로 로딩
   useEffect(() => {
     axios.get('http://localhost:8000/recommendation/subgenres/')
       .then(res => {
         setSubgenreMapping(res.data);
+        const flatList = [];
+        Object.entries(res.data).forEach(([genre, subs]) => {
+          subs.forEach(sub => {
+            flatList.push({ ...sub, genre });
+          });
+        });
+        setFlatSubgenres(flatList);
       })
       .catch(err => {
         console.error("서브장르 불러오기 실패", err);
       });
   }, []);
 
-  // 서브장르 토글
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowDown") {
+        setIndex((i) => Math.min(i + 12, flatSubgenres.length + 1)); // +1: 다음 버튼 포함
+      } else if (e.key === "ArrowUp") {
+        setIndex((i) => Math.max(i - 12, 0));
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [flatSubgenres]);
+
   const toggleSubgenre = (genre, subgenreObj) => {
     const { id: subgenreId, name: subgenreName } = subgenreObj;
 
@@ -76,12 +101,12 @@ function SelectSubgenresPage({user}) {
   const onPrev = () => navigate("/select-subgenres");
   const onGoToLogin = () => navigate("/");
 
+  let focusIndex = 0;
+
   return (
-    <div className="add-profile-bg-centered">
+    <div className="add-profile-bg-centered" ref={containerRef}>
       <div className="add-profile-container">
         <form className="add-profile-form" onSubmit={handleSubmit}>
-
-          {/* 타이핑 인삿말 */}
           <div className="genres-title">
             {startTyping && !line1Done && (
               <TypingText
@@ -91,7 +116,6 @@ function SelectSubgenresPage({user}) {
                 onComplete={() => setLine1Done(true)}
               />
             )}
-
             {line1Done && !line2Done && (
               <>
                 <div className="genres-title-line">
@@ -108,7 +132,6 @@ function SelectSubgenresPage({user}) {
                 />
               </>
             )}
-
             {line1Done && line2Done && (
               <>
                 <div className="genres-title-line">
@@ -121,7 +144,6 @@ function SelectSubgenresPage({user}) {
             )}
           </div>
 
-          {/* 장르 데이터 없을 때 스켈레톤 출력 */}
           {Object.keys(subgenreMapping).length === 0 && (
             <div className="add-profile-genres">
               {[...Array(5)].map((_, idx) => (
@@ -137,9 +159,8 @@ function SelectSubgenresPage({user}) {
             </div>
           )}
 
-          {/* 장르 데이터 있을 때만 리스트 렌더링 */}
           {Object.keys(subgenreMapping).length > 0 && (
-            <div div className={`add-profile-genres ${typingDone ? 'visible' : ''}`}>
+            <div className={`add-profile-genres ${typingDone ? 'visible' : ''}`}>
               {Object.entries(subgenreMapping).map(([genre, subgenres]) => (
                 <div key={genre}>
                   <div className="genre-category-label">{genre}</div>
@@ -149,15 +170,20 @@ function SelectSubgenresPage({user}) {
                       const disabled = !selected && selectedSubgenreIds.length >= MAX_SELECT;
 
                       return (
-                        <button
-                          type="button"
+                        <Focusable
                           key={sub.id}
-                          className={`genre-btn${selected ? " selected" : ""}`}
-                          onClick={() => toggleSubgenre(genre, sub)}
-                          disabled={disabled}
+                          sectionKey="select-subgenres"
+                          index={focusIndex++}
                         >
-                          #{sub.name}
-                        </button>
+                          <button
+                            type="button"
+                            className={`genre-btn${selected ? " selected" : ""}`}
+                            onClick={() => toggleSubgenre(genre, sub)}
+                            disabled={disabled}
+                          >
+                            #{sub.name}
+                          </button>
+                        </Focusable>
                       );
                     })}
                   </div>
@@ -167,27 +193,20 @@ function SelectSubgenresPage({user}) {
           )}
 
           <div className="add-profile-btn-row">
-            <button
-              className="add-profile-prev-btn"
-              type="button"
-              onClick={onPrev}
-            >
-              이전
-            </button>
-            <button
-              className="add-profile-next-btn"
-              type="submit"
-              disabled={selectedSubgenreIds.length === 0}
-            >
-              다음
-            </button>
+            <Focusable sectionKey="select-subgenres" index={focusIndex++}>
+              <button className="add-profile-prev-btn" type="button" onClick={onPrev}>
+                이전
+              </button>
+            </Focusable>
+
+            <Focusable sectionKey="select-subgenres" index={focusIndex++}>
+              <button className="add-profile-next-btn" type="submit" disabled={selectedSubgenreIds.length === 0}>
+                다음
+              </button>
+            </Focusable>
           </div>
         </form>
 
-        <div className="register-bottom">
-          <span>이미 계정이 있으신가요?</span>
-          <button className="login-link" type="button" onClick={onGoToLogin}>로그인</button>
-        </div>
       </div>
     </div>
   );
