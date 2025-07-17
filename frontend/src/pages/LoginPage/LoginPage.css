@@ -1,3 +1,15 @@
+/* focused */
+.focused input,
+.focused button {
+  outline: 2px solid #ec008c;
+  transform: scale(1.05);
+  transition: transform 0.2s ease, outline 0.2s ease;
+  z-index: 2;
+  border-radius: 8px;
+}
+
+
+
 .login-bg {
   min-height: 100vh;
   background: #232323;
@@ -42,6 +54,7 @@
   color: #fff;
   font-size: 1.1rem;
   outline: none;
+  width: 92%;
 }
 
 .login-input::placeholder {
@@ -66,6 +79,7 @@
   cursor: pointer;
   margin-top: 8px;
   transition: background 0.2s;
+  width: 100%;
 }
 
 .login-btn:hover {

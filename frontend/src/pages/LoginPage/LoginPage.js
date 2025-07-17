@@ -1,18 +1,27 @@
 // src/pages/LoginPage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './LoginPage.css';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
+import Focusable from '../../components/Focusable/Focusable';
+import { useFocus } from '../../context/FocusContext';
+
 function LoginPage({ setUser }) {
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const { setSection, setIndex } = useFocus();
 
   const [formData, setFormData] = useState({
     email: "",
     password: ""
   });
+
+  useEffect(() => {
+    setSection('login');
+    setIndex(0);
+  }, [setSection, setIndex]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,10 +34,10 @@ function LoginPage({ setUser }) {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/login/', formData);  // ✅ URL 수정 + axios
-      localStorage.setItem("user", JSON.stringify(response.data)); // 로그인 정보 저장
-      setUser(response.data); // App 상태 업데이트
-      navigate("/select-profile"); // 홈으로 이동
+      const response = await axios.post('http://localhost:8000/api/login/', formData);
+      localStorage.setItem("user", JSON.stringify(response.data));
+      setUser(response.data);
+      navigate("/select-profile");
     } catch (error) {
       console.error('로그인 오류:', error);
       if (error.response) {
@@ -41,9 +50,8 @@ function LoginPage({ setUser }) {
 
   const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID';
   const handleGoogleSuccess = (credentialResponse) => {
-    // 구글 로그인 성공 시 JWT 토큰(credentialResponse.credential) 처리
     console.log('Google 로그인 성공:', credentialResponse);
-    // 필요시 onLogin 호출하거나 별도 소셜 로그인 처리 로직 추가
+    // 여기에 토큰 처리 로직 추가
   };
 
   const handleGoogleFailure = () => {
@@ -54,33 +62,57 @@ function LoginPage({ setUser }) {
     <div className="login-bg">
       <div className="login-container">
         <div className="login-logo">IFITV</div>
+
         <form className="login-form" onSubmit={handleLogin}>
-          <input
-            className="login-input"
-            name="email"
-            type="text"
-            placeholder="이메일"
-            value={formData.email}
-            onChange={handleChange}
-            autoFocus
-            required
-          />
-          <input
-            className="login-input"
-            name="password"
-            type="password"
-            placeholder="비밀번호"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
+          <Focusable sectionKey="login" index={0}>
+            <div>
+              <input
+                className="login-input"
+                name="email"
+                type="text"
+                placeholder="이메일"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </Focusable>
+
+          <Focusable sectionKey="login" index={1}>
+            <div>
+              <input
+                className="login-input"
+                name="password"
+                type="password"
+                placeholder="비밀번호"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </Focusable>
+
           {error && <div className="login-error">{error}</div>}
-          <button className="login-btn" type="submit">로그인</button>
+
+          <Focusable sectionKey="login" index={2}>
+            <div>
+              <button className="login-btn" type="submit">로그인</button>
+            </div>
+          </Focusable>
         </form>
+
         <div className="login-bottom">
           <span>아직 회원이 아니신가요?</span>
-          <button className="register-link" onClick={()=>{navigate("/signup")}}>회원가입</button>
+
+          <Focusable sectionKey="login" index={3}>
+            <div>
+              <button className="register-link" onClick={() => navigate("/signup")}>
+                회원가입
+              </button>
+            </div>
+          </Focusable>
         </div>
+
         <div className="login-google-wrap">
           <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
             <GoogleLogin
@@ -96,7 +128,8 @@ function LoginPage({ setUser }) {
           </GoogleOAuthProvider>
         </div>
       </div>
-    </div> 
+    </div>
   );
 }
+
 export default LoginPage;

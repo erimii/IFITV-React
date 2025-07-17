@@ -1,0 +1,19 @@
+/* wrapper에만 스타일 주기 */
+.focusable-wrapper.focused {
+    outline: 2px solid #ec008c;
+    transform: scale(1.03);
+    transition: transform 0.2s ease, outline 0.2s ease;
+    border-radius: 8px;
+  }
+  
+  /* wrapper가 input 감쌀 때 margin으로 자연스럽게 */
+  .focusable-wrapper {
+    display: block;
+    width: 100%;
+  }
+  
+  .login-input,
+  .login-btn,
+  .register-link {
+    width: 100%;  /* 명시적으로 지정 */
+  }

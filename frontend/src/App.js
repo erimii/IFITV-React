@@ -4,6 +4,8 @@ import axios from 'axios';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 
+import { FocusProvider } from './context/FocusContext';
+
 import SplashScreen from './components/SplashScreen/SplashScreen';
 
 import LandingPage from './pages/LandingPage';
@@ -52,6 +54,7 @@ function App() {
   
 
   return (
+    <FocusProvider>
     <>
       {showSplash ? (
         <SplashScreen onFinish={() => setShowSplash(false)} />
@@ -114,6 +117,7 @@ function App() {
         </Router>
       )}
     </>
+    </FocusProvider>
   );
 }
 
