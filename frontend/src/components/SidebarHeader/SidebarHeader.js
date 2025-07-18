@@ -262,17 +262,16 @@ const SidebarHeader = ({
             </svg>
           </button>
           {settingsDropdownOpen && (
-            <div className="sidebar-dropdown-menu">
+            <div className="sidebar-flyout-menu">
               <button
-                className="sidebar-dropdown-item"
+                className="sidebar-flyout-item"
                 onClick={onEditProfile}
                 type="button"
               >
                 프로필 수정
               </button>
-              <div className="dropdown-divider" />
               <button
-                className="sidebar-dropdown-item"
+                className="sidebar-flyout-item"
                 onClick={onLogout}
                 type="button"
               >
