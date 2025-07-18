@@ -5,15 +5,28 @@ import CarouselSelect from '../../components/CarouselSelect/CarouselSelect';
 import './SelectContentPage.css';
 import TypingText from "../../components/TypingText";
 import Focusable from "../../components/Focusable/Focusable";
+import { useFocus } from "../../context/FocusContext"; // ✅ 포커스 상태 훅 가져오기
 
 function SelectContentPage({ user }) {
   const navigate = useNavigate();
   const location = useLocation();
   const profile = location.state?.profile;
+
   const [contentsByGenre, setContentsByGenre] = useState({});
   const [selectedContentIds, setSelectedContentIds] = useState([]);
   const [selectedTitles, setSelectedTitles] = useState([]);
   const [typingDone, setTypingDone] = useState(false);
+
+  const { setSection, setIndex } = useFocus(); // ✅ 포커스 초기화용
+  const isLoading = Object.keys(contentsByGenre).length === 0;
+
+  // ✅ 초기 포커스 위치 설정
+  useEffect(() => {
+    if (!isLoading) {
+      setSection("select-content");
+      setIndex(0);
+    }
+  }, [isLoading, setSection, setIndex]);
 
   const fetchContents = async () => {
     try {
@@ -64,9 +77,7 @@ function SelectContentPage({ user }) {
 
   const onPrev = () => navigate("/select-profile");
 
-  const isLoading = Object.keys(contentsByGenre).length === 0;
-
-  let focusIndex = 0; // 👉 Focusable에 고유 인덱스 부여
+  let focusIndex = 0;
 
   return (
     <div className="select-content-bg">
@@ -119,14 +130,14 @@ function SelectContentPage({ user }) {
                         style={{
                           border: selectedContentIds.includes(item.id)
                             ? "2px solid #ec008c"
-                            : "none",
+                            : "1px solid #ccc",
                           background: selectedContentIds.includes(item.id)
                             ? "#ec008c"
                             : "none",
                           padding: 0,
-                          cursor: "pointer"
+                          cursor: "pointer",
+                          borderRadius: "6px"
                         }}
-                        
                       >
                         <img
                           src={item.thumbnail}
