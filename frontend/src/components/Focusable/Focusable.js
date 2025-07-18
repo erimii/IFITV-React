@@ -10,8 +10,11 @@ function Focusable({ sectionKey, index, children }) {
   useEffect(() => {
     if (isFocused && ref.current) {
       ref.current.querySelector('input, button, textarea, select')?.focus?.();
+      console.log("[FOCUS TRIGGER]", sectionKey, index);
     }
   }, [isFocused]);
+
+  
 
   return (
     <div
