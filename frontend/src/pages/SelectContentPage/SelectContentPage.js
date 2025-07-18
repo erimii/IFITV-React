@@ -4,6 +4,7 @@ import axios from 'axios';
 import CarouselSelect from '../../components/CarouselSelect/CarouselSelect';
 import './SelectContentPage.css';
 import TypingText from "../../components/TypingText";
+import Focusable from "../../components/Focusable/Focusable";
 
 function SelectContentPage({ user }) {
   const navigate = useNavigate();
@@ -12,7 +13,6 @@ function SelectContentPage({ user }) {
   const [contentsByGenre, setContentsByGenre] = useState({});
   const [selectedContentIds, setSelectedContentIds] = useState([]);
   const [selectedTitles, setSelectedTitles] = useState([]);
-
   const [typingDone, setTypingDone] = useState(false);
 
   const fetchContents = async () => {
@@ -66,35 +66,36 @@ function SelectContentPage({ user }) {
 
   const isLoading = Object.keys(contentsByGenre).length === 0;
 
+  let focusIndex = 0; // 👉 Focusable에 고유 인덱스 부여
+
   return (
     <div className="select-content-bg">
       <div className="select-content-container">
-      {!typingDone ? (
-        <TypingText
-          text={`  ${profile?.name || ""} 님의 취향 콘텐츠를 골라주세요!`}
-          className="typing-text"
-          onComplete={() => setTypingDone(true)}
-        />
-      ) : (
-        <h2 className="select-content-title">
-          <span className="highlight-name">{profile?.name || ""}</span> 님의 취향 콘텐츠를 골라주세요!
-        </h2>
-      )}
-
+        {!typingDone ? (
+          <TypingText
+            text={`  ${profile?.name || ""} 님의 취향 콘텐츠를 골라주세요!`}
+            className="typing-text"
+            onComplete={() => setTypingDone(true)}
+          />
+        ) : (
+          <h2 className="select-content-title">
+            <span className="highlight-name">{profile?.name || ""}</span> 님의 취향 콘텐츠를 골라주세요!
+          </h2>
+        )}
 
         {isLoading ? (
           <div className="loading-wrapper">
-          <div className="skeleton-title" />
-          <div className="skeleton-card-row">
-            {[...Array(15)].map((_, i) => (
-              <div className="skeleton-card" key={i} />
-            ))}
+            <div className="skeleton-title" />
+            <div className="skeleton-card-row">
+              {[...Array(15)].map((_, i) => (
+                <div className="skeleton-card" key={i} />
+              ))}
+            </div>
           </div>
-        </div>
         ) : (
           Object.entries(contentsByGenre).map(([genre, items]) => {
-            if (!items || items.length === 0) return null;  // 🔥 빈 배열이면 출력 안 함
-          
+            if (!items || items.length === 0) return null;
+
             return (
               <div key={genre} className="content-category-block">
                 <div className="content-category-label">
@@ -103,37 +104,56 @@ function SelectContentPage({ user }) {
                     <span> ({profile.preferred_genres[genre].join(', ')})</span>
                   )}
                 </div>
-          
+
                 <CarouselSelect>
                   {items.map((item) => (
-                    <div
+                    <Focusable
                       key={item.id}
-                      onClick={() => toggleContent(item)}
-                      className={`content-card${selectedContentIds.includes(item.id) ? ' selected' : ''}`}
-                      style={{
-                        border: selectedContentIds.includes(item.id)
-                          ? "2px solid #A50034"
-                          : "1px solid #ccc",
-                      }}
+                      sectionKey="select-content"
+                      index={focusIndex++}
                     >
-                      <img src={item.thumbnail} alt={item.title} style={{ width: "100%", borderRadius: "6px" }} />
-                      <div className="content-card-title">{item.title}</div>
-                    </div>
+                      <button
+                        onClick={() => toggleContent(item)}
+                        type="button"
+                        className={`content-card${selectedContentIds.includes(item.id) ? ' selected' : ''}`}
+                        style={{
+                          border: selectedContentIds.includes(item.id)
+                            ? "2px solid #ec008c"
+                            : "none",
+                          background: selectedContentIds.includes(item.id)
+                            ? "#ec008c"
+                            : "none",
+                          padding: 0,
+                          cursor: "pointer"
+                        }}
+                        
+                      >
+                        <img
+                          src={item.thumbnail}
+                          alt={item.title}
+                          style={{ width: "100%", borderRadius: "6px" }}
+                        />
+                        <div className="content-card-title">{item.title}</div>
+                      </button>
+                    </Focusable>
                   ))}
                 </CarouselSelect>
               </div>
             );
           })
-          
         )}
 
         <div className="select-content-btn-row">
-          <button className="select-content-prev-btn" onClick={onPrev} type="button">
-            이전
-          </button>
-          <button className="select-content-next-btn" onClick={handleFinish} type="button">
-            선택 완료
-          </button>
+          <Focusable sectionKey="select-content" index={focusIndex++}>
+            <button className="select-content-prev-btn" onClick={onPrev} type="button">
+              이전
+            </button>
+          </Focusable>
+          <Focusable sectionKey="select-content" index={focusIndex++}>
+            <button className="select-content-next-btn" onClick={handleFinish} type="button">
+              선택 완료
+            </button>
+          </Focusable>
         </div>
       </div>
     </div>

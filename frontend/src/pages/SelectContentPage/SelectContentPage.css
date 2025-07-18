@@ -1,3 +1,41 @@
+/* 포커싱된 요소 커지도록 */
+/* 공통 transition */
+.content-card,
+.select-content-prev-btn,
+.select-content-next-btn {
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* 포커스된 카드 커짐 */
+.focusable-wrapper.focused .content-card {
+  transform: scale(1.12);
+  box-shadow: 0 8px 24px rgba(255, 30, 128, 0.5);
+  z-index: 10;
+}
+
+/* 포커스된 버튼 커짐 */
+.focusable-wrapper.focused .select-content-prev-btn,
+.focusable-wrapper.focused .select-content-next-btn {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(236, 0, 140, 0.4);
+  z-index: 10;
+}
+/* 선택된 + 포커싱된 카드: 핑크 배경 유지 + 강조 효과 */
+.focusable-wrapper.focused .content-card.selected {
+  background-color: #ec008c;
+  border: 2px solid #ec008c;
+  transform: scale(1.12);
+  box-shadow: 0 8px 24px rgba(255, 30, 128, 0.6);
+  z-index: 10;
+  color: white;
+}
+
+
+
+
+
+
+
 .loading-wrapper {
   padding: 60px 24px;
 }
@@ -45,6 +83,8 @@
   font-weight: bold;
 }
 
+
+
 /* 여기서부터 */
 .select-content-bg {
     background: #232323;
@@ -87,7 +127,7 @@
   
   /* 캐러셀 내부 카드 리스트는 CarouselSelect에서 관리하므로 flex-wrap 제거 */
   .content-card {
-    min-width: 200px;
+    width: 200px;
     border-radius: 12px;
     color: #222;
     display: flex;
@@ -102,10 +142,12 @@
   }
   
   .content-card.selected {
-    border: 2px solid  #ec008c;
-    box-shadow: 0 2px 12px rgba(255,30,128,0.13);
+    border: 2px solid #ec008c;
     background-color: #ec008c;
+    box-shadow: 0 2px 12px rgba(255, 30, 128, 0.13);
+    color: white;
   }
+  
 
   .content-card:hover {
     transform: scale(1.05); /* 카드 약간 확대 */
@@ -122,7 +164,7 @@
   
   .content-card-title {
     font-weight: 500;
-    font-size: 1rem;
+    font-size: 0.8rem;
     text-align: center;
     color: #fff;
     white-space: nowrap;       /* 한 줄로 표시 */

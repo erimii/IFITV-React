@@ -3,10 +3,10 @@
     align-items: center;
     width: 100%;
     margin: 0 20px 0 0;
-    gap: 8px;
     justify-content: center;
     position: relative;
     min-height: 350px;
+
   }
   
   /* 버튼: 고유 클래스명으로 변경 */
@@ -48,9 +48,9 @@
     flex-direction: row;
     flex-wrap: nowrap;
     overflow-x: auto;
-    gap: 16px;
+    gap: 50px;
     scroll-behavior: smooth;
-    padding: 10px 30px 10px 10px;
+    padding: 40px 30px 40px 30px;
     width: 98%;
     box-sizing: border-box;
   }
