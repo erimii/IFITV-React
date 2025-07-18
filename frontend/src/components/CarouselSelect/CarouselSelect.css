@@ -103,3 +103,11 @@
     text-align: center;
     white-space: pre-line;
   }
+
+  .carousel-scroll-container {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-behavior: smooth; /* 부드러운 스크롤 */
+  padding: 8px 0;
+}

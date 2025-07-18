@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import './CarouselSelect.css';
 
 const CarouselSelect = ({ children }) => {
@@ -9,6 +9,25 @@ const CarouselSelect = ({ children }) => {
       scrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
     }
   };
+
+  // 방향키 눌렀을 때 스크롤 이동
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const active = document.activeElement;
+      // focus가 현재 carousel 안에 있는 경우에만 스크롤 적용
+      if (!scrollRef.current?.contains(active)) return;
+
+      const scrollAmount = 900;
+      if (e.key === 'ArrowRight') {
+        scroll(scrollAmount);
+      } else if (e.key === 'ArrowLeft') {
+        scroll(-scrollAmount);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <div className="carousel-select-outer">
