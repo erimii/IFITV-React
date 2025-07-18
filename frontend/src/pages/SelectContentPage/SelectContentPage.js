@@ -5,7 +5,7 @@ import CarouselSelect from '../../components/CarouselSelect/CarouselSelect';
 import './SelectContentPage.css';
 import TypingText from "../../components/TypingText";
 import Focusable from "../../components/Focusable/Focusable";
-import { useFocus } from "../../context/FocusContext"; // ✅ 포커스 상태 훅 가져오기
+import { useFocus } from "../../context/FocusContext";
 
 function SelectContentPage({ user }) {
   const navigate = useNavigate();
@@ -17,13 +17,12 @@ function SelectContentPage({ user }) {
   const [selectedTitles, setSelectedTitles] = useState([]);
   const [typingDone, setTypingDone] = useState(false);
 
-  const { setSection, setIndex } = useFocus(); // ✅ 포커스 초기화용
+  const { setSection, setIndex } = useFocus();
   const isLoading = Object.keys(contentsByGenre).length === 0;
 
-  // ✅ 초기 포커스 위치 설정
   useEffect(() => {
     if (!isLoading) {
-      setSection("select-content");
+      setSection("select-content-0");
       setIndex(0);
     }
   }, [isLoading, setSection, setIndex]);
@@ -46,11 +45,9 @@ function SelectContentPage({ user }) {
 
   const toggleContent = (content) => {
     const { id, title } = content;
-
     setSelectedContentIds((prev) =>
       prev.includes(id) ? prev.filter((cid) => cid !== id) : [...prev, id]
     );
-
     setSelectedTitles((prev) =>
       prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title]
     );
@@ -62,7 +59,6 @@ function SelectContentPage({ user }) {
       liked_contents: selectedTitles,
       liked_contents_ids: selectedContentIds
     };
-
     try {
       await axios.post("http://localhost:8000/api/add_profile/", {
         user_id: user.id,
@@ -76,8 +72,6 @@ function SelectContentPage({ user }) {
   };
 
   const onPrev = () => navigate("/select-profile");
-
-  let focusIndex = 0;
 
   return (
     <div className="select-content-bg">
@@ -104,9 +98,10 @@ function SelectContentPage({ user }) {
             </div>
           </div>
         ) : (
-          Object.entries(contentsByGenre).map(([genre, items]) => {
+          Object.entries(contentsByGenre).map(([genre, items], genreIdx) => {
             if (!items || items.length === 0) return null;
 
+            const sectionKey = `select-content-${genreIdx}`;
             return (
               <div key={genre} className="content-category-block">
                 <div className="content-category-label">
@@ -117,11 +112,11 @@ function SelectContentPage({ user }) {
                 </div>
 
                 <CarouselSelect>
-                  {items.map((item) => (
+                  {items.map((item, itemIdx) => (
                     <Focusable
                       key={item.id}
-                      sectionKey="select-content"
-                      index={focusIndex++}
+                      sectionKey={sectionKey}
+                      index={itemIdx}
                     >
                       <button
                         onClick={() => toggleContent(item)}
@@ -155,12 +150,12 @@ function SelectContentPage({ user }) {
         )}
 
         <div className="select-content-btn-row">
-          <Focusable sectionKey="select-content" index={focusIndex++}>
+          <Focusable sectionKey="select-content-btns" index={0}>
             <button className="select-content-prev-btn" onClick={onPrev} type="button">
               이전
             </button>
           </Focusable>
-          <Focusable sectionKey="select-content" index={focusIndex++}>
+          <Focusable sectionKey="select-content-btns" index={1}>
             <button className="select-content-next-btn" onClick={handleFinish} type="button">
               선택 완료
             </button>
