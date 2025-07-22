@@ -1,0 +1,26 @@
+.genre-btn {
+  transition: all 0.2s;
+}
+
+.genre-btn.focused:not(.active) {
+  transform: scale(1.05);
+  box-shadow: 0 0 8px 2px #ec008c88;
+  z-index: 2;
+}
+
+.genre-btn.active {
+  color: #ec008c !important;
+  background: #1f1f1f !important;
+  border-bottom: 2px solid #ec008c;
+  font-weight: bold;
+}
+
+.genre-btn.focused.active {
+  transform: scale(1.08);
+  box-shadow: 0 0 12px 4px #ec008c;
+  color: #ec008c !important;
+  background: #232332 !important;
+  border-bottom: 2px solid #ec008c;
+  font-weight: bold;
+  z-index: 3;
+} 
