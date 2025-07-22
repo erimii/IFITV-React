@@ -1,28 +1,32 @@
 .profile-switch-overlay {
-    position: fixed;
-    top: 0; left: 0; bottom: 0; right: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    overflow: hidden; /* 스크롤바 숨김 */
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0,0,0,0.7) !important;
+    z-index: 3000 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .profile-switch-modal {
     background: #232323;
     border-radius: 24px;
     padding: 64.8px 76.8px 62.4px 76.8px;
-    min-width: 552px;
-    min-height: 696px;
+    min-width: 320px;
+    min-height: 200px;
+    max-width: 90vw !important;
+    max-height: 90vh !important;
     box-shadow: 0 6px 48px rgba(0,0,0,0.24);
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: relative;
-    overflow: hidden;
+    position: relative !important;
+    overflow: auto !important;
+    z-index: 3001 !important;
 }
 
 .profile-switch-close {
@@ -131,12 +135,15 @@
 
 @media (max-width: 600px) {
     .profile-switch-modal {
-        min-width: 108vw;
+        min-width: 85vw;
+        max-width: 85vw;
+        max-height: 85vh;
         padding: 33.6px 7.2vw 33.6px 7.2vw;
+        overflow: auto;
     }
     .profile-switch-image-rect {
-        width: 108vw;
-        height: 38.4vw;
+        width: 100%;
+        height: auto;
         min-width: 192px;
         min-height: 96px;
         font-size: 4.32rem;

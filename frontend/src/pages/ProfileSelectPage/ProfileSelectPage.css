@@ -229,3 +229,17 @@
   text-align: center;
   grid-column: 1 / -1; /* 전체 너비로 */
 }
+
+.focusable-wrapper.focused.profile-select .profile-card {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+
+  border-radius: 18px;
+  transform: scale(1.08);
+  z-index: 2;
+
+  filter: drop-shadow(0 0 18px #ec008c55);
+
+  transition: box-shadow 0.25s, filter 0.25s, transform 0.25s;
+}

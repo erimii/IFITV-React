@@ -9,7 +9,7 @@ import { useFocus } from '../../context/FocusContext';
 function SignupPage({ setUser }) {
   const navigate = useNavigate();
   const [error, setError] = useState("");
-  const { setSection, setIndex } = useFocus();
+  const { setSection, setIndex, registerSections } = useFocus();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -18,9 +18,10 @@ function SignupPage({ setUser }) {
   });
 
   useEffect(() => {
+    registerSections(['signup']);
     setSection("signup");
     setIndex(0);
-  }, []);
+  }, [registerSections, setSection, setIndex]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,7 +67,7 @@ function SignupPage({ setUser }) {
         <form className="register-form" onSubmit={handleSubmit} autoComplete="off">
           <div className="form-group">
             <label htmlFor="email">이메일<span>*</span></label>
-            <Focusable sectionKey="signup" index={0}>
+            <Focusable sectionKey="signup" index={0} context="signup">
               <input
                 id="email"
                 type="email"
@@ -74,12 +75,13 @@ function SignupPage({ setUser }) {
                 value={formData.email}
                 onChange={handleChange}
                 required
+                tabIndex={-1}
               />
             </Focusable>
           </div>
           <div className="form-group">
             <label htmlFor="password">비밀번호<span>*</span></label>
-            <Focusable sectionKey="signup" index={1}>
+            <Focusable sectionKey="signup" index={1} context="signup">
               <input
                 id="password"
                 type="password"
@@ -87,12 +89,13 @@ function SignupPage({ setUser }) {
                 value={formData.password}
                 onChange={handleChange}
                 required
+                tabIndex={-1}
               />
             </Focusable>
           </div>
           <div className="form-group">
             <label htmlFor="passwordConfirm">비밀번호 확인<span>*</span></label>
-            <Focusable sectionKey="signup" index={2}>
+            <Focusable sectionKey="signup" index={2} context="signup">
               <input
                 id="passwordConfirm"
                 type="password"
@@ -100,21 +103,24 @@ function SignupPage({ setUser }) {
                 value={formData.passwordConfirm}
                 onChange={handleChange}
                 required
+                tabIndex={-1}
               />
             </Focusable>
           </div>
 
           {error && <div className="form-error">{error}</div>}
 
-          <Focusable sectionKey="signup" index={3}>
-            <button className="register-btn" type="submit">회원가입</button>
+          <Focusable sectionKey="signup" index={3} context="signup">
+            <button className="register-btn" type="submit" tabIndex={-1}>회원가입</button>
           </Focusable>
         </form>
 
         <div className="register-bottom">
           <span>이미 계정이 있으신가요?</span>
-          <Focusable sectionKey="signup" index={4}>
-            <button className="login-link" onClick={() => navigate("/login")}>로그인</button>
+          <Focusable sectionKey="signup" index={4} context="signup">
+            <button className="login-link" onClick={() => navigate("/login")}
+              tabIndex={-1}
+            >로그인</button>
           </Focusable>
         </div>
       </div>

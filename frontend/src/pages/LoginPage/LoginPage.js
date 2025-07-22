@@ -11,7 +11,7 @@ import { useFocus } from '../../context/FocusContext';
 function LoginPage({ setUser }) {
   const navigate = useNavigate();
   const [error, setError] = useState('');
-  const { setSection, setIndex } = useFocus();
+  const { setSection, setIndex, registerSections } = useFocus();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -19,9 +19,10 @@ function LoginPage({ setUser }) {
   });
 
   useEffect(() => {
+    registerSections(['login']);
     setSection('login');
     setIndex(0);
-  }, [setSection, setIndex]);
+  }, [registerSections, setSection, setIndex]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,7 +65,7 @@ function LoginPage({ setUser }) {
         <div className="login-logo">IFITV</div>
 
         <form className="login-form" onSubmit={handleLogin}>
-          <Focusable sectionKey="login" index={0}>
+          <Focusable sectionKey="login" index={0} context="login">
             <div>
               <input
                 className="login-input"
@@ -78,7 +79,7 @@ function LoginPage({ setUser }) {
             </div>
           </Focusable>
 
-          <Focusable sectionKey="login" index={1}>
+          <Focusable sectionKey="login" index={1} context="login">
             <div>
               <input
                 className="login-input"
@@ -94,7 +95,7 @@ function LoginPage({ setUser }) {
 
           {error && <div className="login-error">{error}</div>}
 
-          <Focusable sectionKey="login" index={2}>
+          <Focusable sectionKey="login" index={2} context="login">
             <div>
               <button className="login-btn" type="submit">로그인</button>
             </div>
@@ -104,7 +105,7 @@ function LoginPage({ setUser }) {
         <div className="login-bottom">
           <span>아직 회원이 아니신가요?</span>
 
-          <Focusable sectionKey="login" index={3}>
+          <Focusable sectionKey="login" index={3} context="login">
             <div>
               <button className="register-link" onClick={() => navigate("/signup")}>
                 회원가입

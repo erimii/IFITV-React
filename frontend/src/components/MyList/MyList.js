@@ -1,5 +1,8 @@
 import './MyList.css';
 import { useState } from 'react';
+import Focusable from '../Focusable/Focusable';
+import { handleCardKeyDownWithSpace } from '../common/cardKeyHandlers';
+import styles from '../HomeContentCard.module.css';
 
 const MyList = ({ myListContents, onClick, isLoading = false }) => {
   const [selectedContentIds, setSelectedContentIds] = useState([]);
@@ -32,20 +35,23 @@ const MyList = ({ myListContents, onClick, isLoading = false }) => {
         </p>
       ) : (
         <div className="mylist-grid">
-          {myListContents.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => toggleContent(item)}
-              className="vod-thumbnail-card"
-              style={{ cursor: 'pointer' }}
-            >
-              <img
-                src={item.thumbnail}
-                alt={item.title}
-                style={{ width: '100%', borderRadius: '8px' }}
-              />
-              <p className="vod-title">{item.title}</p>
-            </div>
+          {myListContents.map((item, idx) => (
+            <Focusable sectionKey="mylist-content" index={idx} key={item.id}>
+              <div
+                onClick={() => toggleContent(item)}
+                className={`${styles.homeContentCard} vod-thumbnail-card`}
+                style={{ cursor: 'pointer' }}
+                tabIndex={0}
+                onKeyDown={(e) => handleCardKeyDownWithSpace(e, () => toggleContent(item))}
+              >
+                <img
+                  src={item.thumbnail}
+                  alt={item.title}
+                  style={{ width: '100%', borderRadius: '8px' }}
+                />
+                <p className="vod-title">{item.title}</p>
+              </div>
+            </Focusable>
           ))}
         </div>
       )}

@@ -1,0 +1,13 @@
+.homeContentCard {
+  transition: transform 0.22s cubic-bezier(0.4, 0.2, 0.2, 1), box-shadow 0.22s, filter 0.22s;
+}
+.homeContentCardFocused {
+  transform: scale(1.08);
+  box-shadow:
+    0 0 0 4px rgba(236,0,140,0.18),
+    0 0 16px 6px #ec008c99,
+    0 0 32px 12px #ec008c55;
+  filter: drop-shadow(0 0 12px #ec008c88);
+  outline: none;
+  z-index: 3;
+} 

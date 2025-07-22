@@ -7,6 +7,7 @@ import MyList from '../../components/MyList/MyList';
 import VODList from '../../components/VODList/VODList';
 import Live from '../../components/Live/Live';
 import SidebarHeader from '../../components/SidebarHeader/SidebarHeader';
+import { useFocus } from '../../context/FocusContext';
 
 import './HomePage.css'
 
@@ -22,6 +23,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   const [myListLoading, setMyListLoading] = useState(false);
   const [liveLoading, setLiveLoading] = useState(false);
 
+  const { registerSections } = useFocus();
 
   
 
@@ -37,7 +39,6 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedContent, setSelectedContent] = useState(null);
   const [results, setResults] = useState([]);
-  const [isGestureModalOpen, setIsGestureModalOpen] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -204,6 +205,24 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
     fetchRecommendations();
   }, [selectedMenuParam, user, profile]);
 
+  // 포커스 섹션 등록
+  useEffect(() => {
+    if (selectedMenuParam === '홈' && !loading) {
+      const sections = ['home-sidebar'];
+      const genreSliders = Object.keys(likedRecommendationsByGenre).filter(genre => 
+        likedRecommendationsByGenre[genre].length > 0
+      );
+      const totalSliders = 1 + genreSliders.length + (livePrograms.length > 0 ? 1 : 0);
+      
+      for (let i = 0; i < totalSliders; i++) {
+        sections.push(`home-slider-${i}`);
+      }
+      
+      console.log("[REGISTER SECTIONS]", sections);
+      registerSections(sections);
+    }
+  }, [selectedMenuParam, loading, likedRecommendationsByGenre, livePrograms.length, registerSections]);
+
   // 콘텐츠 디테일 + 비슷한 콘텐츠 추가
   const fetchDetailRecommendation = async (title, profileId) => {
     const res = await axios.post("http://localhost:8000/api/recommend_with_detail/", {
@@ -328,6 +347,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
         likedContentIds={likedContentIds}
         setLikedContentIds={setLikedContentIds}
         loading={modalLoading}
+        setSelectedContent={setSelectedContent}
       />
 
       {selectedMenuParam === "홈" && !loading && (
@@ -336,15 +356,17 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
             title={`${profile.name}님의 선호 장르 기반 콘텐츠`}
             items={genreContents}
             onCardClick={handleClick}
+            sliderIndex={0}
           />
 
-          {Object.entries(likedRecommendationsByGenre).map(([genre, items]) => (
+          {Object.entries(likedRecommendationsByGenre).map(([genre, items], genreIndex) => (
             items.length > 0 && (
               <HorizontalSlider
                 key={genre}
                 title={`${profile.name}님을 위한 ${genre} 추천`}
                 items={items}
                 onCardClick={handleClick}
+                sliderIndex={1 + genreIndex}
               />
             )
           ))}
@@ -358,6 +380,9 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
                 airtime: item["airtime"],
               }))}
               onCardClick={handleLiveClick}
+              sliderIndex={1 + Object.keys(likedRecommendationsByGenre).filter(genre => 
+                likedRecommendationsByGenre[genre].length > 0
+              ).length}
             />
           )}
         </>

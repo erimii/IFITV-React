@@ -13,12 +13,13 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
   const [loading, setLoading] = useState(true);
   const [editingProfile, setEditingProfile] = useState(null);
   const [editForm, setEditForm] = useState({ name: "", age: "", gender: "", gesture: "" });
-  const { setSection, setIndex } = useFocus();
+  const { setSection, setIndex, registerSections } = useFocus();
 
   useEffect(() => {
+    registerSections(['profile']);
     setSection('profile');
     setIndex(0);
-  }, []);
+  }, [registerSections, setSection, setIndex]);
 
   useEffect(() => {
     const fetchProfiles = async () => {
@@ -102,7 +103,7 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
           ) : (
             <>
               {profiles.map((profile, idx) => (
-                <Focusable sectionKey="profile" index={idx} key={profile.id}>
+                <Focusable sectionKey="profile" index={idx} context="profile-select" key={profile.id}>
                   <div className="profile-card">
                     <button
                       className="profile-avatar-btn"
@@ -204,7 +205,7 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
               ))}
 
               {profiles.length < 4 && (
-                <Focusable sectionKey="profile" index={profiles.length}>
+                <Focusable sectionKey="profile" index={profiles.length} context="profile-select">
                   <button
                     className="profile-card add-profile-btn"
                     onClick={handleAddProfile}

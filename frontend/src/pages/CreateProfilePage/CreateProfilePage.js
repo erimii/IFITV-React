@@ -10,12 +10,13 @@ function CreateProfilePage({ user }) {
   const location = useLocation();
   const usedGestures = location.state?.usedGestures || [];
 
-  const { setSection, setIndex } = useFocus();
+  const { setSection, setIndex, registerSections } = useFocus();
 
   useEffect(() => {
+    registerSections(['create-profile']);
     setSection("create-profile");
     setIndex(0);
-  }, []);
+  }, [registerSections, setSection, setIndex]);
 
   const allGestures = [
     { value: "scissors", label: "✌️" },
@@ -73,7 +74,7 @@ function CreateProfilePage({ user }) {
             return isUsed && !isSelected ? (
               <div key={g.value}>{avatarButton}</div>
             ) : (
-              <Focusable key={g.value} sectionKey="create-profile" index={idx}>
+              <Focusable key={g.value} sectionKey="create-profile" index={idx} context="create-profile">
                 {avatarButton}
               </Focusable>
             );
@@ -87,7 +88,7 @@ function CreateProfilePage({ user }) {
 
         <form className="new-profile-form" onSubmit={handleSubmit}>
           <div className="new-profile-row">
-            <Focusable sectionKey="create-profile" index={4}>
+            <Focusable sectionKey="create-profile" index={4} context="create-profile">
               <input
                 type="text"
                 placeholder="닉네임"
@@ -97,7 +98,7 @@ function CreateProfilePage({ user }) {
                 required
               />
             </Focusable>
-            <Focusable sectionKey="create-profile" index={5}>
+            <Focusable sectionKey="create-profile" index={5} context="create-profile">
               <input
                 type="number"
                 placeholder="나이"
@@ -107,7 +108,7 @@ function CreateProfilePage({ user }) {
                 required
               />
             </Focusable>
-            <Focusable sectionKey="create-profile" index={6}>
+            <Focusable sectionKey="create-profile" index={6} context="create-profile">
               <select
                 value={form.gender}
                 onChange={(e) => setForm({ ...form, gender: e.target.value })}
@@ -128,7 +129,7 @@ function CreateProfilePage({ user }) {
           </div>
 
           <div className="new-profile-btn-row">
-            <Focusable sectionKey="create-profile" index={7}>
+            <Focusable sectionKey="create-profile" index={7} context="create-profile">
               <button
                 className="new-profile-prev-btn"
                 type="button"
@@ -137,7 +138,7 @@ function CreateProfilePage({ user }) {
                 이전
               </button>
             </Focusable>
-            <Focusable sectionKey="create-profile" index={8}>
+            <Focusable sectionKey="create-profile" index={8} context="create-profile">
               <button className="new-profile-next-btn" type="submit">
                 다음
               </button>

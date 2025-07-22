@@ -16,6 +16,21 @@
   transition: transform 0.2s ease;
 }
 
+.focusable-wrapper.focused.create-profile input,
+.focusable-wrapper.focused.create-profile select,
+.focusable-wrapper.focused.create-profile button {
+  transform: scale(1.05);
+  z-index: 2;
+  box-shadow:
+    0 0 0 4px rgba(236,0,140,0.18),
+    0 0 16px 6px rgba(236,0,140,0.32),
+    0 0 32px 12px rgba(236,0,140,0.18);
+  filter: drop-shadow(0 0 12px #ec008c88);
+  outline: none;
+  border: none;
+  transition: box-shadow 0.25s, filter 0.25s, transform 0.25s;
+}
+
 
 
 

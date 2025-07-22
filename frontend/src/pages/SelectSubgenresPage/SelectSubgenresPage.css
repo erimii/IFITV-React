@@ -1,13 +1,25 @@
 
 /* Focuse */
+.focusable-wrapper.focused.select-subgenres > button,
+.focusable-wrapper.focused.select-subgenres > .genre-btn {
+  transform: scale(1.08);
+  z-index: 2;
+  box-shadow:
+    0 0 0 4px rgba(236,0,140,0.18),
+    0 0 16px 6px rgba(236,0,140,0.32),
+    0 0 32px 12px rgba(236,0,140,0.18);
+  filter: drop-shadow(0 0 12px #ec008c88);
+  outline: none !important;
+  border: none !important;
+  transition: box-shadow 0.25s, filter 0.25s, transform 0.25s;
+}
+
 .select-subgenres-section.focused button,
 .select-subgenres-section.focused .genre-btn {
-  border: 2px solid #ec008c !important; /* 분홍색 테두리 */
-  border-radius: 18px;
-  box-shadow: none;
-  outline: none;
-  transition: border 0.2s ease;
-  transform: scale(1.18);
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  transform: none;
 }
 
 
@@ -53,9 +65,10 @@
     min-height: 100vh;
     background: #232323;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     padding: 0;
+    overflow-y: auto;
   }
   
   .add-profile-container {
@@ -66,6 +79,7 @@
     padding: 32px 24px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.07);
     color: #fff;
+    /* 높이 제한 없음 */
   }
   
   .add-profile-form {

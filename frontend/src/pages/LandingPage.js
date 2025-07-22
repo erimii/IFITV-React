@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import GestureModal from '../components/GestureModal/GestureModal';
 import axios from 'axios';
+import { useGestureModal } from '../context/GestureModalContext';
 
 function LandingPage({ user, profiles, selectedProfile, setSelectedProfile }) {
   const navigate = useNavigate();
+  const { showModal } = useGestureModal();
 
   useEffect(() => {
     if (selectedProfile) {
       navigate("/home");
     }
   }, [selectedProfile]);
+
+  // 프로필이 없을 때 자동으로 모달 열기
+  useEffect(() => {
+    if (user && profiles.length > 0 && !selectedProfile) {
+      showModal(profiles, (profile) => setSelectedProfile(profile));
+    }
+  }, [user, profiles, selectedProfile, showModal, setSelectedProfile]);
 
   return (
     <div style={containerStyle}>
@@ -19,14 +27,6 @@ function LandingPage({ user, profiles, selectedProfile, setSelectedProfile }) {
         <button onClick={() => navigate("/signup")} style={buttonStyle}>회원가입</button>
         <button onClick={() => navigate("/login")} style={buttonStyle}>로그인</button>
       </div>
-
-      {user && profiles.length > 0 && !selectedProfile && (
-        <GestureModal
-          profiles={profiles}
-          onClose={() => {}}
-          onRecognized={(profile) => setSelectedProfile(profile)}
-        />
-      )}
     </div>
   );
 }

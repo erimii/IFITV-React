@@ -394,6 +394,24 @@ color: #ec008c;
   box-shadow: 2px 0 8px rgba(0,0,0,0.10);
 }
 
+.sidebar-subgenre-menu {
+  position: fixed;
+  top: 0;
+  left: 300px;
+  height: 100vh;
+  width: 150px;
+  background: #181818;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0 18px 0;
+  border-right: 1px solid #232323;
+  box-sizing: border-box;
+  z-index: 200;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.10);
+}
+
 .sidebar-flyout-item {
   background: none;
   border: none;
@@ -429,11 +447,11 @@ color: #ec008c;
 }
 
 .sidebar-subgenre-menu {
-  position: fixed;
-  top: 0;
-  left: 300px;
-  height: 100vh;
-  width: 150px;
+  position: fixed !important;
+  top: 0 !important;
+  left: 300px !important;
+  height: 100vh !important;
+  width: 150px !important;
   background: #181818;
   color: #fff;
   display: flex;
@@ -444,6 +462,18 @@ color: #ec008c;
   box-sizing: border-box;
   z-index: 200;
   box-shadow: 2px 0 8px rgba(0,0,0,0.10);
+  transform: none !important; /* transform 초기화 */
+  will-change: auto; /* will-change 제거 */
+}
+
+/* 포커싱 시에도 동일한 위치 보장 */
+.sidebar-subgenre-menu:focus-within {
+  position: fixed !important;
+  top: 0 !important;
+  left: 300px !important;
+  height: 100vh !important;
+  width: 150px !important;
+  transform: none !important;
 }
 
 .sidebar-subgenre-menu button {
@@ -483,3 +513,36 @@ color: #ec008c;
 .search-icon:hover svg {
   color: #ec008c;
 }
+
+/* 포커스된 요소 시각적 피드백 - hover와 동일한 스타일 */
+/* 기존 전역 포커스 스타일 제거 (컨텍스트별로만 적용) */
+/*
+.focused {
+  outline: 4px solid #ff0000 !important;
+  background-color: rgba(255, 0, 0, 0.3) !important;
+  transform: scale(1.05) !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.8) !important;
+  border: 2px solid #ff0000 !important;
+}
+
+.sidebar-flyout-toggle.focused,
+.sidebar-flyout-item.focused,
+.sidebar-dropdown-item.focused {
+  outline: 4px solid #ff0000 !important;
+  background-color: rgba(255, 0, 0, 0.3) !important;
+  transform: scale(1.05) !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.8) !important;
+  border: 2px solid #ff0000 !important;
+}
+
+.gesture-button.focused {
+  outline: 4px solid #ff0000 !important;
+  background-color: rgba(255, 0, 0, 0.3) !important;
+  transform: scale(1.1) !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.8) !important;
+  border: 2px solid #ff0000 !important;
+}
+*/

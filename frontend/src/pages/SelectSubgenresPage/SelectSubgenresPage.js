@@ -12,7 +12,7 @@ function SelectSubgenresPage({ user }) {
   const location = useLocation();
   const profile = location.state?.profile;
 
-  const { setSection, setIndex, index } = useFocus();
+  const { setSection, setIndex, index, registerSections } = useFocus();
   const containerRef = useRef();
 
   const [form, setForm] = useState({ preferred_genres: {} });
@@ -27,10 +27,11 @@ function SelectSubgenresPage({ user }) {
   const [startTyping, setStartTyping] = useState(false);
 
   useEffect(() => {
+    registerSections(['select-subgenres']);
     setSection("select-subgenres");
     setIndex(0);
     setStartTyping(true);
-  }, []);
+  }, [registerSections, setSection, setIndex]);
 
   useEffect(() => {
     axios.get('http://localhost:8000/recommendation/subgenres/')
@@ -174,6 +175,7 @@ function SelectSubgenresPage({ user }) {
                           key={sub.id}
                           sectionKey="select-subgenres"
                           index={focusIndex++}
+                          context="select-subgenres"
                         >
                           <button
                             type="button"
@@ -193,13 +195,13 @@ function SelectSubgenresPage({ user }) {
           )}
 
           <div className="add-profile-btn-row">
-            <Focusable sectionKey="select-subgenres" index={focusIndex++}>
+            <Focusable sectionKey="select-subgenres" index={focusIndex++} context="select-subgenres">
               <button className="add-profile-prev-btn" type="button" onClick={onPrev}>
                 이전
               </button>
             </Focusable>
 
-            <Focusable sectionKey="select-subgenres" index={focusIndex++}>
+            <Focusable sectionKey="select-subgenres" index={focusIndex++} context="select-subgenres">
               <button className="add-profile-next-btn" type="submit" disabled={selectedSubgenreIds.length === 0}>
                 다음
               </button>

@@ -111,9 +111,23 @@ function GestureModal({profiles, currentProfile, onClose, onRecognized}) {
     }
   }, [gesture, profiles, isCameraActive]);
 
+  // ESC 키로 모달 닫기
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
+
   return (
-    <div className="profile-switch-overlay">
-      <div className="profile-switch-modal">
+    <div className="profile-switch-overlay" onClick={onClose}>
+      <div className="profile-switch-modal" onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} className="profile-switch-close">
           &times;
         </button>

@@ -17,15 +17,21 @@ function SelectContentPage({ user }) {
   const [selectedTitles, setSelectedTitles] = useState([]);
   const [typingDone, setTypingDone] = useState(false);
 
-  const { setSection, setIndex } = useFocus();
+  const { setSection, setIndex, registerSections } = useFocus();
   const isLoading = Object.keys(contentsByGenre).length === 0;
 
   useEffect(() => {
     if (!isLoading) {
-      setSection("select-content-0");
+      // 모든 sectionKey를 동적으로 등록
+      const sectionKeys = Object.entries(contentsByGenre)
+        .map(([, items], genreIdx) => items && items.length > 0 ? `select-content-${genreIdx}` : null)
+        .filter(Boolean);
+      sectionKeys.push('select-content-btns');
+      registerSections(sectionKeys);
+      setSection(sectionKeys[0]);
       setIndex(0);
     }
-  }, [isLoading, setSection, setIndex]);
+  }, [isLoading, setSection, setIndex, registerSections, contentsByGenre]);
 
   const fetchContents = async () => {
     try {
@@ -117,6 +123,7 @@ function SelectContentPage({ user }) {
                       key={item.id}
                       sectionKey={sectionKey}
                       index={itemIdx}
+                      context="select-content"
                     >
                       <button
                         onClick={() => toggleContent(item)}
@@ -150,12 +157,12 @@ function SelectContentPage({ user }) {
         )}
 
         <div className="select-content-btn-row">
-          <Focusable sectionKey="select-content-btns" index={0}>
+          <Focusable sectionKey="select-content-btns" index={0} context="select-content">
             <button className="select-content-prev-btn" onClick={onPrev} type="button">
               이전
             </button>
           </Focusable>
-          <Focusable sectionKey="select-content-btns" index={1}>
+          <Focusable sectionKey="select-content-btns" index={1} context="select-content">
             <button className="select-content-next-btn" onClick={handleFinish} type="button">
               선택 완료
             </button>
