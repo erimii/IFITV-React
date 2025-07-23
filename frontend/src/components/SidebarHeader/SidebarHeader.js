@@ -106,6 +106,10 @@ const SidebarHeader = ({
         onSelect('홈'); // 'Home'에서 '홈'으로 수정
       } else if (itemIndex === 1) {
         onSelect('Live');
+        setTimeout(() => {
+          setSection('live-slider-0'); // Live 컴포넌트의 첫 섹션
+          setIndex(0);                 // 첫 콘텐츠
+        }, 0);
       } else if (itemIndex === 2) {
         onSelect('VOD');
       } else if (itemIndex === 3) {

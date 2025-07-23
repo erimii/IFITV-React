@@ -7,7 +7,7 @@ import styles from '../HomeContentCard.module.css';
 
 const DEFAULT_THUMBNAIL = "/default_thumb.png";
 
-function HorizontalSlider({ title, items, onCardClick, sliderIndex = 0 }) {
+function HorizontalSlider({ title, items, onCardClick, sliderIndex = 0, manageFocusInternally = true }) {
   const scrollRef = useRef(null);
   const { section, index, setSection, setIndex } = useFocus();
 
@@ -32,6 +32,7 @@ function HorizontalSlider({ title, items, onCardClick, sliderIndex = 0 }) {
 
   // 키보드 네비게이션 핸들러
   const handleCardKeyDown = (e, cardIndex) => {
+    if (!manageFocusInternally) return; // Live에서는 내부 포커스 이동 금지
     const sectionKey = `home-slider-${sliderIndex}`;
     
     console.log("[CARD KEYDOWN]", e.key, "cardIndex:", cardIndex, "sliderIndex:", sliderIndex);
@@ -97,9 +98,17 @@ function HorizontalSlider({ title, items, onCardClick, sliderIndex = 0 }) {
                 onClick={() => onCardClick(item.title, item.airtime)}
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  handleCardKeyDownWithSpace(e, () => onCardClick(item.title, item.airtime));
                   handleCardKeyDown(e, idx);
+                  if (e.key === 'ArrowLeft' && index === 0) {
+                    setSection('home-sidebar');
+                    setIndex(1); // Sidebar의 'Live' 메뉴 인덱스
+                    e.preventDefault();
+                    e.stopPropagation();
+                  } else {
+                    handleCardKeyDownWithSpace(e, () => onCardClick(item));
+                  }
                 }}
+                
               >
                 {item.is_live && <div className="live-badge">LIVE</div>}
                 <img
