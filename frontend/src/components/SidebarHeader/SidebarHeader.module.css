@@ -147,34 +147,59 @@
 } 
 
 /* SidebarHeader.module.css */
-.searchButton {
+.searchButton,
+.gesture-button,
+.settings-gear-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   margin-left: auto;
   margin-right: auto;
+  margin-top: 10px;
   width: 40px;
   height: 40px;
-  border: none; /* 기본 흰색 테두리 */
+  border: none;
   background: none;
   color: #fff;
   border-radius: 6px;
-  transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, border 0.2s, color 0.2s;
 }
 
-.searchButton svg {
+.searchButton svg,
+.gesture-button svg,
+.settings-gear-btn svg {
   width: 30px;
   height: 30px;
   color: #fff;
   transition: color 0.2s ease;
 }
 
-.searchButton.focused {
+.searchButton.focused,
+.gesture-button.focused,
+.settings-gear-btn.focused {
   transform: scale(1.2);
-  box-shadow: 0 0 10px hotpink;
-  border: none; /* 포커스 시 테두리 제거 */
+  box-shadow: 0 0 8px 4px #ec008c99, 0 0 16px 12px #ec008c55;
+  border: none;
+  outline: none;
 }
 
-.searchButton.focused svg {
-  color: hotpink; /* 포커스 시 아이콘 색상 변경 */
+.searchButton.focused svg,
+.gesture-button.focused svg,
+.settings-gear-btn.focused svg {
+  color: #ec008c;
 }
+
+.gesture-button.focused,
+.settings-gear-btn.focused {
+  transform: scale(1.2) !important;
+  box-shadow: 0 0 8px 4px #ec008c99, 0 0 16px 12px #ec008c55 !important;
+  border: none !important;
+  outline: none !important;
+  background: none !important;
+}
+
+.gesture-button.focused svg,
+.settings-gear-btn.focused svg {
+  color: #ec008c !important;
+}
+

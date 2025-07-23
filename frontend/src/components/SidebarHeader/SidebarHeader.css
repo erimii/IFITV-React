@@ -291,16 +291,14 @@
 }
 
 .gesture-button {
-  background: #333;
+  background: none;
   border: none;
-  width: 80px;
-  height: 80px;
   font-size: 2.5rem;
-  border-radius: 50%;
   cursor: pointer;
   transition: background 0.2s;
   margin-bottom: 5px;
-
+  border: none;
+  outline: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -514,35 +512,27 @@ color: #ec008c;
   color: #ec008c;
 }
 
-/* 포커스된 요소 시각적 피드백 - hover와 동일한 스타일 */
-/* 기존 전역 포커스 스타일 제거 (컨텍스트별로만 적용) */
-/*
-.focused {
-  outline: 4px solid #ff0000 !important;
-  background-color: rgba(255, 0, 0, 0.3) !important;
-  transform: scale(1.05) !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 0 15px rgba(255, 0, 0, 0.8) !important;
-  border: 2px solid #ff0000 !important;
+/* 포커스 상태 스타일 */
+.settings-gear-btn.focused {
+  transform: scale(1.15);
+  box-shadow: 0 0 10px #ec008c;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: none;
 }
 
-.sidebar-flyout-toggle.focused,
-.sidebar-flyout-item.focused,
-.sidebar-dropdown-item.focused {
-  outline: 4px solid #ff0000 !important;
-  background-color: rgba(255, 0, 0, 0.3) !important;
-  transform: scale(1.05) !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 0 15px rgba(255, 0, 0, 0.8) !important;
-  border: 2px solid #ff0000 !important;
+/* 포커스 시 내부 아이콘(돋보기/톱니바퀴 등) 색상 변경 */
+.settings-gear-btn.focused .settings-gear-icon {
+  fill: #ec008c !important;
+  color: #ec008c !important;
 }
 
-.gesture-button.focused {
-  outline: 4px solid #ff0000 !important;
-  background-color: rgba(255, 0, 0, 0.3) !important;
-  transform: scale(1.1) !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 0 15px rgba(255, 0, 0, 0.8) !important;
-  border: 2px solid #ff0000 !important;
+.gesture-emoji {
+  font-size: 2.5rem;
+  display: inline-block;
+  transition: transform 0.2s, filter 0.2s;
 }
-*/
+
+.gesture-button.focused .gesture-emoji {
+  filter: drop-shadow(0 0 8px #ec008c);
+  transform: scale(1.3);
+}

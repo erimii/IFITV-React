@@ -370,7 +370,7 @@ const SidebarHeader = ({
               tabIndex={0}
               onKeyDown={(e) => handleSidebarKeyDown(e, 5)}
             >
-              <span>
+              <span className="gesture-emoji">
                 {currentProfile?.gesture === "scissors" && "✌️"}
                 {currentProfile?.gesture === "rock" && "✊"}
                 {currentProfile?.gesture === "paper" && "🖐"}
