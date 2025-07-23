@@ -42,7 +42,37 @@ export const FocusProvider = ({ children }) => {
         console.log("[FOCUS CONTEXT] Skipping default handler for slider section");
         return;
       }
-      
+
+      // select-content 섹션 간 이동 (SelectContentPage 전용)
+      if (section.startsWith('select-content-') || section === 'select-content-btns') {
+        // 섹션 순서 배열 만들기
+        const sectionKeys = Object.keys(sectionOrder).filter(key => key.startsWith('select-content-')).sort((a, b) => {
+          // 숫자 순 정렬
+          const aNum = parseInt(a.replace('select-content-', ''), 10);
+          const bNum = parseInt(b.replace('select-content-', ''), 10);
+          return aNum - bNum;
+        });
+        sectionKeys.push('select-content-btns');
+        const currentIdx = sectionKeys.indexOf(section);
+
+        if (e.key === 'ArrowDown') {
+          if (currentIdx < sectionKeys.length - 1) {
+            setSection(sectionKeys[currentIdx + 1]);
+            setIndex(0);
+            e.preventDefault();
+            return;
+          }
+        }
+        if (e.key === 'ArrowUp') {
+          if (currentIdx > 0) {
+            setSection(sectionKeys[currentIdx - 1]);
+            setIndex(0);
+            e.preventDefault();
+            return;
+          }
+        }
+      }
+
       if (e.key === 'ArrowRight') {
         setIndex((i) => Math.min(i + 1, (sectionOrder[section] || 1) - 1));
       }

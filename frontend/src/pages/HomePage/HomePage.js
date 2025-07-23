@@ -23,7 +23,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   const [myListLoading, setMyListLoading] = useState(false);
   const [liveLoading, setLiveLoading] = useState(false);
 
-  const { registerSections } = useFocus();
+  const { registerSections, setSection, setIndex } = useFocus();
 
   
 
@@ -126,6 +126,14 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
 
     fetchMyList();
   }, [selectedMenuParam, profile]);
+
+  // 홈 콘텐츠가 로딩 완료되었을 때 포커스 초기화
+useEffect(() => {
+  if (selectedMenuParam === '홈' && !loading) {
+    setSection('home-slider-0');
+    setIndex(0);
+  }
+}, [selectedMenuParam, loading, setSection, setIndex]);
 
 
   // 무한 스크롤

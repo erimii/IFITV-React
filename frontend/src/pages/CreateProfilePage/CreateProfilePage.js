@@ -13,7 +13,7 @@ function CreateProfilePage({ user }) {
   const { setSection, setIndex, registerSections } = useFocus();
 
   useEffect(() => {
-    registerSections(['create-profile']);
+    registerSections({ 'create-profile': 9 }); // 0~8
     setSection("create-profile");
     setIndex(0);
   }, [registerSections, setSection, setIndex]);

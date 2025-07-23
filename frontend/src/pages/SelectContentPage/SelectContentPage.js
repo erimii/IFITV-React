@@ -22,13 +22,16 @@ function SelectContentPage({ user }) {
 
   useEffect(() => {
     if (!isLoading) {
-      // 모든 sectionKey를 동적으로 등록
-      const sectionKeys = Object.entries(contentsByGenre)
-        .map(([, items], genreIdx) => items && items.length > 0 ? `select-content-${genreIdx}` : null)
-        .filter(Boolean);
-      sectionKeys.push('select-content-btns');
-      registerSections(sectionKeys);
-      setSection(sectionKeys[0]);
+      // sectionKey별로 최대 index+1을 객체로 만듦
+      const sectionOrder = {};
+      Object.entries(contentsByGenre).forEach(([_, items], genreIdx) => {
+        if (items && items.length > 0) {
+          sectionOrder[`select-content-${genreIdx}`] = items.length;
+        }
+      });
+      sectionOrder['select-content-btns'] = 2; // 이전/선택완료 버튼
+      registerSections(sectionOrder);
+      setSection(Object.keys(sectionOrder)[0]);
       setIndex(0);
     }
   }, [isLoading, setSection, setIndex, registerSections, contentsByGenre]);

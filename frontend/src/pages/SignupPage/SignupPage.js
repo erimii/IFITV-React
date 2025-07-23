@@ -18,7 +18,7 @@ function SignupPage({ setUser }) {
   });
 
   useEffect(() => {
-    registerSections(['signup']);
+    registerSections({ 'signup': 5 });
     setSection("signup");
     setIndex(0);
   }, [registerSections, setSection, setIndex]);

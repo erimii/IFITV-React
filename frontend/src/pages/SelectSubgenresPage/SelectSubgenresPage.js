@@ -27,11 +27,13 @@ function SelectSubgenresPage({ user }) {
   const [startTyping, setStartTyping] = useState(false);
 
   useEffect(() => {
-    registerSections(['select-subgenres']);
+    // subgenre 버튼 개수 + 이전/다음 버튼 2개
+    const totalFocusable = flatSubgenres.length + 2;
+    registerSections({ 'select-subgenres': totalFocusable });
     setSection("select-subgenres");
     setIndex(0);
     setStartTyping(true);
-  }, [registerSections, setSection, setIndex]);
+  }, [registerSections, setSection, setIndex, flatSubgenres.length]);
 
   useEffect(() => {
     axios.get('http://localhost:8000/recommendation/subgenres/')

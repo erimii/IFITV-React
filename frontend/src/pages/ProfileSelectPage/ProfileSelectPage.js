@@ -16,10 +16,12 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
   const { setSection, setIndex, registerSections } = useFocus();
 
   useEffect(() => {
-    registerSections(['profile']);
+    // 프로필 개수 + 추가 버튼(최대 4개)
+    const count = profiles.length < 4 ? profiles.length + 1 : profiles.length;
+    registerSections({ 'profile': count });
     setSection('profile');
     setIndex(0);
-  }, [registerSections, setSection, setIndex]);
+  }, [registerSections, setSection, setIndex, profiles.length]);
 
   useEffect(() => {
     const fetchProfiles = async () => {
