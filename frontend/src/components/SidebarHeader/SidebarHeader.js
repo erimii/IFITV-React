@@ -241,7 +241,12 @@ const SidebarHeader = ({
                       <button
                         className={`sidebar-flyout-item ${section === 'home-sidebar-subgenre' && index === subIdx ? 'focused' : ''}`}
                         style={{ fontSize: '0.95rem' }}
-                        onClick={() => handleSubgenreSelect(sub)}
+                        onClick={() => {
+                          handleSubgenreSelect(sub);
+                          setVodDropdownOpen(false);
+                          setSection('home-slider-0');
+                          setIndex(0);
+                        }}
                         tabIndex={0}
                       >
                         {sub.name}

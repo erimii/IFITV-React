@@ -417,7 +417,7 @@ color: #ec008c;
   color: #fff;
   text-decoration: none;
   padding: 10px 0;
-  width: 100%;
+  width: 120px;
   text-align: center;
   font-size: 1.15rem;
   border-radius: 8px;
@@ -431,9 +431,17 @@ color: #ec008c;
   padding-left: 18px;
 }
 
+.sidebar-flyout-item.focused {
+  font-size: 1.35rem;            /* 포커스 시 글자 크기 증가 */
+  color: #303030;                /* 핑크색 강조 */
+  font-weight: bold;            /* (선택) 강조 */
+  background: #1a1a1a;           /* (선택) 포커스 배경 */
+  transition: font-size 0.15s ease, color 0.15s ease;
+}
+
+
 .sidebar-flyout-item:hover,
 .sidebar-flyout-item:active,
-.sidebar-flyout-item:focus,
 .sidebar-flyout-item.active {
   background: #303030;
   color: #ec008c;
@@ -481,7 +489,7 @@ color: #ec008c;
   color: #fff;
   text-decoration: none;
   padding: 10px 0;
-  width: 100%;
+  width: 120px;
   text-align: center;
   font-size: 1.15rem;
   border-radius: 8px;
@@ -500,6 +508,14 @@ color: #ec008c;
   color: #ec008c;
 }
 
+.sidebar-subgenre-menu button.focused {
+  font-size: 1.35rem;           /* 폰트 크기 증가 */
+  color: #ec008c;               /* 포커스 시 핑크색 강조 */
+  font-weight: bold;           /* (선택) 강조 */
+  background: #303030;         /* (선택) 약간 어두운 배경 */
+  transform: scale(1.05);
+  transition: transform 0.15s ease, font-size 0.15s ease;
+}
 
 .search-icon svg {
   width: 30px;
