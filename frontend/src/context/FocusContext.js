@@ -9,10 +9,12 @@ export const FocusProvider = ({ children }) => {
   const [section, setSection] = useState('home-sidebar');
   const [index, setIndex] = useState(0);
 
-  const [sectionOrder, setSectionOrder] = useState(['home-sidebar']); // 동적으로 갱신 가능
+  // sectionOrder를 객체({ sectionKey: maxIndex })로 관리
+  const [sectionOrder, setSectionOrder] = useState({ 'home-sidebar': 1 }); // { sectionKey: maxIndex+1 }
 
-  // 아래에서 등록하는 함수로 section 순서 설정 가능
+  // 아래에서 등록하는 함수로 section별 최대 인덱스 설정 가능
   const registerSections = useCallback((sections) => {
+    // sections: { sectionKey: maxIndex+1 }
     console.log("[REGISTER SECTIONS]", sections);
     setSectionOrder(sections);
   }, []);
@@ -28,7 +30,7 @@ export const FocusProvider = ({ children }) => {
       console.log("[FOCUS CONTEXT KEYDOWN]", e.key, "current section:", section, "current index:", index);
       
       // 현재 섹션이 등록된 섹션 목록에 없으면 home-sidebar로 리셋
-      if (!sectionOrder.includes(section)) {
+      if (!Object.keys(sectionOrder).includes(section)) {
         console.log("[FOCUS CONTEXT] Current section not in sectionOrder, resetting to home-sidebar");
         setSection('home-sidebar');
         setIndex(0);
@@ -42,32 +44,23 @@ export const FocusProvider = ({ children }) => {
       }
       
       if (e.key === 'ArrowRight') {
-        console.log("[FOCUS CONTEXT] ArrowRight - incrementing index");
-        setIndex((i) => i + 1);
+        setIndex((i) => Math.min(i + 1, (sectionOrder[section] || 1) - 1));
       }
       else if (e.key === 'ArrowLeft') {
-        console.log("[FOCUS CONTEXT] ArrowLeft - decrementing index");
         setIndex((i) => Math.max(i - 1, 0));
       }
       else if (e.key === 'ArrowDown') {
-        if (sectionOrder.length === 1) {
+        // index 최대값 체크
+        if (index < (sectionOrder[section] || 1) - 1) {
           setIndex((i) => i + 1);
         } else {
-          const currentIdx = sectionOrder.indexOf(section);
-          if (currentIdx !== -1 && currentIdx < sectionOrder.length - 1) {
-            setSection(sectionOrder[currentIdx + 1]);
-            setIndex(0);
-          }
+          // 다음 section으로 이동 (여러 section 지원 시)
         }
       } else if (e.key === 'ArrowUp') {
-        if (sectionOrder.length === 1) {
+        if (index > 0) {
           setIndex((i) => Math.max(i - 1, 0));
         } else {
-          const currentIdx = sectionOrder.indexOf(section);
-          if (currentIdx > 0) {
-            setSection(sectionOrder[currentIdx - 1]);
-            setIndex(0);
-          }
+          // 이전 section으로 이동 (여러 section 지원 시)
         }
       } else if (e.key === 'Enter') {
         document.activeElement?.click?.();

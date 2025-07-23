@@ -27,7 +27,7 @@ const SidebarHeader = ({
   const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
 
   const { showModal } = useGestureModal();
-  const { section, index, setSection, setIndex } = useFocus();
+  const { section, index, setSection, setIndex, registerSections } = useFocus();
 
  /* 후버 후버 구조를 위해,, */
   const [subgenresByGenre, setSubgenresByGenre] = useState([]);
@@ -46,6 +46,16 @@ const SidebarHeader = ({
   
     fetchGenresWithSubgenres();
   }, []);
+
+  // home-sidebar의 index 최대값(0~6, 총 7개) 등록
+  useEffect(() => {
+    registerSections({
+      'home-sidebar': 7,
+      'home-sidebar-flyout': subgenresByGenre.length,
+      'home-sidebar-subgenre':
+        (hoveredGenre && subgenresByGenre.find(g => g.id === hoveredGenre)?.subgenres?.length) || 0
+    });
+  }, [registerSections, subgenresByGenre, hoveredGenre]);
 
   // VOD 포커싱 시 flyout 상태 관리
   useEffect(() => {
@@ -87,6 +97,7 @@ const SidebarHeader = ({
   };
 
   // 키보드 이벤트 핸들러 (Enter/Space 키 추가)
+  const maxSidebarIndex = 6; // Home(0) ~ 설정(6)까지
   const handleSidebarKeyDown = (e, itemIndex) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -116,7 +127,7 @@ const SidebarHeader = ({
         setVodDropdownOpen(true); // flyout 열기 상태 유지
         setSection('home-sidebar-flyout');
         setIndex(0);
-      } else if (itemIndex === 5) { // 설정 항목
+      } else if (itemIndex === 6) { // 설정 항목
         setSettingsDropdownOpen(true);
         setSection('home-sidebar-settings');
         setIndex(0);
@@ -127,7 +138,7 @@ const SidebarHeader = ({
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
       e.stopPropagation();
-      const nextIndex = Math.min(itemIndex + 1, 5); // 0-5 범위
+      const nextIndex = Math.min(itemIndex + 1, maxSidebarIndex); // 0-6 범위
       setIndex(nextIndex);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
@@ -238,214 +249,140 @@ const SidebarHeader = ({
   const isSidebarActive = ['홈', 'Live', 'VOD', 'My List'].includes(selectedMenu);
 
   return (
-    <aside className={`sidebar-header${isSidebarFocused ? ' focused' : ''}${isSidebarActive ? ' active' : ''}`}>
-      <div className="sidebar-logo">
-        IFITV
-      </div>
-
-      <nav className="sidebar-nav"> 
-        <Focusable sectionKey="home-sidebar" index={0}>
-          <div
-            className={[
-              styles['sidebar-flyout-toggle'],
-              selectedMenu === '홈' ? styles.active : '',
-              section === 'home-sidebar' && index === 0 ? styles.focused : ''
-            ].filter(Boolean).join(' ')}
-            onClick={() => onSelect('홈')}
-            tabIndex={0}
-            onKeyDown={(e) => handleSidebarKeyDown(e, 0)}
-          >
-            Home
-          </div>
-        </Focusable>
-
-        {/* Live */}
-        <Focusable sectionKey="home-sidebar" index={1}>
-          <div className="sidebar-flyout">
+    <aside className="sidebar-header">
+      <div className="sidebar-logo">IFITV</div>
+      <div className="sidebar-focus-group">
+        {['홈', 'Live', 'VOD', 'My List'].map((menu, i) => (
+          <Focusable key={menu} sectionKey="home-sidebar" index={i}>
             <div
-              className={[
-                styles['sidebar-flyout-toggle'],
-                selectedMenu === 'Live' ? styles.active : '',
-                section === 'home-sidebar' && index === 1 ? styles.focused : ''
-              ].filter(Boolean).join(' ')}
-              onClick={() => onSelect('Live')}
+              className={`${styles['sidebar-flyout-toggle']} ${selectedMenu === menu ? styles.active : ''} ${section === 'home-sidebar' && index === i ? styles.focused : ''}`}
+              onClick={() => onSelect(menu)}
+              onKeyDown={(e) => handleSidebarKeyDown(e, i)}
               tabIndex={0}
-              onKeyDown={(e) => handleSidebarKeyDown(e, 1)}
             >
-              Live
+              {menu}
             </div>
-          </div>
-        </Focusable>
-
-        {/* VOD */}
-        <Focusable sectionKey="home-sidebar" index={2}>
-          <div
-            className="sidebar-flyout"
-            onMouseEnter={() => setVodDropdownOpen(true)}
+          </Focusable>
+        ))}
+        {/* VOD flyout: VOD Focusable(index=2) 바로 아래에 위치 */}
+        {vodDropdownOpen && (
+          <div className="vod-flyout-wrapper"
             onMouseLeave={() => {
-              if (section !== 'home-sidebar' || index !== 2) {
-                setVodDropdownOpen(false);
-                setHoveredGenre(null);
-              }
+              setVodDropdownOpen(false);
+              setSection('home-sidebar');
+              setIndex(2); // VOD로 복귀
             }}
           >
-            <div
-              className={[
-                styles['sidebar-flyout-toggle'],
-                (selectedMenu === 'VOD' || vodDropdownOpen || hoveredGenre || (section === 'home-sidebar' && index === 2)) ? styles['submenu-active'] : '',
-                section === 'home-sidebar' && index === 2 ? styles.focused : ''
-              ].filter(Boolean).join(' ')}
-              onClick={() => onSelect('VOD')}
-              tabIndex={0}
-              onKeyDown={(e) => handleSidebarKeyDown(e, 2)}
-            >
-              VOD
+            <div className="sidebar-flyout-menu">
+              {subgenresByGenre.map((genreObj, genreIdx) => (
+                <Focusable sectionKey="home-sidebar-flyout" index={genreIdx} key={genreObj.id}>
+                  <div
+                    className="sidebar-flyout-group"
+                    onMouseEnter={() => setHoveredGenre(genreObj.id)}
+                  >
+                    <button
+                      className={`sidebar-flyout-item ${hoveredGenre === genreObj.id ? 'active' : ''} ${section === 'home-sidebar-flyout' && index === genreIdx ? 'focused' : ''}`}
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'ArrowLeft') {
+                          setVodDropdownOpen(false);
+                          setSection('home-sidebar');
+                          setIndex(2); // VOD로 복귀
+                        } else if (e.key === 'ArrowRight') {
+                          setSection('home-sidebar-subgenre');
+                          setIndex(0);
+                        }
+                      }}
+                    >
+                      {genreObj.name}
+                    </button>
+                  </div>
+                </Focusable>
+              ))}
             </div>
-            {/* VOD 포커싱 시 자동으로 flyout이 열리지 않도록 수정 */}
-            {(vodDropdownOpen || hoveredGenre) && (
-              <div
-                className="vod-flyout-wrapper"
-                onMouseLeave={() => {
-                  if (section !== 'home-sidebar-flyout' && section !== 'home-sidebar-subgenre') {
-                    setVodDropdownOpen(false);
-                    setHoveredGenre(null);
-                  }
-                }}
-              >
-                <div className="sidebar-flyout-menu">
-                  {subgenresByGenre.map((genreObj, genreIdx) => (
-                    <Focusable sectionKey="home-sidebar-flyout" index={genreIdx} key={genreObj.id}>
-                      <div
-                        className="sidebar-flyout-group"
-                        onMouseEnter={() => setHoveredGenre(genreObj.id)}
+            {/* 서브장르 flyout */}
+            {hoveredGenre && (
+              <div className="sidebar-subgenre-menu">
+                {subgenresByGenre
+                  .find((g) => g.id === hoveredGenre)
+                  ?.subgenres.map((sub, subIdx) => (
+                    <Focusable sectionKey="home-sidebar-subgenre" index={subIdx} key={sub.id}>
+                      <button
+                        className={`sidebar-flyout-item ${section === 'home-sidebar-subgenre' && index === subIdx ? 'focused' : ''}`}
+                        style={{ fontSize: '0.95rem' }}
+                        onClick={() => handleSubgenreSelect(sub)}
+                        tabIndex={0}
                       >
-                        <button
-                          className={`sidebar-flyout-item ${
-                            hoveredGenre === genreObj.id || (section === 'home-sidebar-flyout' && index === genreIdx) ? 'active' : ''
-                          } ${section === 'home-sidebar-flyout' && index === genreIdx ? 'focused' : ''}`}
-                          tabIndex={0}
-                          onKeyDown={(e) => handleFlyoutKeyDown(e, genreIdx)}
-                        >
-                          {genreObj.name}
-                        </button>
-                      </div>
+                        {sub.name}
+                      </button>
                     </Focusable>
                   ))}
-                </div>
-                {/* 서브장르 영역도 wrapper 안에 같이 넣음 */}
-                {hoveredGenre && (
-                  <div className="sidebar-subgenre-menu">
-                    {subgenresByGenre
-                      .find((g) => g.id === hoveredGenre)
-                      ?.subgenres.map((sub, subIdx) => (
-                        <Focusable sectionKey="home-sidebar-subgenre" index={subIdx} key={sub.id}>
-                          <button
-                            className={`sidebar-flyout-item ${section === 'home-sidebar-subgenre' && index === subIdx ? 'focused' : ''}`}
-                            style={{ fontSize: '0.95rem' }}
-                            onClick={() => handleSubgenreSelect(sub)}
-                            tabIndex={0}
-                            onKeyDown={(e) => handleSubgenreKeyDown(e, subIdx)}
-                          >
-                            {sub.name}
-                          </button>
-                        </Focusable>
-                      ))}
-                  </div>
-                )}
               </div>
             )}
           </div>
-        </Focusable>
-
-        <Focusable sectionKey="home-sidebar" index={3}>
-          <div
-            className={[
-              styles['sidebar-flyout-toggle'],
-              selectedMenu === 'My List' ? styles.active : '',
-              section === 'home-sidebar' && index === 3 ? styles.focused : ''
-            ].filter(Boolean).join(' ')}
-            onClick={() => onSelect('My List')}
-            tabIndex={0}
-            onKeyDown={(e) => handleSidebarKeyDown(e, 3)}
-          >
-            My List
-          </div>
-        </Focusable>
-
-      </nav>
-
-
-      <div className="sidebar-search">
-      <span
-        className="search-icon"
-        onClick={() => setSearchOpen(v => !v)}
-        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-        aria-label="검색 열기"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="22"
-          height="22"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="11" cy="11" r="7" />
-          <line x1="17" y1="17" x2="21" y2="21" />
-        </svg>
-      </span>
-
-
-        {searchOpen && (
-          <form className="search-form" onSubmit={handleSearchSubmit} style={{ position: 'relative' }}>
-            <input
-              type="text"
-              className="search-input"
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              placeholder="영화, TV 검색"
-              autoFocus
-            />
-            <button
-              type="button"
-              className="search-close-btn"
-              onClick={() => setSearchOpen(false)}
-              aria-label="검색창 닫기"
-            >x</button>
-          </form>
         )}
+        <Focusable sectionKey="home-sidebar" index={4}>
+        <button
+          className={`${styles.searchButton} ${section === 'home-sidebar' && index === 4 ? styles.focused : ''}`}
+          onClick={() => setSearchOpen(true)}
+          aria-label="검색 열기"
+          onKeyDown={(e) => handleSidebarKeyDown(e, 4)}
+          tabIndex={0}
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="7" />
+              <line x1="17" y1="17" x2="21" y2="21" />
+            </svg>
+          </button>
+        </Focusable>
+
+
       </div>
+      {searchOpen && (
+        <form className="search-form" onSubmit={handleSearchSubmit} style={{ position: 'absolute', left: 0, right: 0, zIndex: 100 }}>
+          <input
+            type="text"
+            className="search-input"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            placeholder="영화, TV 검색"
+            autoFocus
+          />
+          <button
+            type="button"
+            className="search-close-btn"
+            onClick={() => setSearchOpen(false)}
+            aria-label="검색창 닫기"
+          >x</button>
+        </form>
+      )}
 
       <div className="sidebar-profile">
-        <Focusable sectionKey="home-sidebar" index={4}>
+        <Focusable sectionKey="home-sidebar" index={5}>
           <div className="sidebar-gesture">
             <button
-            onClick={() => showModal(profiles, (matchedProfile) => {
-              setSelectedProfile?.(matchedProfile);
-              navigate("/home");
-            })}
-            className={`gesture-button ${section === 'home-sidebar' && index === 4 ? 'focused' : ''}`}
-            aria-label="프로필 제스처 전환"
-            tabIndex={0}
-            onKeyDown={(e) => handleSidebarKeyDown(e, 4)}
+              onClick={() => showModal(profiles, (matchedProfile) => {
+                setSelectedProfile?.(matchedProfile);
+                navigate("/home");
+              })}
+              className={`gesture-button ${section === 'home-sidebar' && index === 5 ? 'focused' : ''}`}
+              aria-label="프로필 제스처 전환"
+              tabIndex={0}
+              onKeyDown={(e) => handleSidebarKeyDown(e, 5)}
             >
-            <span>
-            {currentProfile?.gesture === "scissors" && "✌️"}
-            {currentProfile?.gesture === "rock" && "✊"}
-            {currentProfile?.gesture === "paper" && "🖐"}
-            {currentProfile?.gesture === "ok" && "👌"}
-            </span>
-
+              <span>
+                {currentProfile?.gesture === "scissors" && "✌️"}
+                {currentProfile?.gesture === "rock" && "✊"}
+                {currentProfile?.gesture === "paper" && "🖐"}
+                {currentProfile?.gesture === "ok" && "👌"}
+              </span>
             </button>
             <div className="profile-name">{currentProfile.name}</div>
             {/* GestureModal 컴포넌트는 이제 직접 호출하지 않고, 컨텍스트에서 관리 */}
           </div>
         </Focusable>
         {/* 설정(톱니바퀴) 드롭다운 */}
-        <Focusable sectionKey="home-sidebar" index={5}>
+        <Focusable sectionKey="home-sidebar" index={6}>
           <div
             className="sidebar-dropdown"
             ref={settingsRef}
@@ -454,10 +391,10 @@ const SidebarHeader = ({
             onMouseLeave={() => setSettingsDropdownOpen(false)}
           >
             <button
-              className={`sidebar-dropdown-item settings-gear-btn ${section === 'home-sidebar' && index === 5 ? 'focused' : ''}`}
+              className={`sidebar-dropdown-item settings-gear-btn ${section === 'home-sidebar' && index === 6 ? 'focused' : ''}`}
               aria-label="설정"
               tabIndex={0}
-              onKeyDown={(e) => handleSidebarKeyDown(e, 5)}
+              onKeyDown={(e) => handleSidebarKeyDown(e, 6)}
             >
               {/* Google Settings SVG 아이콘 */}
               <svg className="settings-gear-icon" viewBox="0 0 24 24">
