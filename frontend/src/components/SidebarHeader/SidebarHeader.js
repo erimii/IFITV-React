@@ -130,6 +130,12 @@ const SidebarHeader = ({
         setVodDropdownOpen(true); // flyout 열기 상태 유지
         setSection('home-sidebar-flyout');
         setIndex(0);
+      }else if (itemIndex === 2) { // VOD에서 오른쪽 → 눌렀을 때
+        setSection('vod-content');
+        setIndex(0);
+      }else if (itemIndex === 3) { // My List에서 오른쪽 → 눌렀을 때
+        setSection('mylist-content');
+        setIndex(0);
       } else if (itemIndex === 6) { // 설정 항목
         setSettingsDropdownOpen(true);
         setSection('home-sidebar-settings');

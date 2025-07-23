@@ -8,7 +8,7 @@
   color: #fff;
   font-size: 1.7rem;
   font-weight: bold;
-  margin-bottom: 18px;
+  margin-bottom: 28px;
   letter-spacing: 1px;
   text-align: left;
   padding-left: 2px;
@@ -17,43 +17,55 @@
 .mylist-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 1rem;
+  gap: 4rem;
 }
 
-.vod-thumbnail-card {
+.mylist-thumbnail-card {
   position: relative;
   transition: transform 0.25s ease;
 }
 
-.vod-thumbnail-card:hover {
+.mylist-thumbnail-card:hover {
   transform: scale(1.05);
   z-index: 2;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
 }
 
-.vod-title {
-  margin-top: 0.5rem;
+.mylist-thumbnail-card.focused {
+  transform: scale(1.08);
+  box-shadow: 0 0 8px 4px #ec008c99, 0 0 16px 12px #ec008c55;
+  outline: none;
+  z-index: 2;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 8px;
+}
+
+.mylist-title {
+  margin-top: 0;
   color: #fff;
-  font-size: 1rem;
+  font-size: 0.9rem;
   overflow: hidden;
+  margin-bottom: 5px;
   white-space: nowrap;
   text-overflow: ellipsis;
+  text-align: center;   /* ✅ 가운데 정렬 */
+  width: 100%;          /* ✅ 전체 카드 기준 */
 }
 
 /* 스켈레톤 */
-.vod-skeleton-card {
+.mylist-skeleton-card {
   display: flex;
   flex-direction: column;
 }
 
-.vod-skeleton-thumb {
+.mylist-skeleton-thumb {
   width: 100%;
   aspect-ratio: 2 / 3;
   background-color: #2a2a2a;
   border-radius: 8px;
 }
 
-.vod-skeleton-title {
+.mylist-skeleton-title {
   width: 80%;
   height: 0.8rem;
   margin-top: 0.5rem;
