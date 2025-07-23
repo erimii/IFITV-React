@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './SidebarHeader.css';
+import styles from './SidebarHeader.module.css';
 import Focusable from '../Focusable/Focusable';
 import { useFocus } from '../../context/FocusContext';
 import { useGestureModal } from '../../context/GestureModalContext';
@@ -233,8 +234,11 @@ const SidebarHeader = ({
     }
   };
 
+  const isSidebarFocused = section === 'home-sidebar';
+  const isSidebarActive = ['홈', 'Live', 'VOD', 'My List'].includes(selectedMenu);
+
   return (
-    <aside className="sidebar-header">
+    <aside className={`sidebar-header${isSidebarFocused ? ' focused' : ''}${isSidebarActive ? ' active' : ''}`}>
       <div className="sidebar-logo">
         IFITV
       </div>
@@ -242,22 +246,28 @@ const SidebarHeader = ({
       <nav className="sidebar-nav"> 
         <Focusable sectionKey="home-sidebar" index={0}>
           <div
-              className={`sidebar-flyout-toggle ${selectedMenu === '홈' ? 'active' : ''} ${section === 'home-sidebar' && index === 0 ? 'focused' : ''}`}
-              onClick={() => onSelect('홈')}
-              tabIndex={0}
-              onKeyDown={(e) => handleSidebarKeyDown(e, 0)}
+            className={[
+              styles['sidebar-flyout-toggle'],
+              selectedMenu === '홈' ? styles.active : '',
+              section === 'home-sidebar' && index === 0 ? styles.focused : ''
+            ].filter(Boolean).join(' ')}
+            onClick={() => onSelect('홈')}
+            tabIndex={0}
+            onKeyDown={(e) => handleSidebarKeyDown(e, 0)}
           >
-              Home
+            Home
           </div>
         </Focusable>
 
         {/* Live */}
         <Focusable sectionKey="home-sidebar" index={1}>
-          <div
-            className="sidebar-flyout"
-          >
+          <div className="sidebar-flyout">
             <div
-              className={`sidebar-flyout-toggle ${selectedMenu === 'Live' ? 'active' : ''} ${section === 'home-sidebar' && index === 1 ? 'focused' : ''}`}
+              className={[
+                styles['sidebar-flyout-toggle'],
+                selectedMenu === 'Live' ? styles.active : '',
+                section === 'home-sidebar' && index === 1 ? styles.focused : ''
+              ].filter(Boolean).join(' ')}
               onClick={() => onSelect('Live')}
               tabIndex={0}
               onKeyDown={(e) => handleSidebarKeyDown(e, 1)}
@@ -280,9 +290,11 @@ const SidebarHeader = ({
             }}
           >
             <div
-              className={`sidebar-flyout-toggle ${
-                selectedMenu === 'VOD' || vodDropdownOpen || hoveredGenre || (section === 'home-sidebar' && index === 2) ? 'submenu-active' : ''
-              } ${section === 'home-sidebar' && index === 2 ? 'focused' : ''}`}
+              className={[
+                styles['sidebar-flyout-toggle'],
+                (selectedMenu === 'VOD' || vodDropdownOpen || hoveredGenre || (section === 'home-sidebar' && index === 2)) ? styles['submenu-active'] : '',
+                section === 'home-sidebar' && index === 2 ? styles.focused : ''
+              ].filter(Boolean).join(' ')}
               onClick={() => onSelect('VOD')}
               tabIndex={0}
               onKeyDown={(e) => handleSidebarKeyDown(e, 2)}
@@ -347,12 +359,16 @@ const SidebarHeader = ({
 
         <Focusable sectionKey="home-sidebar" index={3}>
           <div
-              className={`sidebar-flyout-toggle ${selectedMenu === 'My List' ? 'active' : ''} ${section === 'home-sidebar' && index === 3 ? 'focused' : ''}`}
-              onClick={() => onSelect('My List')}
-              tabIndex={0}
-              onKeyDown={(e) => handleSidebarKeyDown(e, 3)}
+            className={[
+              styles['sidebar-flyout-toggle'],
+              selectedMenu === 'My List' ? styles.active : '',
+              section === 'home-sidebar' && index === 3 ? styles.focused : ''
+            ].filter(Boolean).join(' ')}
+            onClick={() => onSelect('My List')}
+            tabIndex={0}
+            onKeyDown={(e) => handleSidebarKeyDown(e, 3)}
           >
-              My List
+            My List
           </div>
         </Focusable>
 

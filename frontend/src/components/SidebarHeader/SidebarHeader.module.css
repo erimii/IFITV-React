@@ -1,10 +1,60 @@
 .sidebar-flyout-toggle,
+.sidebar-flyout-toggle:focus,
+.sidebar-flyout-toggle:focus-visible,
+.sidebar-flyout-toggle:active {
+  outline: none !important;
+  box-shadow: none;
+  min-height: 48px;
+  min-width: 140px;
+  padding: 12px 0;
+  margin-bottom: 10px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 10px;
+  font-size: 1.15rem;
+  font-weight: 500;
+  user-select: none;
+  transition: all 0.2s;
+}
+
+.sidebar-flyout-toggle.focused:not(.active) {
+  transform: scale(1.05);
+  box-shadow: 0 0 8px 2px #ec008c88 !important;
+  background: #232332 !important;
+  color: #fff !important;
+  z-index: 2;
+}
+
+.sidebar-flyout-toggle.active {
+  color: #ec008c !important;
+  background: #1f1f1f !important;
+  border-left: 4px solid #ec008c !important;
+  font-weight: bold;
+}
+
+.sidebar-flyout-toggle.focused.active {
+  transform: scale(1.08);
+  box-shadow: 0 0 12px 4px #ec008c !important;
+  color: #ec008c !important;
+  background: #232332 !important;
+  border-left: 4px solid #ec008c !important;
+  font-weight: bold;
+  z-index: 3;
+}
+
+.sidebar-flyout-toggle:hover {
+  background: #232332 !important;
+  color: #ec008c !important;
+}
+
 .sidebar-dropdown-item,
 .sidebar-flyout-item {
   transition: all 0.2s;
 }
 
-.sidebar-flyout-toggle.focused:not(.active),
 .sidebar-dropdown-item.focused:not(.active),
 .sidebar-flyout-item.focused:not(.active) {
   transform: scale(1.05);
@@ -31,4 +81,41 @@
   border-left: 4px solid #ec008c;
   font-weight: bold;
   z-index: 3;
+}
+
+.sidebar-header {
+  transition: 
+    transform 0.22s cubic-bezier(0.4, 0.2, 0.2, 1),
+    box-shadow 0.22s,
+    background 0.22s,
+    border 0.22s;
+  background: #181818;
+  border-right: 1.5px solid #232323;
+  box-shadow: none;
+}
+
+/* 포커스(방향키 등으로 커서가 올라간 상태) */
+.sidebar-header.focused {
+  transform: scale(1.05);
+  box-shadow: 0 0 16px 4px #ec008c99, 0 0 32px 12px #ec008c55;
+  background: #1a1620;
+  border-right: 2.5px solid #ec008c;
+  z-index: 10;
+}
+
+/* 활성(현재 페이지/항목이 선택된 상태) */
+.sidebar-header.active {
+  background: linear-gradient(90deg, #232332 80%, #ec008c22 100%);
+  border-right: 4px solid #ec008c;
+  box-shadow: 0 0 24px 6px #ec008c44;
+  transform: scale(1.03);
+}
+
+/* 포커스+활성(가장 강조) */
+.sidebar-header.focused.active {
+  background: linear-gradient(90deg, #232332 60%, #ec008c33 100%);
+  border-right: 5px solid #ec008c;
+  box-shadow: 0 0 32px 10px #ec008c99, 0 0 48px 16px #ec008c55;
+  transform: scale(1.08);
+  z-index: 20;
 } 
