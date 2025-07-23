@@ -1,10 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Focusable from '../Focusable/Focusable';
 import './VODList.css'
 import styles from '../HomeContentCard.module.css';
 import { handleCardKeyDownWithSpace } from '../common/cardKeyHandlers';
+import { useFocus } from '../../context/FocusContext';
+
 
 const VODList = ({ vodContents, onClick, loaderRef, selectedSubgenre, isLoading }) => {
+  const { registerSections, setSection, setIndex } = useFocus();
+  const { section, index } = useFocus();
+
+  useEffect(() => {
+    if (!isLoading && vodContents.length > 0) {
+      registerSections({ 'vod-content': vodContents.length });
+      setSection('vod-content');
+      setIndex(0);
+    }
+  }, [vodContents, isLoading, registerSections, setSection, setIndex]);
+
   return (
     <div className="vod-page-container">
       <h2 className="vod-category-title">
@@ -30,11 +43,21 @@ const VODList = ({ vodContents, onClick, loaderRef, selectedSubgenre, isLoading 
           {vodContents.map((content, idx) => (
             <Focusable sectionKey="vod-content" index={idx} context="vod" key={idx}>
               <div
-                className={`${styles.homeContentCard} vod-thumbnail-card`}
+                className={`vod-thumbnail-card ${section === 'vod-content' && index === idx ? 'focused' : ''}`}
                 style={{ cursor: "pointer" }}
                 onClick={() => onClick(content.title)}
                 tabIndex={0}
-                onKeyDown={(e) => handleCardKeyDownWithSpace(e, () => onClick(content.title))}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowLeft' && idx === 0) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setSection('home-sidebar');
+                    setIndex(2); // VOD 메뉴의 index
+                    return;
+                  }
+                  handleCardKeyDownWithSpace(e, () => onClick(content.title));
+                }}
+                
               >
                 <img
                   src={content.thumbnail}
