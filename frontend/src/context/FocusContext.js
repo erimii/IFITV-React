@@ -31,11 +31,11 @@ export const FocusProvider = ({ children }) => {
       
       // 현재 섹션이 등록된 섹션 목록에 없으면 home-sidebar로 리셋
       if (!Object.keys(sectionOrder).includes(section)) {
-        console.log("[FOCUS CONTEXT] Current section not in sectionOrder, resetting to home-sidebar");
-        setSection('home-sidebar');
-        setIndex(0);
+        console.log("[FOCUS CONTEXT] Unknown section:", section);
+        // section이 등록될 때까지 기다림 (강제 리셋 안함)
         return;
       }
+      
       
       // 슬라이더 섹션에서는 기본 핸들러를 실행하지 않음
       if (section.startsWith('home-slider-')) {

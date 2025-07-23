@@ -1,191 +1,72 @@
-.carousel2-outer {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-  }
-  
-  .carousel2-inner {
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    display: flex;
-    gap: 20px;
-    width: 100%;
-    height: auto;
-    box-sizing: border-box;
-  }
-  
-  .no-scrollbar {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .carousel2-card {
-    box-sizing: border-box;
-    flex: 0 0 calc(33.333% - 30px);
-    max-width: calc(33.333% - 30x);
-    border-radius: 12px;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: box-shadow 0.18s, border 0.18s;
-    cursor: pointer;
-    overflow: hidden;
-    position: relative;
-  }
-  .carousel2-card:hover {
-    border: 2px solid #ec008c;
-  }
-  
-  .carousel2-poster {
-    width: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-    background: #222;
-  }
-
-.carousel2-image-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  border-radius: 8px;
-}
-
-  /* 숨겨진 오버레이 */
-.carousel2-hover-info {
-  position: absolute;
+/* 모달 전체 영역 */
+.modal-overlay {
+  position: fixed;
   top: 0;
   left: 0;
-  background: rgba(24, 27, 27, 0.9);
-  color: white;
-  padding: 1rem;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  width: 100vw;
+  max-width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 999;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: 0.5rem;
-  z-index: 2;
-  overflow: auto;
-  border-radius: 8px;
-  white-space: normal;
-  overflow-wrap: break-word;
-  word-break: break-word;
-  box-sizing: border-box;
-}
-
-/* 마우스 올리면 보이게 */
-.carousel2-image-wrapper:hover .carousel2-hover-info {
-  opacity: 1;
-}
-
-.carousel2-hover-title {
-  font-size: 1.2rem;
-  font-weight: bold;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.carousel2-hover-subgenre {
-  font-size: 0.8rem;
-  color: #ccc;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.carousel2-hover-desc {
-  font-size: 0.9rem;
-  line-height: 1.3;
-  color: #ddd;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 12;
-}
-
-
-
-.carousel2-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 30px;
-  height: 30px;
-  background: #222;
-  color: #fff;
-  font-size: 1rem;
-  border: none;
-  border-radius: 50%;
-  padding: 0;
-  cursor: pointer;
-  z-index: 10;
-  transition: background 0.2s, color 0.2s;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  align-items: center;
+  overflow-x: hidden;
+}
+
+.modal-content {
+  border-radius: 16px;
+  max-width: 800px;
+  width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
   outline: none;
-  opacity: 0.7;
-}
-.carousel2-arrow.left { left: 7px; padding: 0 2px 0 0; }
-.carousel2-arrow.right { right: 7px; padding: 0 0 0 2px; }
-.carousel2-arrow:hover:not(:disabled) { background: #ec008c; color: #fff; }
-/* .carousel2-arrow:hover { opacity: 0.25; cursor: not-allowed; background: #222; color: #fff; box-shadow: none; } */
-.carousel2-arrow svg {
-  width: 2rem;
-  height: 2rem;
-  display: block;
+  background: #232323;
 }
 
-/* 캐러셀 카드 포커스 시각적 피드백 - hover와 동일한 스타일 */
-.carousel-card.focused {
-  outline: 2px solid #00f !important;
-  background-color: rgba(0, 0, 255, 0.1) !important;
-  transform: scale(1.05) !important;
-  transition: all 0.2s ease !important;
-  border-radius: 8px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 255, 0.3) !important;
-}
-
+/* 캐러셀 전체 wrapper */
 .modal-carousel-wrapper {
   overflow: hidden;
   width: 100%;
   position: relative;
+  box-sizing: border-box;
+  background: #232323;
 }
 
+/* 캐러셀 내부 */
 .modal-carousel-container {
   display: flex;
   flex-direction: row;
-  gap: 16px;
-  width: 100%;
+  gap: 25px;
   overflow-x: auto;
+  overflow-y: hidden;
+  padding: 24px 0 24px 10px;
   scroll-behavior: smooth;
-  padding: 24px 0 8px 0;
+
+  /* ✅ 추가 */
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
+/* 캐러셀 카드 */
 .modal-carousel-card {
-  flex: 0 0 40%;
-  max-width: 360px;
+  flex: 0 0 280px;
+  width: 280px;
+  max-width: 280px;
   min-width: 280px;
   border-radius: 16px;
   background: #232323;
   box-shadow: 0 2px 12px rgba(0,0,0,0.13);
-  transition: box-shadow 0.18s, border 0.18s, transform 0.18s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, outline 0.2s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
   position: relative;
+  transform: scale(1);
+  box-shadow: none;
+  outline: none;
 }
 
 .modal-carousel-card:last-child {
@@ -211,24 +92,112 @@
   display: block;
 }
 
-@media (max-width: 900px) {
-  .modal-carousel-card {
-    flex: 0 0 calc(60% - 16px);
-    max-width: 320px;
-    min-width: 180px;
-  }
-  .modal-carousel-card .carousel2-image-wrapper {
-    height: 180px;
-  }
+/* hover 효과 */
+.modal-carousel-card:hover,
+.modal-carousel-card.focused {
+  transform: scale(1.03);
+  box-shadow: 0 0 8px 2px rgba(236, 0, 140, 0.5);
+  outline: 2px solid #ec008c;
+  z-index: 2;
 }
 
-@media (max-width: 600px) {
-  .modal-carousel-card {
-    flex: 0 0 80vw;
-    max-width: 90vw;
-    min-width: 120px;
-  }
-  .modal-carousel-card .carousel2-image-wrapper {
-    height: 120px;
-  }
+/* hover-info 기본 숨김 */
+.carousel2-hover-info {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background: rgba(24, 27, 27, 0.9);
+  color: white;
+  padding: 1rem;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.5rem;
+
+  z-index: 2;
+  overflow: auto;
+
+  border-radius: 16px;
+  white-space: normal;
+  word-break: break-word;
+  box-sizing: border-box;
+}
+
+
+/* 마우스 올리거나 포커스 시 보여줌 */
+.carousel2-image-wrapper:hover .carousel2-hover-info,
+.modal-carousel-card.focused .carousel2-hover-info {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* 텍스트 영역 */
+.carousel2-hover-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.carousel2-hover-subgenre {
+  font-size: 0.8rem;
+  color: #ccc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.carousel2-hover-desc {
+  font-size: 0.9rem;
+  line-height: 1.3;
+  color: #ddd;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 12;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 좌우 화살표 */
+.carousel2-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  background: #222;
+  color: #fff;
+  font-size: 1rem;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  outline: none;
+  opacity: 0.7;
+}
+.carousel2-arrow.left { left: 7px; padding: 0 2px 0 0; }
+.carousel2-arrow.right { right: 7px; padding: 0 0 0 2px; }
+.carousel2-arrow:hover:not(:disabled) {
+  background: #ec008c;
+  color: #fff;
 }

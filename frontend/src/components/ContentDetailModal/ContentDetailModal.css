@@ -40,6 +40,23 @@
 
 
 
+/* 모달 안에서 포커스된 버튼 스타일 (테마색 강조) */
+.focusable-wrapper.modal.focused button {
+  transform: scale(1.05);
+  box-shadow: 0 0 8px 2px rgba(236, 0, 140, 0.6); /* 테마색 글로우 */
+  outline: 2px solid #ec008c;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, outline 0.2s ease;
+  z-index: 1;
+}
+
+/* 기본 버튼 리셋 */
+.modal-actions button {
+  transform: scale(1);
+  box-shadow: none;
+  outline: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, outline 0.2s ease;
+}
+
 
 
 .modal-overlay {

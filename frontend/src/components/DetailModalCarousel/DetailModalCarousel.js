@@ -3,7 +3,7 @@ import './DetailModalCarousel.css';
 import Focusable from '../Focusable/Focusable';
 import { useFocus } from '../../context/FocusContext';
 
-const DetailModalCarousel = ({ recommendations, onCardClick }) => {
+const DetailModalCarousel = ({ recommendations, onCardClick, sectionKey = 'modal', startIndex = 2 }) => {
   const scrollRef = useRef(null);
   const { section, index, setSection, setIndex } = useFocus();
 
@@ -47,7 +47,7 @@ const DetailModalCarousel = ({ recommendations, onCardClick }) => {
         {recommendations.map((item, idx) => {
           const isFocused = section === 'modal-carousel' && index === idx;
           return (
-            <Focusable key={idx} sectionKey="modal-carousel" index={idx}>
+            <Focusable key={idx} sectionKey="modal-carousel" index={idx} context="modal" >
               <div
                 className={`carousel2-card modal-carousel-card${isFocused ? ' focused' : ''}`}
                 onClick={() => onCardClick(item.title)}

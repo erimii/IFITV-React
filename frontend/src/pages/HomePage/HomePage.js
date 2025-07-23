@@ -23,9 +23,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   const [myListLoading, setMyListLoading] = useState(false);
   const [liveLoading, setLiveLoading] = useState(false);
 
-  const { registerSections, setSection, setIndex } = useFocus();
-
-  
+  const { registerSections, setSection, setIndex, section, index } = useFocus();
 
   const [vodContents, setVodContents] = useState([]);
   const [myListContents, setMyListContents] = useState([]);
@@ -48,8 +46,8 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   const [selectedSubgenre, setSelectedSubgenre] = useState(null);
   const [groupedLiveContents, setGroupedLiveContents] = useState({});
 
-  
-  // 프로필 최신 목록 불러오기
+  const [prevFocus, setPrevFocus] = useState(null);
+
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
@@ -63,13 +61,11 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
     };
     fetchProfiles();
   }, [user.id]);
-  
-  // VOD 콘텐츠 가져오기
+
   useEffect(() => {
     const fetchVOD = async () => {
       if (!profile || selectedMenuParam !== "VOD" || !hasNext) return;
-  
-      setVodLoading(true); // 로딩 시작
+      setVodLoading(true);
       try {
         const subParam = selectedSubgenre ? `&subgenre_id=${selectedSubgenre.id}` : "";
         const res = await axios.get(`http://localhost:8000/recommendation/all_vod_contents/?page=${page}${subParam}`);
@@ -78,77 +74,61 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
       } catch (error) {
         console.error("VOD 불러오기 실패:", error);
       } finally {
-        setVodLoading(false); // 로딩 종료
+        setVodLoading(false);
       }
     };
     fetchVOD();
   }, [selectedMenuParam, page, profile, hasNext, selectedSubgenre]);
-  
-  // Live 콘텐츠 가져오기
+
   useEffect(() => {
     if (selectedMenuParam !== "Live" || !profile) return;
-    setLiveLoading(true)
-  
+    setLiveLoading(true);
     const fetchLiveContents = async () => {
       try {
         const res = await axios.get("http://localhost:8000/recommendation/api/live_by_broadcaster/");
         setGroupedLiveContents(res.data);
       } catch (error) {
-        console.error("실시간 콘텐츠 불러오기 실패:", error.message, error.response?.data);
+        console.error("실시간 콘텐츠 불러오기 실패:", error);
       } finally {
-        setLiveLoading(false)
+        setLiveLoading(false);
       }
     };
-  
     fetchLiveContents();
   }, [selectedMenuParam, profile]);
-  
-  
 
-  // 좋아요 한 콘텐츠 가져오기
   useEffect(() => {
     const fetchMyList = async () => {
       if (!profile || selectedMenuParam !== "My List") return;
-
-      setMyListLoading(true); // 로딩 시작
-
+      setMyListLoading(true);
       try {
         const res = await axios.get(`http://localhost:8000/api/my_list/?profile_id=${profile.id}`);
-        const contents = Array.isArray(res.data) ? res.data : [];
-        setMyListContents(contents);
-        setLikedContentIds(contents.map(c => c.id));
+        setMyListContents(res.data);
+        setLikedContentIds(res.data.map(c => c.id));
       } catch (error) {
         console.error("My List 불러오기 실패:", error);
       } finally {
-        setMyListLoading(false); // 로딩 종료
+        setMyListLoading(false);
       }
     };
-
     fetchMyList();
   }, [selectedMenuParam, profile]);
 
-  // 홈 콘텐츠가 로딩 완료되었을 때 포커스 초기화
-useEffect(() => {
-  if (selectedMenuParam === '홈' && !loading) {
-    setSection('home-slider-0');
-    setIndex(0);
-  }
-}, [selectedMenuParam, loading, setSection, setIndex]);
+  useEffect(() => {
+    if (selectedMenuParam === '홈' && !loading && !isModalOpen) {
+      setSection('home-slider-0');
+      setIndex(0);
+    }
+  }, [selectedMenuParam, loading, isModalOpen, setSection, setIndex]);
 
-
-  // 무한 스크롤
   useEffect(() => {
     if (selectedMenuParam !== "VOD") return;
-
     const observer = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasNext) {
         setPage(prev => prev + 1);
       }
     });
-
     const target = loaderRef.current;
     if (target) observer.observe(target);
-
     return () => {
       if (target) observer.unobserve(target);
     };
@@ -156,52 +136,37 @@ useEffect(() => {
 
   useEffect(() => {
     if (selectedMenuParam === "VOD") {
-      setVodContents([]);  
-      setPage(1);             
-      setHasNext(true);      
+      setVodContents([]);
+      setPage(1);
+      setHasNext(true);
     }
   }, [selectedMenuParam]);
 
-  // 시청 기록
   useEffect(() => {
     const fetchWatchHistory = async () => {
       if (!profile) return;
       try {
         const res = await axios.get(`http://localhost:8000/recommendation/watch_history/${profile.id}`);
-        const ids = res.data.map(id => Number(id));
-        setWatchedContentIds(ids);
+        setWatchedContentIds(res.data.map(id => Number(id)));
       } catch (error) {
         console.error("시청 이력 불러오기 실패:", error);
       }
     };
-  
     fetchWatchHistory();
   }, [profile]);
 
-  // 홈 
   useEffect(() => {
     if (selectedMenuParam !== "홈" || !user || !profile) return;
-  
     const fetchRecommendations = async () => {
       setLoading(true);
       try {
         const [res1, res2, res3] = await Promise.all([
-          // 1. 선호 장르 기반 추천
-          axios.post("http://localhost:8000/recommendation/subgenre_based_recommend/", {
-            profile_id: profile.id
-          }),
-          // 2. 실시간 방송 추천
-          axios.post("http://localhost:8000/api/live_recommend/", {
-            profile_id: profile.id
-          }),
-          // 3. liked 기반 추천 (profile_id 기반)
-          axios.post("http://localhost:8000/recommendation/liked_based_recommend/", {
-            profile_id: profile.id
-          })
+          axios.post("http://localhost:8000/recommendation/subgenre_based_recommend/", { profile_id: profile.id }),
+          axios.post("http://localhost:8000/api/live_recommend/", { profile_id: profile.id }),
+          axios.post("http://localhost:8000/recommendation/liked_based_recommend/", { profile_id: profile.id })
         ]);
-        console.log("📺 livePrograms 응답", res2.data);
-        setGenreContents(res1.data || []);
-        setLivePrograms(res2.data || []);
+        setGenreContents(res1.data);
+        setLivePrograms(res2.data);
         setLikedRecommendationsByGenre(res3.data);
       } catch (err) {
         console.error("추천 오류:", err);
@@ -209,29 +174,21 @@ useEffect(() => {
         setLoading(false);
       }
     };
-  
     fetchRecommendations();
   }, [selectedMenuParam, user, profile]);
 
-  // 포커스 섹션 등록
   useEffect(() => {
     if (selectedMenuParam === '홈' && !loading) {
       const sections = ['home-sidebar'];
-      const genreSliders = Object.keys(likedRecommendationsByGenre).filter(genre => 
-        likedRecommendationsByGenre[genre].length > 0
-      );
+      const genreSliders = Object.keys(likedRecommendationsByGenre).filter(genre => likedRecommendationsByGenre[genre].length > 0);
       const totalSliders = 1 + genreSliders.length + (livePrograms.length > 0 ? 1 : 0);
-      
       for (let i = 0; i < totalSliders; i++) {
         sections.push(`home-slider-${i}`);
       }
-      
-      console.log("[REGISTER SECTIONS]", sections);
       registerSections(sections);
     }
   }, [selectedMenuParam, loading, likedRecommendationsByGenre, livePrograms.length, registerSections]);
 
-  // 콘텐츠 디테일 + 비슷한 콘텐츠 추가
   const fetchDetailRecommendation = async (title, profileId) => {
     const res = await axios.post("http://localhost:8000/api/recommend_with_detail/", {
       title,
@@ -241,30 +198,35 @@ useEffect(() => {
     });
     return res.data;
   };
-  
-  // 모달 키기
+
   const handleClick = async (title) => {
+    setPrevFocus({ section, index }); // ⭐️ 현재 포커스 저장
     setModalLoading(true);
     try {
       const data = await fetchDetailRecommendation(title, profile.id);
       setSelectedContent(data.info);
       setResults(data.recommendations);
-      setIsModalOpen(true);   
+      setIsModalOpen(true);
     } catch (error) {
       console.error("상세 추천 오류:", error);
     } finally {
       setModalLoading(false);
     }
   };
-  // 모달 끄기
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedContent(null);
+    if (prevFocus) {
+      setTimeout(() => {
+        setSection(prevFocus.section);
+        setIndex(prevFocus.index);
+      }, 0);
+    }
   };
 
   const parseAirtimeToDate = (airtime) => {
     if (airtime.includes(" ")) return new Date(airtime);
-  
     const [hour, minute, second] = airtime.split(":").map(Number);
     const date = new Date();
     date.setHours(hour);
@@ -272,25 +234,21 @@ useEffect(() => {
     date.setSeconds(second || 0);
     return date;
   };
-  
+
   const handleLiveClick = (title, airtime) => {
     const now = new Date();
     const programTime = parseAirtimeToDate(airtime);
-  
-    alert(programTime < now
-      ? `🔔 "${title}" 보러가기!`
-      : `📅 "${title}" 시청 예약하기!`);
+    alert(programTime < now ? `🔔 "${title}" 보러가기!` : `📅 "${title}" 시청 예약하기!`);
   };
 
-  // vod - 서브장르 선택 시
   const handleSubgenreSelect = (sub) => {
     setSelectedMenuParam("VOD");
     setSelectedSubgenre(sub);
-    setVodContents([]); // 초기화
+    setVodContents([]);
     setPage(1);
     setHasNext(true);
   };
-  
+
   return (
     <div className="home-page">
       <SidebarHeader
@@ -306,100 +264,75 @@ useEffect(() => {
 
       {selectedMenuParam === "홈" && (
         <div className="welcome-section">
-          <h1>
-            Welcome, {profile.name}!
-          </h1>
+          <h1>Welcome, {profile.name}!</h1>
           <p>Continue Watching where you left off</p>
         </div>
       )}
+
       {selectedMenuParam === "홈" && loading && (
         <>
           <div className="home-skeleton-title" />
-          <div className="home-skeleton-row">
-            {[...Array(6)].map((_, idx) => (
-              <div className="home-skeleton-card" key={idx} />
-            ))}
-          </div>
+          <div className="home-skeleton-row">{[...Array(6)].map((_, idx) => <div className="home-skeleton-card" key={idx} />)}</div>
           <div className="home-skeleton-title" />
-          <div className="home-skeleton-row">
-            {[...Array(6)].map((_, idx) => (
-              <div className="home-skeleton-card" key={idx} />
-            ))}
-          </div>
-          <div className="home-skeleton-title" />
-          <div className="home-skeleton-row">
-            {[...Array(6)].map((_, idx) => (
-              <div className="home-skeleton-card" key={idx} />
-            ))}
-          </div>
+          <div className="home-skeleton-row">{[...Array(6)].map((_, idx) => <div className="home-skeleton-card" key={idx} />)}</div>
         </>
       )}
-      
-      {selectedMenuParam === "My List" && <MyList myListContents={myListContents} onClick={handleClick} isLoading={myListLoading}/>}
-      {selectedMenuParam === "Live" && <Live groupedLiveContents={groupedLiveContents} onClick={handleClick} isLoading={liveLoading}/>}
 
-      {selectedMenuParam === "VOD" && (<VODList vodContents={vodContents} onClick={handleClick} loaderRef={loaderRef} selectedSubgenre={selectedSubgenre} isLoading={vodLoading} />
-)}
-
-      <div>
+      {selectedMenuParam === "My List" && <MyList myListContents={myListContents} onClick={handleClick} isLoading={myListLoading} />}
+      {selectedMenuParam === "Live" && <Live groupedLiveContents={groupedLiveContents} onClick={handleClick} isLoading={liveLoading} />}
+      {selectedMenuParam === "VOD" && <VODList vodContents={vodContents} onClick={handleClick} loaderRef={loaderRef} selectedSubgenre={selectedSubgenre} isLoading={vodLoading} />}
 
       <div className="home-content-wrapper">
+        <ContentDetailModal
+          content={selectedContent}
+          recommendations={results}
+          onClose={handleCloseModal}
+          profile={profile}
+          watchedContentIds={watchedContentIds}
+          setWatchedContentIds={setWatchedContentIds}
+          likedContentIds={likedContentIds}
+          setLikedContentIds={setLikedContentIds}
+          loading={modalLoading}
+          setSelectedContent={setSelectedContent}
+        />
 
-      <ContentDetailModal
-        content={selectedContent}
-        recommendations={results}
-        onClose={handleCloseModal}
-        profile={profile}
-        watchedContentIds={watchedContentIds}
-        setWatchedContentIds={setWatchedContentIds}
-        likedContentIds={likedContentIds}
-        setLikedContentIds={setLikedContentIds}
-        loading={modalLoading}
-        setSelectedContent={setSelectedContent}
-      />
-
-      {selectedMenuParam === "홈" && !loading && (
-        <>
-          <HorizontalSlider
-            title={`${profile.name}님의 선호 장르 기반 콘텐츠`}
-            items={genreContents}
-            onCardClick={handleClick}
-            sliderIndex={0}
-          />
-
-          {Object.entries(likedRecommendationsByGenre).map(([genre, items], genreIndex) => (
-            items.length > 0 && (
-              <HorizontalSlider
-                key={genre}
-                title={`${profile.name}님을 위한 ${genre} 추천`}
-                items={items}
-                onCardClick={handleClick}
-                sliderIndex={1 + genreIndex}
-              />
-            )
-          ))}
-
-          {livePrograms.length > 0 && (
+        {selectedMenuParam === "홈" && !loading && (
+          <>
             <HorizontalSlider
-              title={`${profile.name}님의 오늘 방송 추천`}
-              items={livePrograms.map((item) => ({
-                title: item["title"],
-                thumbnail: item["thumbnail"],
-                airtime: item["airtime"],
-              }))}
-              onCardClick={handleLiveClick}
-              sliderIndex={1 + Object.keys(likedRecommendationsByGenre).filter(genre => 
-                likedRecommendationsByGenre[genre].length > 0
-              ).length}
+              title={`${profile.name}님의 선호 장르 기반 콘텐츠`}
+              items={genreContents}
+              onCardClick={handleClick}
+              sliderIndex={0}
             />
-          )}
-        </>
-      )}
 
-    </div>
-    </div>
-    </div>
+            {Object.entries(likedRecommendationsByGenre).map(([genre, items], genreIndex) => (
+              items.length > 0 && (
+                <HorizontalSlider
+                  key={genre}
+                  title={`${profile.name}님을 위한 ${genre} 추천`}
+                  items={items}
+                  onCardClick={handleClick}
+                  sliderIndex={1 + genreIndex}
+                />
+              )
+            ))}
 
+            {livePrograms.length > 0 && (
+              <HorizontalSlider
+                title={`${profile.name}님의 오늘 방송 추천`}
+                items={livePrograms.map((item) => ({
+                  title: item["title"],
+                  thumbnail: item["thumbnail"],
+                  airtime: item["airtime"],
+                }))}
+                onCardClick={handleLiveClick}
+                sliderIndex={1 + Object.keys(likedRecommendationsByGenre).filter(g => likedRecommendationsByGenre[g].length > 0).length}
+              />
+            )}
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 
