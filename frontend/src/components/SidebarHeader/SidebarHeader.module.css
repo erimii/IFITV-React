@@ -147,9 +147,7 @@
 } 
 
 /* SidebarHeader.module.css */
-.searchButton,
-.gesture-button,
-.settings-gear-btn {
+.searchButton {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -162,44 +160,23 @@
   background: none;
   color: #fff;
   border-radius: 6px;
-  transition: transform 0.2s, box-shadow 0.2s, border 0.2s, color 0.2s;
+  transition: transform 0.2s, border 0.2s, color 0.2s;
 }
 
-.searchButton svg,
-.gesture-button svg,
-.settings-gear-btn svg {
+.searchButton svg {
   width: 30px;
   height: 30px;
   color: #fff;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, filter 0.2s ease;
 }
 
-.searchButton.focused,
-.gesture-button.focused,
-.settings-gear-btn.focused {
+.searchButton.focused {
   transform: scale(1.2);
-  box-shadow: 0 0 8px 4px #ec008c99, 0 0 16px 12px #ec008c55;
   border: none;
   outline: none;
 }
 
-.searchButton.focused svg,
-.gesture-button.focused svg,
-.settings-gear-btn.focused svg {
+.searchButton.focused svg {
   color: #ec008c;
+  filter: drop-shadow(0 0 6px #ec008c) drop-shadow(0 0 12px #ec008c88);
 }
-
-.gesture-button.focused,
-.settings-gear-btn.focused {
-  transform: scale(1.2) !important;
-  box-shadow: 0 0 8px 4px #ec008c99, 0 0 16px 12px #ec008c55 !important;
-  border: none !important;
-  outline: none !important;
-  background: none !important;
-}
-
-.gesture-button.focused svg,
-.settings-gear-btn.focused svg {
-  color: #ec008c !important;
-}
-

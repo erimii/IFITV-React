@@ -21,9 +21,7 @@ const SidebarHeader = ({
   const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [liveDropdownOpen, setLiveDropdownOpen] = useState(false);
   const [vodDropdownOpen, setVodDropdownOpen] = useState(false);
-  const [genreDropdownOpen, setGenreDropdownOpen] = useState(false);
   const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
 
   const { showModal } = useGestureModal();
@@ -118,7 +116,12 @@ const SidebarHeader = ({
           navigate("/home");
         });
       } else if (itemIndex === 5) {
-        setSettingsDropdownOpen(true);
+        showModal(profiles, (matchedProfile) => {
+          setSelectedProfile?.(matchedProfile);
+          navigate("/home");
+        });
+      } else if (itemIndex === 6) {
+        setSettingsDropdownOpen(prev => !prev);
       }
     } else if (e.key === 'ArrowRight') {
       e.preventDefault();
@@ -148,75 +151,6 @@ const SidebarHeader = ({
     }
   };
 
-  const handleFlyoutKeyDown = (e, genreIndex) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      e.stopPropagation();
-      // 장르 선택 시 해당 장르로 이동 (필요시 구현)
-      console.log('장르 선택:', subgenresByGenre[genreIndex].name);
-    } else if (e.key === 'ArrowRight') {
-      e.preventDefault();
-      e.stopPropagation();
-      setSection('home-sidebar-subgenre');
-      setIndex(0);
-    } else if (e.key === 'ArrowLeft') {
-      e.preventDefault();
-      e.stopPropagation();
-      setSection('home-sidebar');
-      setIndex(2); // VOD 항목으로 돌아가기
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      e.stopPropagation();
-      const nextIndex = Math.min(genreIndex + 1, subgenresByGenre.length - 1);
-      setIndex(nextIndex);
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      e.stopPropagation();
-      const prevIndex = Math.max(genreIndex - 1, 0);
-      setIndex(prevIndex);
-    }
-  };
-
-  const handleSubgenreKeyDown = (e, subIndex) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      if (e.key === ' ') {
-        // Space바: flyout 닫고 첫 번째 콘텐츠에 포커스
-        setVodDropdownOpen(false);
-        setHoveredGenre(null);
-        onSelect('VOD');
-        // 첫 번째 콘텐츠에 포커스하기 위해 FocusContext에서 콘텐츠 섹션으로 이동
-        // 이는 HomePage에서 콘텐츠 영역의 첫 번째 아이템으로 포커스를 이동시켜야 함
-        setSection('vod-content');
-        setIndex(0);
-      } else {
-        // Enter: 서브장르 선택
-        const currentGenre = subgenresByGenre.find(g => g.id === hoveredGenre);
-        if (currentGenre && currentGenre.subgenres[subIndex]) {
-          handleSubgenreSelect(currentGenre.subgenres[subIndex]);
-        }
-      }
-    } else if (e.key === 'ArrowLeft') {
-      e.preventDefault();
-      e.stopPropagation();
-      setSection('home-sidebar-flyout');
-      setIndex(0);
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      e.stopPropagation();
-      const currentGenre = subgenresByGenre.find(g => g.id === hoveredGenre);
-      const maxIndex = currentGenre?.subgenres?.length - 1 || 0;
-      const nextIndex = Math.min(subIndex + 1, maxIndex);
-      setIndex(nextIndex);
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      e.stopPropagation();
-      const prevIndex = Math.max(subIndex - 1, 0);
-      setIndex(prevIndex);
-    }
-  };
 
   const handleSettingsKeyDown = (e, settingIndex) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -244,9 +178,6 @@ const SidebarHeader = ({
       setIndex(prevIndex);
     }
   };
-
-  const isSidebarFocused = section === 'home-sidebar';
-  const isSidebarActive = ['홈', 'Live', 'VOD', 'My List'].includes(selectedMenu);
 
   return (
     <aside className="sidebar-header">
