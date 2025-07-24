@@ -17,6 +17,8 @@ from django.core.paginator import Paginator
 from profiles.models import VODWatchHistory
 from datetime import date, time, datetime
 from collections import defaultdict
+from image_kobert_recommender import recommend_topn, df, all_embeds, tokenizer, model, bert_matrix
+
 
 #  VOD 전체 가져오기
 def all_vod_contents(request):
@@ -152,7 +154,48 @@ def sample_contents_by_genre(request):
             contents_by_genre[genre] = []  # 서브장르 없으면 빈 리스트
 
     return Response(contents_by_genre)
- 
+
+# 0. 사용자 로그 기반 콘텐츠 추천
+from logistic_hybrid_recommender import HybridRecommender
+
+recommender = HybridRecommender()
+
+@api_view(['POST'])
+def logistic_hybrid_recommend(request):
+    profile_id = request.data.get('profile_id')
+    top_n = int(request.data.get('top_n', 10))
+
+    if not profile_id:
+        return Response({"error": "profile_id는 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # 프로필 존재 여부 확인
+        profile = Profile.objects.get(id=profile_id)
+    except Profile.DoesNotExist:
+        return Response({"error": "해당 프로필이 존재하지 않습니다."}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        # ✅ HybridRecommender가 profile_id 기준으로 학습된 경우
+        if profile_id not in recommender.df_feat['profile_id'].values:
+            return Response({"message": "추천 불가: 해당 프로필의 기록이 충분하지 않습니다."}, status=status.HTTP_200_OK)
+
+        # 추천 실행
+        recommended_titles = recommender.recommend_top_n(profile_id=profile_id, top_n=top_n)
+        recommended = recommender.meta_df[recommender.meta_df['title'].isin(recommended_titles)]
+
+        # 결과 구성
+        results = recommended.drop_duplicates('title')[['title', 'thumbnail', 'description', 'genre', 'subgenre']]\
+                             .fillna('').to_dict(orient="records")
+
+        return Response(results, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        import traceback
+        print("[ERROR] logistic_hybrid_recommend 실패")
+        print(traceback.format_exc())
+        return Response({"error": "서버 내부 오류", "detail": str(e)}, status=500)
+
+
 # 1. 선호 장르 기반 콘텐츠 추천
 @api_view(['POST'])
 def subgenre_based_recommend(request):
@@ -288,32 +331,66 @@ def liked_based_recommend(request):
     print(f"[TIME] liked_based_recommend took {end - start:.2f} seconds")
     return Response(results, status=status.HTTP_200_OK)
 
+
+
+
+import traceback
+
 # 컨텐츠 클릭 시 디테일 + 해당 콘텐츠 기반 다른 콘텐츠 추천(모달에서)
 @api_view(['POST'])
 def recommend_with_detail(request):
-    title = request.data.get('title')
+    title = request.data.get('title', '').strip()
     top_n = request.data.get('top_n', 5)
     alpha = request.data.get('alpha', 0.7)
-
     profile_id = request.data.get("profile_id")
 
     if not title:
         return Response({"error": "title은 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        content = VodContent.objects.filter(title=title).first()
+        print(f"[DEBUG] 요청받은 title: '{title}'")
 
-        # 해당 콘텐츠가 찜되어 있는지 확인
+        # DB에서 해당 콘텐츠 가져오기
+        content = VodContent.objects.filter(title=title).first()
+        if not content:
+            print("[ERROR] VodContent에서 해당 title 없음")
+            return Response({"error": "해당 제목의 콘텐츠가 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+
+        # 찜 여부 확인
         is_liked = ProfileLikedVODContent.objects.filter(
             profile_id=profile_id,
             content_id=content.id
         ).exists()
 
-        result_df = fast_hybrid_recommend(title, top_n=top_n, alpha=alpha)
+        # 추천 모델 import
+        from image_kobert_recommender import (
+            df as reco_df,
+            all_embeds,
+            bert_matrix,
+            tokenizer,
+            model,
+            recommend_topn
+        )
 
-        # 기준 콘텐츠 정보 가져오기
-        from recommend_model import df  # df 로딩 위치 주의
-        base = df[df["title"] == title].iloc[0]
+        # title이 df에 없으면 예외 발생 방지
+        if title not in reco_df['title'].values:
+            print("[ERROR] 추천용 df에서 해당 title을 찾을 수 없음")
+            return Response({"error": f"추천 실패: '{title}'은 추천 데이터셋에 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 추천 실행
+        result_df = recommend_topn(
+            df=reco_df,
+            all_embeds=all_embeds,
+            input_title=title,
+            bert_matrix=bert_matrix,
+            tokenizer=tokenizer,
+            model=model,
+            weights=(0.3, 0.2, 0.2, 0.3),
+            top_n=top_n
+        )
+
+        # 콘텐츠 디테일 정보
+        base = reco_df[reco_df["title"] == title].iloc[0]
         info = {
             "id": int(base["id"]),
             "title": base["title"],
@@ -332,7 +409,10 @@ def recommend_with_detail(request):
         }, status=status.HTTP_200_OK)
 
     except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        print("[ERROR] Internal Server Error 발생")
+        print(traceback.format_exc())
+        return Response({"error": "서버 내부 오류가 발생했습니다.", "detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # 시청기록 저장
 @api_view(['POST'])

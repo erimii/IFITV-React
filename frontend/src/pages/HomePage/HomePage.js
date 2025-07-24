@@ -30,6 +30,8 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   const [genreContents, setGenreContents] = useState([]);
   const [livePrograms, setLivePrograms] = useState([]);
   const [likedRecommendationsByGenre, setLikedRecommendationsByGenre] = useState({ 드라마: [], 예능: [], 영화: [] });
+  const [hybridRecommendations, setHybridRecommendations] = useState([]);
+
 
   const [likedContentIds, setLikedContentIds] = useState([]);
   const [watchedContentIds, setWatchedContentIds] = useState([]);
@@ -142,6 +144,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
     }
   }, [selectedMenuParam]);
 
+
   useEffect(() => {
     const fetchWatchHistory = async () => {
       if (!profile) return;
@@ -158,36 +161,41 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   useEffect(() => {
     if (selectedMenuParam !== "홈" || !user || !profile) return;
     const fetchRecommendations = async () => {
-      setLoading(true);
-      try {
-        const [res1, res2, res3] = await Promise.all([
-          axios.post("http://localhost:8000/recommendation/subgenre_based_recommend/", { profile_id: profile.id }),
-          axios.post("http://localhost:8000/api/live_recommend/", { profile_id: profile.id }),
-          axios.post("http://localhost:8000/recommendation/liked_based_recommend/", { profile_id: profile.id })
-        ]);
-        setGenreContents(res1.data);
-        setLivePrograms(res2.data);
-        setLikedRecommendationsByGenre(res3.data);
-      } catch (err) {
-        console.error("추천 오류:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setLoading(true);
+    try {
+      const [res1, res2, res3, res4] = await Promise.all([
+        axios.post("http://localhost:8000/recommendation/subgenre_based_recommend/", { profile_id: profile.id }),
+        axios.post("http://localhost:8000/api/live_recommend/", { profile_id: profile.id }),
+        axios.post("http://localhost:8000/recommendation/liked_based_recommend/", { profile_id: profile.id }),
+        axios.post("http://localhost:8000/recommendation/logistic_hybrid_recommend/", { profile_id: profile.id })
+      ]);
+      setGenreContents(res1.data);
+      setLivePrograms(res2.data);
+      setLikedRecommendationsByGenre(res3.data);
+      setHybridRecommendations(res4.data);
+    } catch (err) {
+      console.error("추천 오류:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
     fetchRecommendations();
+    
   }, [selectedMenuParam, user, profile]);
 
   useEffect(() => {
     if (selectedMenuParam === '홈' && !loading) {
       const sections = ['home-sidebar'];
       const genreSliders = Object.keys(likedRecommendationsByGenre).filter(genre => likedRecommendationsByGenre[genre].length > 0);
-      const totalSliders = 1 + genreSliders.length + (livePrograms.length > 0 ? 1 : 0);
+      const totalSliders = 1 + genreSliders.length + (livePrograms.length > 0 ? 1 : 0) + (hybridRecommendations.length > 0 ? 1 : 0);
       for (let i = 0; i < totalSliders; i++) {
         sections.push(`home-slider-${i}`);
       }
       registerSections(sections);
     }
-  }, [selectedMenuParam, loading, likedRecommendationsByGenre, livePrograms.length, registerSections]);
+  }, [selectedMenuParam, loading, likedRecommendationsByGenre, livePrograms.length, hybridRecommendations.length, registerSections]);
+
 
   const fetchDetailRecommendation = async (title, profileId) => {
     const res = await axios.post("http://localhost:8000/api/recommend_with_detail/", {
@@ -198,6 +206,11 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
     });
     return res.data;
   };
+
+  useEffect(() => {
+    console.log("[DEBUG] hybridRecommendations:", hybridRecommendations);
+  }, [hybridRecommendations]);
+
 
   const handleClick = async (title) => {
     setPrevFocus({ section, index }); // ⭐️ 현재 포커스 저장
@@ -298,6 +311,18 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
 
         {selectedMenuParam === "홈" && !loading && (
           <>
+            {hybridRecommendations.length > 0 && (
+              <HorizontalSlider
+                title={`${profile.name}님을 위한 AI 하이브리드 추천`}
+                items={hybridRecommendations}
+                onCardClick={handleClick}
+                sliderIndex={
+                  1 + Object.keys(likedRecommendationsByGenre).filter(g => likedRecommendationsByGenre[g].length > 0).length
+                }
+              />
+            )}
+
+          
             <HorizontalSlider
               title={`${profile.name}님의 선호 장르 기반 콘텐츠`}
               items={genreContents}
