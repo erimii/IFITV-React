@@ -189,7 +189,7 @@ const ContentDetailModal = ({
                     className="play-btn"
                     onClick={handleWatch}
                   >
-                    {isWatched ? '✅ 시청 완료' : '▶ Play'}
+                    {isWatched ? '▶ Play' : '▶ Play'}
                   </button>
                 </Focusable>
 
