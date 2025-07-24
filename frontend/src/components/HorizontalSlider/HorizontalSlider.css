@@ -104,8 +104,8 @@
   /* 라이브 디자인 */
   .live-card {
     position: relative;
-    width: 240px;
-    height: 360px;
+    width: 280px;
+    height: 400px;
     overflow: hidden;
     border-radius: 8px;
     cursor: pointer;

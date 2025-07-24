@@ -270,6 +270,7 @@ def live_recommend(request):
         if any(name.strip() in preferred_names for name in subgenre_names + genre_names):
             matched.append({
                 "title": program.title,
+                "channel": program.channel or "",
                 "airtime": airtime_str,
                 "genre": ", ".join(genre_names),
                 "subgenre": ", ".join(subgenre_names),

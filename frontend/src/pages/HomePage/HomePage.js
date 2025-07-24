@@ -329,6 +329,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
                   title: item["title"],
                   thumbnail: item["thumbnail"],
                   airtime: item["airtime"],
+                  channel: item["channel"]
                 }))}
                 onCardClick={handleLiveClick}
                 sliderIndex={1}

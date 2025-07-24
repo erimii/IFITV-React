@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect }from "react";
 import "./HorizontalSlider.css";
 import Focusable from '../Focusable/Focusable';
 import { useFocus } from '../../context/FocusContext';
@@ -29,6 +29,11 @@ function HorizontalSlider({ title, items, onCardClick, sliderIndex = 0, manageFo
     const displayHour = hourNum % 12 === 0 ? 12 : hourNum % 12;
     return `${ampm} ${displayHour}:${minute}`;
   };
+
+  useEffect(() => {
+  console.log("[DEBUG] HorizontalSlider items:", items);
+}, [items]);
+
 
   // 키보드 네비게이션 핸들러
   const handleCardKeyDown = (e, cardIndex) => {
