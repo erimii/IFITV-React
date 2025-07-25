@@ -1,5 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import './GestureModal.css';
+import Focusable from "../../components/Focusable/Focusable";
+import { useFocus } from "../../context/FocusContext";
 
 function GestureModal({ profiles, currentProfile, onClose, onRecognized }) {
   const videoRef = useRef(null);
@@ -7,6 +9,8 @@ function GestureModal({ profiles, currentProfile, onClose, onRecognized }) {
   const [gesture, setGesture] = useState("");
   const [isCameraActive, setIsCameraActive] = useState(true);
   const [isCameraReady, setIsCameraReady] = useState(false);
+
+  const { registerSections, setSection, setIndex } = useFocus();
 
   const startCamera = () => {
     if (!videoRef.current) return;
@@ -102,6 +106,15 @@ function GestureModal({ profiles, currentProfile, onClose, onRecognized }) {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
+  // 🔥 포커스 섹션 등록
+  useEffect(() => {
+    if (profiles?.length > 0) {
+      registerSections({ "gesture-modal": profiles.length });
+      setSection("gesture-modal");
+      setIndex(0);
+    }
+  }, [profiles]);
+
   return (
     <div className="profile-switch-overlay" onClick={onClose}>
       <div className="profile-switch-modal" onClick={(e) => e.stopPropagation()}>
@@ -131,28 +144,31 @@ function GestureModal({ profiles, currentProfile, onClose, onRecognized }) {
         <div className="profile-switch-desc">프로필 수동 전환</div>
         <div className="profile-switch-list">
           {profiles && profiles.length > 0 ? (
-            profiles.map((p) => (
-              <button
+            profiles.map((p, i) => (
+              <Focusable
                 key={p.id}
-                onClick={() => {
-                  onRecognized(p);
-                  onClose();
-                }}
-                className="profile-switch-profile-btn"
+                sectionKey="gesture-modal"
+                index={i}
+                context="gesture-modal"
               >
-                <div className="profile-switch-profile-item">
-                  <div className="profile-switch-avatar-circle">
-                    {p.gesture && (
-                      p.gesture === "rock" ? "✊" :
-                      p.gesture === "paper" ? "🖐" :
-                      p.gesture === "scissors" ? "✌️" :
-                      p.gesture === "ok" ? "👌" :
-                      "❓"
-                    )}
+                <button
+                  onClick={() => {
+                    onRecognized(p);
+                    onClose();
+                  }}
+                  className="profile-switch-profile-btn"
+                >
+                  <div className="profile-switch-profile-item">
+                    <div className="profile-switch-avatar-circle">
+                      {p.gesture === "rock" ? "✊" :
+                       p.gesture === "paper" ? "🖐" :
+                       p.gesture === "scissors" ? "✌️" :
+                       p.gesture === "ok" ? "👌" : "❓"}
+                    </div>
+                    <div className="profile-switch-name">{p.name}</div>
                   </div>
-                  <div className="profile-switch-name">{p.name}</div>
-                </div>
-              </button>
+                </button>
+              </Focusable>
             ))
           ) : (
             <div style={{ color: "#888", fontSize: "1.2rem" }}>등록된 프로필이 없습니다.</div>
