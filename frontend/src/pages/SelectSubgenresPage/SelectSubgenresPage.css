@@ -25,12 +25,12 @@
 
 /* skeleton */
 .skeleton-genre-block {
-  margin-bottom: 32px;
+  margin-bottom: 38px;
 }
 
 .skeleton-genre-title {
-  width: 140px;
-  height: 22px;
+  width: 120px;
+  height: 32px;
   background: #444;
   border-radius: 6px;
   margin-bottom: 12px;
@@ -39,7 +39,7 @@
 .skeleton-btn-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 15px;
 }
 
 .skeleton-btn {

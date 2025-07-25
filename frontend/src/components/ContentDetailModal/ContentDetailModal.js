@@ -73,20 +73,24 @@ const ContentDetailModal = ({
 
   const handleLike = async () => {
     if (!profile || !content) return;
+
     try {
-      if (isLiked) {
-        await axios.delete(`http://localhost:8000/api/my_list/${content.id}/${profile.id}/`);
-        setLikedContentIds(prev => prev.filter(id => id !== content.id));
-      } else {
-        await axios.post('http://localhost:8000/api/my_list/', {
-          content_id: content.id,
-          profile_id: profile.id
-        });
+      const response = await axios.post("http://localhost:8000/api/toggle_like/", {
+        profile_id: profile.id,
+        content_id: content.id
+      });
+
+      const status = response.data.status;
+
+      if (status === "added") {
         setLikedContentIds(prev => [...prev, content.id]);
+        setIsLiked(true);
+      } else if (status === "removed") {
+        setLikedContentIds(prev => prev.filter(id => id !== content.id));
+        setIsLiked(false);
       }
-      setIsLiked(!isLiked);
     } catch (error) {
-      console.error('좋아요 처리 오류:', error);
+      console.error("좋아요 처리 오류:", error);
     }
   };
 

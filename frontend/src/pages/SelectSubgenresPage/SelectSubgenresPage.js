@@ -149,11 +149,11 @@ function SelectSubgenresPage({ user }) {
 
           {Object.keys(subgenreMapping).length === 0 && (
             <div className="add-profile-genres">
-              {[...Array(5)].map((_, idx) => (
+              {[...Array(4)].map((_, idx) => (
                 <div className="skeleton-genre-block" key={idx}>
                   <div className="skeleton-genre-title" />
                   <div className="skeleton-btn-row">
-                    {[...Array(6)].map((_, j) => (
+                    {[...Array(20)].map((_, j) => (
                       <div className="skeleton-btn" key={j} />
                     ))}
                   </div>
