@@ -10,6 +10,18 @@ const MyList = ({ myListContents, onClick, isLoading = false }) => {
   const { registerSections, setSection, setIndex } = useFocus();
   const { section, index } = useFocus();
 
+  const [showContent, setShowContent] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading) {
+      const timer = setTimeout(() => setShowContent(true), 100); // 살짝 delay 줘야 transition 먹힘
+      return () => clearTimeout(timer);
+    } else {
+      setShowContent(false);
+    }
+  }, [isLoading]);
+
+
 
 
   useEffect(() => {
@@ -48,39 +60,38 @@ const MyList = ({ myListContents, onClick, isLoading = false }) => {
         <p style={{ color: '#aaa', textAlign: 'center', fontSize: '1.2rem' }}>
           아직 좋아요한 콘텐츠가 없습니다.
         </p>
-      ) : (
-        <div className="mylist-grid">
+      ) : showContent ? ( // ✅ showContent가 true일 때만 렌더링
+        <div className={`mylist-grid fade-in`}>
           {myListContents.map((item, idx) => (
             <Focusable sectionKey="mylist-content" index={idx} key={item.id}>
-            <div
-              onClick={() => toggleContent(item)}
-              className={`mylist-thumbnail-card ${section === 'mylist-content' && index === idx ? 'focused' : ''}`}
-              style={{ cursor: 'pointer' }}
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'ArrowLeft' && idx === 0) {
-                  setSection('home-sidebar');
-                  setIndex(3); // 'My List'의 sidebar index
-                  e.preventDefault();
-                  e.stopPropagation();
-                  return;
-                }
-                handleCardKeyDownWithSpace(e, () => toggleContent(item));
-              }}
-              
-            >
-              <img
-                src={item.thumbnail}
-                alt={item.title}
-                style={{ width: '100%', borderRadius: '8px' }}
-              />
-              <p className="mylist-title">{item.title}</p>
-            </div>
-          </Focusable>
-          
+              <div
+                onClick={() => toggleContent(item)}
+                className={`mylist-thumbnail-card ${section === 'mylist-content' && index === idx ? 'focused' : ''}`}
+                style={{ cursor: 'pointer' }}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowLeft' && idx === 0) {
+                    setSection('home-sidebar');
+                    setIndex(3);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                  }
+                  handleCardKeyDownWithSpace(e, () => toggleContent(item));
+                }}
+              >
+                <img
+                  src={item.thumbnail}
+                  alt={item.title}
+                  style={{ width: '100%', borderRadius: '8px' }}
+                />
+                <p className="mylist-title">{item.title}</p>
+              </div>
+            </Focusable>
           ))}
         </div>
-      )}
+      ) : null}
+
     </div>
   );
 };

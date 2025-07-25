@@ -72,3 +72,26 @@
   background-color: #3a3a3a;
   border-radius: 4px;
 }
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+.mylist-skeleton-thumb,
+.mylist-skeleton-title {
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+
+
+
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.4s ease-in;
+}
+
+.fade-hidden {
+  opacity: 0;
+}

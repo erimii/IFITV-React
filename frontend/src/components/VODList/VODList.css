@@ -81,3 +81,30 @@
   background-color: #3a3a3a;
   border-radius: 4px;
 }
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+.vod-skeleton-thumb,
+.vod-skeleton-title {
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+
+
+.fade-in {
+  opacity: 1;
+  animation: fadeIn 0.4s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

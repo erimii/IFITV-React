@@ -1,14 +1,25 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Focusable from '../Focusable/Focusable';
-import './VODList.css'
+import './VODList.css';
 import styles from '../HomeContentCard.module.css';
 import { handleCardKeyDownWithSpace } from '../common/cardKeyHandlers';
 import { useFocus } from '../../context/FocusContext';
 
-
 const VODList = ({ vodContents, onClick, loaderRef, selectedSubgenre, isLoading }) => {
   const { registerSections, setSection, setIndex } = useFocus();
   const { section, index } = useFocus();
+
+  const [showContent, setShowContent] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading && vodContents.length > 0) {
+      const timer = setTimeout(() => setShowContent(true), 100);
+      return () => clearTimeout(timer);
+    } else {
+      setShowContent(false);
+    }
+  }, [isLoading, vodContents]);
+
 
   useEffect(() => {
     if (!isLoading && vodContents.length > 0) {
@@ -23,6 +34,7 @@ const VODList = ({ vodContents, onClick, loaderRef, selectedSubgenre, isLoading 
       <h2 className="vod-category-title">
         {selectedSubgenre?.name ? `VOD - ${selectedSubgenre.name}` : "전체 VOD 콘텐츠"}
       </h2>
+
       {isLoading ? (
         <div
           style={{
@@ -38,8 +50,8 @@ const VODList = ({ vodContents, onClick, loaderRef, selectedSubgenre, isLoading 
             </div>
           ))}
         </div>
-      ) : (
-        <div className="mylist-grid">
+      ) : showContent ? (
+        <div className="mylist-grid fade-in">
           {vodContents.map((content, idx) => (
             <Focusable sectionKey="vod-content" index={idx} context="vod" key={idx}>
               <div
@@ -52,12 +64,11 @@ const VODList = ({ vodContents, onClick, loaderRef, selectedSubgenre, isLoading 
                     e.preventDefault();
                     e.stopPropagation();
                     setSection('home-sidebar');
-                    setIndex(2); // VOD 메뉴의 index
+                    setIndex(2);
                     return;
                   }
                   handleCardKeyDownWithSpace(e, () => onClick(content.title));
                 }}
-                
               >
                 <img
                   src={content.thumbnail}
@@ -69,7 +80,7 @@ const VODList = ({ vodContents, onClick, loaderRef, selectedSubgenre, isLoading 
             </Focusable>
           ))}
         </div>
-      )}
+      ) : null}
 
       <div ref={loaderRef} style={{ height: "1px" }} />
     </div>
