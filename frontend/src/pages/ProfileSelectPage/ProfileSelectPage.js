@@ -95,13 +95,12 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
 
   return (
     <div className="profile-select-bg">
-      <div className="profile-select-container">
-        <div className="profile-select-title">프로필을 선택하세요</div>
-        <div className="profile-list">
+      <div className={`profile-select-container${!loading ? " fade-in" : ""}`}>
+
+        <div className="profile-select-title">프로필을 선택해주세요.</div>
+        <div className={`profile-list${!loading ? " loaded" : ""}`}>
           {loading ? (
-            [...Array(4)].map((_, i) => (
-              <div key={i} className="profile-card skeleton-profile-card" />
-            ))
+            <div/>
           ) : (
             <>
               {profiles.map((profile, idx) => (
