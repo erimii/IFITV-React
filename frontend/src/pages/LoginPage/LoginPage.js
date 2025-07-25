@@ -19,10 +19,11 @@ function LoginPage({ setUser }) {
   });
 
   useEffect(() => {
-    registerSections(['login']);
+    registerSections({ login: 4 }); // ← 포커스 가능한 요소가 4개 (index: 0 ~ 3)
     setSection('login');
     setIndex(0);
   }, [registerSections, setSection, setIndex]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
