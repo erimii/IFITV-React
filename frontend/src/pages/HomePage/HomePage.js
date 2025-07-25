@@ -63,6 +63,18 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
 
   const [prevFocus, setPrevFocus] = useState(null);
 
+  const [showSliders, setShowSliders] = useState(false);
+
+  useEffect(() => {
+    if (!loading && selectedMenuParam === "Home") {
+      const timer = setTimeout(() => setShowSliders(true), 100); // 살짝 delay 줘야 transition 작동
+      return () => clearTimeout(timer);
+    } else {
+      setShowSliders(false);
+    }
+  }, [loading, selectedMenuParam]);
+
+
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
@@ -326,7 +338,9 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
           <>
             {/* ✅ 0번: 하이브리드 추천 */}
             {hybridRecommendations.length > 0 && (
-              <div ref={el => (sliderSectionRefs.current['home-slider-0'] = el)}>
+              <div 
+                className={`fade-wrapper ${showSliders ? "fade-in" : "fade-hidden"}`}
+                ref={el => (sliderSectionRefs.current['home-slider-0'] = el)}>
                 <HorizontalSlider
                   title={`${profile.name}님을 위한 AI 하이브리드 추천`}
                   items={hybridRecommendations}
@@ -338,7 +352,9 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
 
             {/* ✅ 1번: 실시간 추천 */}
             {livePrograms.length > 0 && (
-              <div ref={el => (sliderSectionRefs.current['home-slider-1'] = el)}>
+              <div 
+                className={`fade-wrapper ${showSliders ? "fade-in" : "fade-hidden"}`}
+                ref={el => (sliderSectionRefs.current['home-slider-1'] = el)}>
                 <HorizontalSlider
                   title={`${profile.name}님의 오늘 방송 추천`}
                   items={livePrograms.map((item) => ({
