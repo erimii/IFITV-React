@@ -278,3 +278,28 @@
 .new-profile-row input[type=number] {
   -moz-appearance: textfield;
 }
+
+@keyframes fancyFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.fancy-fade-in {
+  opacity: 0;
+  animation: fancyFadeIn 0.6s ease-out forwards;
+}
+
+.fancy-fade-in.delay-0 { animation-delay: 0s; }
+.fancy-fade-in.delay-1 { animation-delay: 0.1s; }
+.fancy-fade-in.delay-2 { animation-delay: 0.2s; }
+.fancy-fade-in.delay-3 { animation-delay: 0.3s; }
+.fancy-fade-in.delay-4 { animation-delay: 0.4s; }
+.fancy-fade-in.delay-5 { animation-delay: 0.5s; }

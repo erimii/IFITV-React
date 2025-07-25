@@ -12,17 +12,11 @@ function CreateProfilePage({ user }) {
 
   const { setSection, setIndex, registerSections } = useFocus();
 
-  useEffect(() => {
-    registerSections({ 'create-profile': 9 }); // 0~8
-    setSection("create-profile");
-    setIndex(0);
-  }, [registerSections, setSection, setIndex]);
-
   const allGestures = [
     { value: "scissors", label: "✌️" },
     { value: "rock", label: "✊" },
     { value: "paper", label: "🖐" },
-    { value: "ok", label: "👌" },
+    { value: "ok", label: "🖐" },
   ];
 
   const [form, setForm] = useState({
@@ -32,31 +26,40 @@ function CreateProfilePage({ user }) {
     gesture: "",
   });
 
+  const availableGestures = allGestures.filter(
+    (g) => !usedGestures.includes(g.value) || form.gesture === g.value
+  );
+
+  useEffect(() => {
+    const totalFocusable = availableGestures.length + 5;
+    registerSections({ 'create-profile': totalFocusable });
+    setSection("create-profile");
+    setIndex(0);
+  }, [registerSections, setSection, setIndex, availableGestures.length]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const profileData = {
       ...form,
       user_id: user.id,
       preferred_subgenres: [],
       liked_contents_ids: [],
     };
-
-    console.log("최종 profileData:", profileData);
     navigate("/select-subgenres", { state: { profile: profileData } });
   };
 
   return (
     <div className="new-profile-bg">
       <div className="new-profile-container">
-        <h2 className="new-profile-title">새 프로필 만들기</h2>
+        <h2 className="new-profile-title fancy-fade-in delay-0">새 프로필 만들기</h2>
 
-        <div className="avatar-select-row">
-          {allGestures.map((g, idx) => {
+        <div className="avatar-select-row fancy-fade-in delay-1">
+          {allGestures.map((g) => {
             const isUsed = usedGestures.includes(g.value);
             const isSelected = form.gesture === g.value;
+            const isFocusable = !isUsed || isSelected;
+            const currentIndex = availableGestures.findIndex((av) => av.value === g.value);
 
-            // 사용 가능한 제스처만 Focusable로 감쌈
             const avatarButton = (
               <button
                 type="button"
@@ -71,24 +74,28 @@ function CreateProfilePage({ user }) {
               </button>
             );
 
-            return isUsed && !isSelected ? (
-              <div key={g.value}>{avatarButton}</div>
-            ) : (
-              <Focusable key={g.value} sectionKey="create-profile" index={idx} context="create-profile">
+            return isFocusable ? (
+              <Focusable
+                key={g.value}
+                sectionKey="create-profile"
+                index={currentIndex}
+                context="create-profile"
+              >
                 {avatarButton}
               </Focusable>
+            ) : (
+              <div key={g.value}>{avatarButton}</div>
             );
           })}
         </div>
 
-
-        <p className="gesture-select-label">
+        <p className="gesture-select-label fancy-fade-in delay-2">
           프로필 전환 시 사용할 손 모양을 골라주세요!
         </p>
 
-        <form className="new-profile-form" onSubmit={handleSubmit}>
+        <form className="new-profile-form fancy-fade-in delay-3" onSubmit={handleSubmit}>
           <div className="new-profile-row">
-            <Focusable sectionKey="create-profile" index={4} context="create-profile">
+            <Focusable sectionKey="create-profile" index={availableGestures.length} context="create-profile">
               <input
                 type="text"
                 placeholder="닉네임"
@@ -98,7 +105,7 @@ function CreateProfilePage({ user }) {
                 required
               />
             </Focusable>
-            <Focusable sectionKey="create-profile" index={5} context="create-profile">
+            <Focusable sectionKey="create-profile" index={availableGestures.length + 1} context="create-profile">
               <input
                 type="number"
                 placeholder="나이"
@@ -108,13 +115,13 @@ function CreateProfilePage({ user }) {
                 required
               />
             </Focusable>
-            <Focusable sectionKey="create-profile" index={6} context="create-profile">
+            <Focusable sectionKey="create-profile" index={availableGestures.length + 2} context="create-profile">
               <select
                 value={form.gender}
                 onChange={(e) => setForm({ ...form, gender: e.target.value })}
                 onKeyDown={(e) => {
                   if (["ArrowLeft", "ArrowRight"].includes(e.key)) {
-                    e.preventDefault(); // ←→ 방향키로 성별 바뀌는 것 방지
+                    e.preventDefault();
                   }
                 }}
                 required
@@ -125,11 +132,10 @@ function CreateProfilePage({ user }) {
                 <option value="기타">기타</option>
               </select>
             </Focusable>
-
           </div>
 
-          <div className="new-profile-btn-row">
-            <Focusable sectionKey="create-profile" index={7} context="create-profile">
+          <div className="new-profile-btn-row fancy-fade-in delay-4">
+            <Focusable sectionKey="create-profile" index={availableGestures.length + 3} context="create-profile">
               <button
                 className="new-profile-prev-btn"
                 type="button"
@@ -138,7 +144,7 @@ function CreateProfilePage({ user }) {
                 이전
               </button>
             </Focusable>
-            <Focusable sectionKey="create-profile" index={8} context="create-profile">
+            <Focusable sectionKey="create-profile" index={availableGestures.length + 4} context="create-profile">
               <button className="new-profile-next-btn" type="submit">
                 다음
               </button>
