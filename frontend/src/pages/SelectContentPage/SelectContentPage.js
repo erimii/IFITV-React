@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from 'axios';
 import CarouselSelect from '../../components/CarouselSelect/CarouselSelect';
@@ -17,8 +17,11 @@ function SelectContentPage({ user }) {
   const [selectedTitles, setSelectedTitles] = useState([]);
   const [typingDone, setTypingDone] = useState(false);
 
-  const { setSection, setIndex, registerSections } = useFocus();
+  const { setSection, setIndex, registerSections, section } = useFocus();
   const isLoading = Object.keys(contentsByGenre).length === 0;
+
+  // sectionKey별 ref 저장
+  const sectionRefs = useRef({});
 
   useEffect(() => {
     if (!isLoading) {
@@ -35,6 +38,16 @@ function SelectContentPage({ user }) {
       setIndex(0);
     }
   }, [isLoading, setSection, setIndex, registerSections, contentsByGenre]);
+
+  useEffect(() => {
+    // section이 바뀔 때마다 해당 섹션을 스크롤
+    if (section && sectionRefs.current[section]) {
+      sectionRefs.current[section].scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [section]);
 
   const fetchContents = async () => {
     try {
@@ -101,7 +114,14 @@ function SelectContentPage({ user }) {
           <div className="loading-wrapper">
             <div className="skeleton-title" />
             <div className="skeleton-card-row">
-              {[...Array(15)].map((_, i) => (
+              {[...Array(8)].map((_, i) => (
+                <div className="skeleton-card" key={i} />
+              ))}
+            </div>
+            <div style={{height: '20px'}}></div>
+            <div className="skeleton-title" />
+            <div className="skeleton-card-row">
+              {[...Array(8)].map((_, i) => (
                 <div className="skeleton-card" key={i} />
               ))}
             </div>
@@ -112,7 +132,11 @@ function SelectContentPage({ user }) {
 
             const sectionKey = `select-content-${genreIdx}`;
             return (
-              <div key={genre} className="content-category-block">
+              <div
+                key={genre}
+                className="content-category-block"
+                ref={el => (sectionRefs.current[sectionKey] = el)}
+              >
                 <div className="content-category-label">
                   {genre}
                   {profile.preferred_genres[genre] && profile.preferred_genres[genre].length > 0 && (
