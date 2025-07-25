@@ -34,6 +34,22 @@ function HorizontalSlider({ title, items, onCardClick, sliderIndex = 0, manageFo
   console.log("[DEBUG] HorizontalSlider items:", items);
 }, [items]);
 
+useEffect(() => {
+  const sectionKey = `home-slider-${sliderIndex}`;
+  if (section === sectionKey && scrollRef.current) {
+    const focusableItems = scrollRef.current.querySelectorAll(".focusable-wrapper");
+    const target = focusableItems[index];
+    if (target) {
+      target.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "nearest"
+      });
+    }
+  }
+}, [section, index]);
+
+
 
   // 키보드 네비게이션 핸들러
   const handleCardKeyDown = (e, cardIndex) => {
