@@ -127,7 +127,7 @@ def edit_profile(request):
 @api_view(['GET'])
 def get_my_list(request):
     profile_id = request.GET.get('profile_id')
-    liked_contents = ProfileLikedVODContent.objects.filter(profile_id=profile_id).select_related('content')
+    liked_contents = ProfileLikedVODContent.objects.filter(profile_id=profile_id).select_related('content').order_by('-liked_at')
     data = [
         {
             'id': item.content.id,

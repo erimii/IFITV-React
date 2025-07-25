@@ -34,6 +34,7 @@ class ProfilePreferredSubgenre(models.Model):
 class ProfileLikedVODContent(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     content = models.ForeignKey(VodContent, on_delete=models.CASCADE)
+    liked_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'profile_liked_vod_contents'

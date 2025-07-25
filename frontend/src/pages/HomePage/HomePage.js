@@ -16,7 +16,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const [profiles, setProfiles] = useState([]);
-  const [selectedMenuParam, setSelectedMenuParam] = useState("홈");
+  const [selectedMenuParam, setSelectedMenuParam] = useState("Home");
 
   const [modalLoading, setModalLoading] = useState(false);
   const [vodLoading, setVodLoading] = useState(false);
@@ -129,7 +129,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   }, [selectedMenuParam, profile]);
 
   useEffect(() => {
-    if (selectedMenuParam === '홈' && !loading && !isModalOpen) {
+    if (selectedMenuParam === 'Home' && !loading && !isModalOpen) {
       setSection('home-slider-0');
       setIndex(0);
     }
@@ -172,7 +172,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   }, [profile]);
 
   useEffect(() => {
-    if (selectedMenuParam !== "홈" || !user || !profile) return;
+    if (selectedMenuParam !== "Home" || !user || !profile) return;
     const fetchRecommendations = async () => {
     setLoading(true);
     try {
@@ -198,7 +198,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   }, [selectedMenuParam, user, profile]);
 
   useEffect(() => {
-    if (selectedMenuParam === '홈' && !loading) {
+    if (selectedMenuParam === 'Home' && !loading) {
       const sections = ['home-sidebar'];
       const genreSliders = Object.keys(likedRecommendationsByGenre).filter(genre => likedRecommendationsByGenre[genre].length > 0);
       const totalSliders = 1 + genreSliders.length + (livePrograms.length > 0 ? 1 : 0) + (hybridRecommendations.length > 0 ? 1 : 0);
@@ -288,14 +288,14 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
         handleSubgenreSelect={handleSubgenreSelect}
       />
 
-      {selectedMenuParam === "홈" && (
+      {selectedMenuParam === "Home" && (
         <div className="welcome-section">
           <h1>Welcome, {profile.name}!</h1>
           <p>Continue Watching where you left off</p>
         </div>
       )}
 
-      {selectedMenuParam === "홈" && loading && (
+      {selectedMenuParam === "Home" && loading && (
         <>
           <div className="home-skeleton-title" />
           <div className="home-skeleton-row">{[...Array(6)].map((_, idx) => <div className="home-skeleton-card" key={idx} />)}</div>
@@ -322,7 +322,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
           setSelectedContent={setSelectedContent}
         />
 
-        {selectedMenuParam === "홈" && !loading && (
+        {selectedMenuParam === "Home" && !loading && (
           <>
             {/* ✅ 0번: 하이브리드 추천 */}
             {hybridRecommendations.length > 0 && (

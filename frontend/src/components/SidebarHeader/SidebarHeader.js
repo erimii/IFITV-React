@@ -103,7 +103,7 @@ const SidebarHeader = ({
       
       // 각 항목별 onClick 함수 호출
       if (itemIndex === 0) {
-        onSelect('홈'); // 'Home'에서 '홈'으로 수정
+        onSelect('Home'); // 'Home'에서 'Home'으로 수정
       } else if (itemIndex === 1) {
         onSelect('Live');
         setTimeout(() => {
@@ -193,7 +193,7 @@ const SidebarHeader = ({
     <aside className="sidebar-header">
       <div className="sidebar-logo">IFITV</div>
       <div className="sidebar-focus-group">
-        {['홈', 'Live', 'VOD', 'My List'].map((menu, i) => (
+        {['Home', 'Live', 'VOD', 'My List'].map((menu, i) => (
           <Focusable key={menu} sectionKey="home-sidebar" index={i}>
             <div
               className={`${styles['sidebar-flyout-toggle']} ${selectedMenu === menu ? styles.active : ''} ${section === 'home-sidebar' && index === i ? styles.focused : ''}`}
