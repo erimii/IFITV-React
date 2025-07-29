@@ -15,9 +15,10 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     openjdk-17-jdk \
     curl \
+    default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
-    # JAVA_HOME 설정
+# JAVA_HOME 설정
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ENV PATH="$JAVA_HOME/bin:$PATH"
 

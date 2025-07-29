@@ -28,9 +28,9 @@ def load_user_logs_from_db():
         vwh.watched_percent AS view_percentage,
         CASE WHEN plvc.content_id IS NOT NULL THEN 1 ELSE 0 END AS mylist,
         vwh.watched_at AS watched_time
-    FROM VOD_watch_history vwh
-    JOIN VOD_contents vc ON vwh.VOD_content_id = vc.id
-    LEFT JOIN profile_liked_VOD_contents plvc 
+    FROM vod_watch_history vwh
+    JOIN vod_contents vc ON vwh.VOD_content_id = vc.id
+    LEFT JOIN profile_liked_vod_contents plvc 
         ON vwh.profile_id = plvc.profile_id AND vc.id = plvc.content_id
     """
     logs = pd.read_sql(query, engine)

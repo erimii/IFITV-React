@@ -20,7 +20,8 @@ services:
     build: ./backend
     container_name: ifitv-backend
     restart: always
-    command: python manage.py runserver 0.0.0.0:8000
+    command: ["sh", "-c", "until mysqladmin ping -h db -uroot -prubi --silent; do echo '⏳ waiting for db...'; sleep 2; done && python manage.py runserver 0.0.0.0:8000"]
+
     volumes:
       - ./backend:/app
     ports:
@@ -29,6 +30,7 @@ services:
       - db
     environment:
       - DB_HOST=db
+      - IS_DOCKER=1
     networks:
       - ifitv-net
 
