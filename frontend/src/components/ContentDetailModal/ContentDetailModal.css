@@ -357,3 +357,27 @@
   transform: scale(1.02) !important;
   transition: all 0.2s ease !important;
 }
+
+/* ✨ 모달 내 Play 버튼 포커스 스타일 */
+.focusable-wrapper.focused .play-btn {
+  transform: scale(1.06);
+  box-shadow:
+    0 0 0 4px rgba(236, 0, 140, 0.2),
+    0 0 12px 6px rgba(236, 0, 140, 0.3),
+    0 0 20px 10px rgba(236, 0, 140, 0.15);
+  filter: drop-shadow(0 0 6px #ec008c55);
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+/* ✨ 모달 내 My List 버튼 포커스 스타일 */
+.focusable-wrapper.focused .mylist-btn {
+  transform: scale(1.06);
+  box-shadow:
+    0 0 0 4px rgba(236, 0, 140, 0.2),
+    0 0 12px 6px rgba(236, 0, 140, 0.3),
+    0 0 20px 10px rgba(236, 0, 140, 0.15);
+  filter: drop-shadow(0 0 6px #ec008c55);
+  outline: none;
+  transition: all 0.25s ease;
+}
