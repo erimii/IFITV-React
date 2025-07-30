@@ -1,14 +1,27 @@
 // src/components/Live/Live.js
-import React, { useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import HorizontalSlider from '../HorizontalSlider/HorizontalSlider';
 import './Live.css';
 import { useFocus } from '../../context/FocusContext';
 
 const Live = ({ groupedLiveContents, onClick, isLoading }) => {
   const { registerSections, setSection, setIndex } = useFocus();
+  const [showContent, setShowContent] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading && Object.keys(groupedLiveContents).length > 0) {
+      const timer = setTimeout(() => setShowContent(true), 100);
+      return () => clearTimeout(timer);
+    } else {
+      setShowContent(false);
+    }
+  }, [isLoading, groupedLiveContents]);
+
+
 
   useEffect(() => {
     if (!isLoading && groupedLiveContents.length > 0) {
+      window.scrollTo({ top: 0, behavior: 'auto' });
       const sectionCount = Object.keys(groupedLiveContents).length;
       const sectionMap = {};
       for (let i = 0; i < sectionCount; i++) {
@@ -25,6 +38,7 @@ const Live = ({ groupedLiveContents, onClick, isLoading }) => {
       <h1 className="live-header">Live</h1>
 
       {isLoading ? (
+        // ⛔ 스켈레톤
         <>
           {[...Array(3)].map((_, i) => (
             <div key={i}>
@@ -37,24 +51,27 @@ const Live = ({ groupedLiveContents, onClick, isLoading }) => {
             </div>
           ))}
         </>
-      ) : Object.keys(groupedLiveContents).length === 0 ? (
-        <p style={{ color: '#aaa', textAlign: 'center', fontSize: '1.2rem' }}>
-          오늘 방송 예정 콘텐츠가 없습니다.
-        </p>
-      ) : (
-        <div>
-          {Object.entries(groupedLiveContents).map(([broadcaster, contents], sliderIndex) => (
-            <HorizontalSlider
-              key={broadcaster}
-              title={broadcaster}
-              items={contents}
-              onCardClick={onClick}
-              sliderIndex={sliderIndex}
-              sectionKey={`live-slider-${sliderIndex}`} // 중요!!
-            />
-          ))}
-        </div>
-      )}
+      ) : showContent ? (
+        Object.keys(groupedLiveContents).length === 0 ? (
+          <p style={{ color: '#aaa', textAlign: 'center', fontSize: '1.2rem' }}>
+            오늘 방송 예정 콘텐츠가 없습니다.
+          </p>
+        ) : (
+          <div className="fade-in">
+            {Object.entries(groupedLiveContents).map(([broadcaster, contents], sliderIndex) => (
+              <HorizontalSlider
+                key={broadcaster}
+                title={broadcaster}
+                items={contents}
+                onCardClick={onClick}
+                sliderIndex={sliderIndex}
+                sectionKey={`live-slider-${sliderIndex}`}
+              />
+            ))}
+          </div>
+        )
+      ) : null}
+
     </div>
   );
 };

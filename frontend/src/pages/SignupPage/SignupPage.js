@@ -62,7 +62,7 @@ function SignupPage({ setUser }) {
 
   return (
     <div className="register-bg">
-      <div className="register-container">
+      <div className="register-container fade-in">
         <div className="register-logo">IFITV</div>
         <form className="register-form" onSubmit={handleSubmit} autoComplete="off">
           <div className="form-group">

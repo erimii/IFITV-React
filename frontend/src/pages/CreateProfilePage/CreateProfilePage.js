@@ -16,7 +16,7 @@ function CreateProfilePage({ user }) {
     { value: "scissors", label: "✌️" },
     { value: "rock", label: "✊" },
     { value: "paper", label: "🖐" },
-    { value: "ok", label: "🖐" },
+    { value: "ok", label: "👌" },
   ];
 
   const [form, setForm] = useState({

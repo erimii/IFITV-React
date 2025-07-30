@@ -62,7 +62,7 @@ function LoginPage({ setUser }) {
 
   return (
     <div className="login-bg">
-      <div className="login-container">
+      <div className="login-container fade-in">
         <div className="login-logo">IFITV</div>
 
         <form className="login-form" onSubmit={handleLogin}>

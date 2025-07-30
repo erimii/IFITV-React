@@ -11,7 +11,13 @@ function HorizontalSlider({ title, items, onCardClick, sliderIndex = 0, manageFo
   const scrollRef = useRef(null);
   const { section, index, setSection, setIndex } = useFocus();
 
-  const cleanTitle = (raw) => raw.replace(/\[\d+\]/g, "").trim();
+  const cleanTitle = (raw) => {
+    if (typeof raw === 'string') {
+      return raw.replace(/\[\d+\]/g, "").trim();
+    }
+    return raw; // JSX는 그대로 반환
+  };
+
 
   const scrollLeft = () => {
     scrollRef.current.scrollLeft -= 700;
@@ -102,8 +108,11 @@ useEffect(() => {
   return (
     <div className="horizontal-slider-wrapper">
       <h2 className="horizontal-slider-title">
-        {items.length > 0 && items[0].channel ? cleanTitle(title) : title}
+        {items.length > 0 && items[0].channel
+          ? cleanTitle(title)
+          : title}
       </h2>
+
 
       <div className="horizontal-slider-scroll" ref={scrollRef}>
         {items.map((item, idx) => {
