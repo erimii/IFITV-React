@@ -63,7 +63,7 @@
 
 .welcome-section {
   margin-top: 0;
-  padding-top: 8px;
+  padding-top: 18px;
   margin-bottom: 10px;
   padding-left: 60px; /* IFITV 배너와 동일하게 */
 }
@@ -76,9 +76,9 @@
 }
 
 .welcome-section p {
-  margin: 6px 0 0 6px;
+  margin: 6px 0 0 10px;
   color: #bbb;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 500;
 }
   
