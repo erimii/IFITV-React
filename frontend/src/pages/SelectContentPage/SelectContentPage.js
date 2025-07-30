@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from 'axios';
 import CarouselSelect from '../../components/CarouselSelect/CarouselSelect';
@@ -16,31 +16,36 @@ function SelectContentPage({ user }) {
   const [selectedContentIds, setSelectedContentIds] = useState([]);
   const [selectedTitles, setSelectedTitles] = useState([]);
   const [typingDone, setTypingDone] = useState(false);
+  const [showContent, setShowContent] = useState(false);
 
   const { setSection, setIndex, registerSections, section } = useFocus();
   const isLoading = Object.keys(contentsByGenre).length === 0;
 
-  // sectionKey별 ref 저장
   const sectionRefs = useRef({});
 
   useEffect(() => {
-    if (!isLoading) {
-      // sectionKey별로 최대 index+1을 객체로 만듦
+    if (!isLoading && Object.keys(contentsByGenre).length > 0) {
       const sectionOrder = {};
+      window.scrollTo({ top: 0, behavior: 'auto' });
       Object.entries(contentsByGenre).forEach(([_, items], genreIdx) => {
         if (items && items.length > 0) {
           sectionOrder[`select-content-${genreIdx}`] = items.length;
         }
       });
-      sectionOrder['select-content-btns'] = 2; // 이전/선택완료 버튼
+      sectionOrder['select-content-btns'] = 2;
       registerSections(sectionOrder);
       setSection(Object.keys(sectionOrder)[0]);
       setIndex(0);
+
+      // 페이드 인 트리거
+      const timer = setTimeout(() => setShowContent(true), 100);
+      return () => clearTimeout(timer);
+    } else {
+      setShowContent(false);
     }
-  }, [isLoading, setSection, setIndex, registerSections, contentsByGenre]);
+  }, [isLoading, contentsByGenre, setSection, setIndex, registerSections]);
 
   useEffect(() => {
-    // section이 바뀔 때마다 해당 섹션을 스크롤
     if (section && sectionRefs.current[section]) {
       sectionRefs.current[section].scrollIntoView({
         behavior: "smooth",
@@ -118,7 +123,7 @@ function SelectContentPage({ user }) {
                 <div className="skeleton-card" key={i} />
               ))}
             </div>
-            <div style={{height: '20px'}}></div>
+            <div style={{ height: '20px' }}></div>
             <div className="skeleton-title" />
             <div className="skeleton-card-row">
               {[...Array(8)].map((_, i) => (
@@ -127,14 +132,14 @@ function SelectContentPage({ user }) {
             </div>
           </div>
         ) : (
-          Object.entries(contentsByGenre).map(([genre, items], genreIdx) => {
+          showContent && Object.entries(contentsByGenre).map(([genre, items], genreIdx) => {
             if (!items || items.length === 0) return null;
 
             const sectionKey = `select-content-${genreIdx}`;
             return (
               <div
                 key={genre}
-                className="content-category-block"
+                className="content-category-block fade-in"
                 ref={el => (sectionRefs.current[sectionKey] = el)}
               >
                 <div className="content-category-label">
