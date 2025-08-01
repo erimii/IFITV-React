@@ -1,5 +1,7 @@
 
 # IFITV 예능 추천기 (React + Django 연동)
+<img width="1920" height="916" alt="image" src="https://github.com/user-attachments/assets/75bf911e-8f5b-4582-9626-00a16f9f351e" />
+
 
 티빙 예능 콘텐츠 기반의 맞춤형 추천 시스템입니다.
 React 프론트엔드와 Django 백엔드를 사용하여 **멀티 프로필**, **실시간 방송 추천**, **콘텐츠 기반 유사 추천**, **제스처 인식 기반 자동 로그인** 기능 등을 제공합니다.
