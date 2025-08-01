@@ -82,4 +82,13 @@ React 프론트엔드와 Django 백엔드를 사용하여 **멀티 프로필**, 
 
 ---
 
+## 시연 영상
+
+
+
+
+https://github.com/user-attachments/assets/a7e05351-7a1d-4ac1-8ad7-2c2e1f0056d3
+
+
+
 
