@@ -142,10 +142,35 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
 
   useEffect(() => {
     if (selectedMenuParam === 'Home' && !loading && !isModalOpen) {
-      setSection('home-slider-0');
+      const sectionOrder = {};
+      let currentIndex = 0;
+
+      if (hybridRecommendations.length > 0) {
+        sectionOrder[`home-slider-${currentIndex}`] = hybridRecommendations.length;
+        currentIndex += 1;
+      }
+
+      if (livePrograms.length > 0) {
+        sectionOrder[`home-slider-${currentIndex}`] = livePrograms.length;
+        currentIndex += 1;
+      }
+
+      sectionOrder[`home-slider-${currentIndex}`] = genreContents.length;
+      currentIndex += 1;
+
+      Object.entries(likedRecommendationsByGenre).forEach(([genre, items]) => {
+        if (items.length > 0) {
+          sectionOrder[`home-slider-${currentIndex}`] = items.length;
+          currentIndex += 1;
+        }
+      });
+
+      registerSections(Object.keys(sectionOrder));
+      setSection(Object.keys(sectionOrder)[0]);
       setIndex(0);
     }
-  }, [selectedMenuParam, loading, isModalOpen, setSection, setIndex]);
+  }, [selectedMenuParam, loading, isModalOpen, hybridRecommendations, livePrograms, genreContents, likedRecommendationsByGenre]);
+
 
   useEffect(() => {
     if (selectedMenuParam !== "VOD") return;
@@ -302,8 +327,8 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
 
       {selectedMenuParam === "Home" && (
         <div className="welcome-section">
-          <h1>Welcome, {profile.name}!</h1>
-          <p>Continue Watching where you left off</p>
+          <h1>반가워요, {profile.name}님!</h1>
+          <p>당신만을 위한 추천 콘텐츠를 준비했어요.</p>
         </div>
       )}
 
@@ -342,7 +367,14 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
                 className={`fade-wrapper ${showSliders ? "fade-in" : "fade-hidden"}`}
                 ref={el => (sliderSectionRefs.current['home-slider-0'] = el)}>
                 <HorizontalSlider
-                  title={`${profile.name}님을 위한 AI 하이브리드 추천`}
+                  title={
+                    <>
+                      <span style={{ color: '#ec008c', fontWeight: 'bold' }}>
+                        {profile.name}
+                      </span>
+                      님 취향 분석 끝! 이런 콘텐츠 어때요?
+                    </>
+                  }
                   items={hybridRecommendations}
                   onCardClick={handleClick}
                   sliderIndex={0}
@@ -356,7 +388,14 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
                 className={`fade-wrapper ${showSliders ? "fade-in" : "fade-hidden"}`}
                 ref={el => (sliderSectionRefs.current['home-slider-1'] = el)}>
                 <HorizontalSlider
-                  title={`${profile.name}님의 오늘 방송 추천`}
+                  title={
+                    <>
+                      <span style={{ color: '#ec008c', fontWeight: 'bold' }}>
+                        {profile.name}
+                      </span>
+                      님을 위한 오늘의 방송 PICK!
+                    </>
+                  }
                   items={livePrograms.map((item) => ({
                     title: item["title"],
                     thumbnail: item["thumbnail"],
@@ -369,34 +408,49 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
               </div>
             )}
 
-            {/* ✅ 2 ~ N+1번: 찜 기반 장르별 추천 */}
+            {/* ✅ 2번: 선호 장르 기반 콘텐츠 (순서 올림) */}
+            <div ref={el => (sliderSectionRefs.current[`home-slider-2`] = el)}>
+              <HorizontalSlider
+                title={
+                    <>
+                      <span style={{ color: '#ec008c', fontWeight: 'bold' }}>
+                        {profile.name}
+                      </span>
+                      님 취향의 콘텐츠만 모았어요
+                    </>
+                  }
+                items={genreContents}
+                onCardClick={handleClick}
+                sliderIndex={2}
+              />
+            </div>
+
+            {/* ✅ 3 ~ N번: 찜 기반 장르별 추천 */}
             {Object.entries(likedRecommendationsByGenre).map(([genre, items], genreIndex) => (
               items.length > 0 && (
                 <div
                   key={genre}
-                  ref={el => (sliderSectionRefs.current[`home-slider-${2 + genreIndex}`] = el)}
+                  ref={el => (sliderSectionRefs.current[`home-slider-${3 + genreIndex}`] = el)}
                 >
                   <HorizontalSlider
-                    title={`${profile.name}님을 위한 ${genre} 추천`}
+                    title={
+                    <>
+                      <span style={{ color: '#ec008c', fontWeight: 'bold' }}>
+                        {profile.name}
+                      </span>
+                      님 취향 저격! {genre} 콘텐츠
+                    </>
+                  }
                     items={items}
                     onCardClick={handleClick}
-                    sliderIndex={2 + genreIndex}
+                    sliderIndex={3 + genreIndex}
                   />
                 </div>
               )
             ))}
-
-            {/* ✅ 마지막: 선호 장르 기반 콘텐츠 */}
-            <div ref={el => (sliderSectionRefs.current[`home-slider-${2 + Object.keys(likedRecommendationsByGenre).filter(g => likedRecommendationsByGenre[g].length > 0).length}`] = el)}>
-              <HorizontalSlider
-                title={`${profile.name}님의 선호 장르 기반 콘텐츠`}
-                items={genreContents}
-                onCardClick={handleClick}
-                sliderIndex={2 + Object.keys(likedRecommendationsByGenre).filter(g => likedRecommendationsByGenre[g].length > 0).length}
-              />
-            </div>
           </>
         )}
+
 
       </div>
     </div>

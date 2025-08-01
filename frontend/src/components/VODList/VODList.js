@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Focusable from '../Focusable/Focusable';
 import './VODList.css';
 import styles from '../HomeContentCard.module.css';
@@ -10,7 +10,9 @@ const VODList = ({ vodContents, onClick, loaderRef, selectedSubgenre, isLoading 
   const { section, index } = useFocus();
 
   const [showContent, setShowContent] = useState(false);
+  const hasRegistered = useRef(false);
 
+  // 콘텐츠가 바뀔 때 잠깐 delay 주고 보여주기
   useEffect(() => {
     if (!isLoading && vodContents.length > 0) {
       const timer = setTimeout(() => setShowContent(true), 100);
@@ -20,14 +22,20 @@ const VODList = ({ vodContents, onClick, loaderRef, selectedSubgenre, isLoading 
     }
   }, [isLoading, vodContents]);
 
-
+  // 👉 포커스 섹션 등록 (한 번만)
   useEffect(() => {
-    if (!isLoading && vodContents.length > 0) {
+    if (!isLoading && vodContents.length > 0 && !hasRegistered.current) {
       registerSections({ 'vod-content': vodContents.length });
       setSection('vod-content');
       setIndex(0);
+      hasRegistered.current = true;
     }
   }, [vodContents, isLoading, registerSections, setSection, setIndex]);
+
+  // 👉 서브장르가 바뀌면 다시 등록 가능하게
+  useEffect(() => {
+    hasRegistered.current = false;
+  }, [selectedSubgenre]);
 
   return (
     <div className="vod-page-container">

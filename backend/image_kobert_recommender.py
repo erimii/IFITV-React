@@ -15,7 +15,8 @@ from transformers import AutoTokenizer, AutoModel
 from sqlalchemy import create_engine
 
 def load_contents_from_db():
-    engine = create_engine("mysql+pymysql://root:rubi@db:3306/ifitv_db")
+    # engine = create_engine("mysql+pymysql://root:rubi@db:3306/ifitv_db")
+    engine = create_engine('mysql+pymysql://root:rubi@localhost:3306/ifitv_db')
     df = pd.read_sql("SELECT * FROM vod_contents", engine)
     df = df[df['thumbnail'].notna() & (df['thumbnail'].str.strip() != '')].reset_index(drop=True)
     return df

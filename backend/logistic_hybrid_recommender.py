@@ -20,7 +20,8 @@ from tqdm import tqdm
 warnings.filterwarnings('ignore')
 
 def load_user_logs_from_db():
-    engine = create_engine("mysql+pymysql://root:rubi@db:3306/ifitv_db")
+    # engine = create_engine("mysql+pymysql://root:rubi@db:3306/ifitv_db")
+    engine = create_engine('mysql+pymysql://root:rubi@localhost:3306/ifitv_db')
     query = """
     SELECT 
         vwh.profile_id AS profile_id,
@@ -39,7 +40,8 @@ def load_user_logs_from_db():
     return logs
 
 def load_vod_contents_from_db():
-    engine = create_engine("mysql+pymysql://root:rubi@db:3306/ifitv_db")
+    # engine = create_engine("mysql+pymysql://root:rubi@db:3306/ifitv_db")
+    engine = create_engine('mysql+pymysql://root:rubi@localhost:3306/ifitv_db')
     return pd.read_sql("SELECT * FROM vod_contents", engine)
 
 def build_tfidf_matrix(descriptions):

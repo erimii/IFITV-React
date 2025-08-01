@@ -85,9 +85,9 @@ DATABASES = {
         'NAME': 'ifitv_db',
         'USER': 'root',
         'PASSWORD': 'rubi',
-        #'HOST': 'localhost',
+        'HOST': 'localhost',
         #'HOST': 'host.docker.internal',
-        'HOST': 'db' if IS_DOCKER else 'localhost',
+        #'HOST': 'db'
         'PORT': '3306',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
