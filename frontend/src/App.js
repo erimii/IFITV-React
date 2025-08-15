@@ -61,7 +61,7 @@ function App() {
   useEffect(() => {
     if (!user) return;
   
-    axios.get("http://localhost:8000/api/profiles/by_user/", {
+    axios.get("/api/profiles/by_user/", {
       params: { user_id: user.id },
     })
     .then((res) => setProfiles(res.data))

@@ -65,7 +65,7 @@ function GestureModal({ profiles, currentProfile, onClose, onRecognized }) {
   const sendToServer = (joints) => {
     if (gesture) return;
 
-    fetch("http://localhost:8000/api/predict_gesture/", {
+    fetch("/api/predict_gesture/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ joints }),

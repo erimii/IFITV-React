@@ -36,7 +36,7 @@ function SelectSubgenresPage({ user }) {
   }, [registerSections, setSection, setIndex, flatSubgenres.length]);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/recommendation/subgenres/')
+    axios.get('/api/recommendation/subgenres/')
       .then(res => {
         setSubgenreMapping(res.data);
         const flatList = [];

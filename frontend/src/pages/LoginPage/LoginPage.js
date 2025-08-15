@@ -36,7 +36,7 @@ function LoginPage({ setUser }) {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/login/', formData);
+      const response = await axios.post('/api/login/', formData);
       localStorage.setItem("user", JSON.stringify(response.data));
       setUser(response.data);
       navigate("/select-profile");

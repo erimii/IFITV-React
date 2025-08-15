@@ -56,7 +56,7 @@ function SelectContentPage({ user }) {
 
   const fetchContents = async () => {
     try {
-      const response = await axios.post("http://localhost:8000/recommendation/sample_contents/", {
+      const response = await axios.post("/api/recommendation/sample_contents/", {
         selected: profile.preferred_genres,
         profile_id: profile.id,
       });
@@ -87,7 +87,7 @@ function SelectContentPage({ user }) {
       liked_contents_ids: selectedContentIds
     };
     try {
-      await axios.post("http://localhost:8000/api/add_profile/", {
+      await axios.post("/api/add_profile/", {
         user_id: user.id,
         profile: fullProfile
       });

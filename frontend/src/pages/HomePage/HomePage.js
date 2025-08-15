@@ -78,7 +78,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/profiles/by_user/', {
+        const response = await axios.get('/api/profiles/by_user/', {
           params: { user_id: user.id }
         });
         setProfiles(response.data);
@@ -95,7 +95,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
       setVodLoading(true);
       try {
         const subParam = selectedSubgenre ? `&subgenre_id=${selectedSubgenre.id}` : "";
-        const res = await axios.get(`http://localhost:8000/recommendation/all_vod_contents/?page=${page}${subParam}`);
+        const res = await axios.get(`/api/recommendation/all_vod_contents/?page=${page}${subParam}`);
         setVodContents(prev => [...prev, ...res.data.results]);
         setHasNext(res.data.has_next);
       } catch (error) {
@@ -112,7 +112,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
     setLiveLoading(true);
     const fetchLiveContents = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/recommendation/api/live_by_broadcaster/");
+        const res = await axios.get("/api/recommendation/api/live_by_broadcaster/");
         setGroupedLiveContents(res.data);
       } catch (error) {
         console.error("실시간 콘텐츠 불러오기 실패:", error);
@@ -128,7 +128,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
       if (!profile || selectedMenuParam !== "My List") return;
       setMyListLoading(true);
       try {
-        const res = await axios.get(`http://localhost:8000/api/my_list/?profile_id=${profile.id}`);
+        const res = await axios.get(`/api/my_list/?profile_id=${profile.id}`);
         setMyListContents(res.data);
         setLikedContentIds(res.data.map(c => c.id));
       } catch (error) {
@@ -199,7 +199,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
     const fetchWatchHistory = async () => {
       if (!profile) return;
       try {
-        const res = await axios.get(`http://localhost:8000/recommendation/watch_history/${profile.id}`);
+        const res = await axios.get(`/api/recommendation/watch_history/${profile.id}`);
         setWatchedContentIds(res.data.map(id => Number(id)));
       } catch (error) {
         console.error("시청 이력 불러오기 실패:", error);
@@ -214,10 +214,10 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
     setLoading(true);
     try {
       const [res1, res2, res3, res4] = await Promise.all([
-        axios.post("http://localhost:8000/recommendation/subgenre_based_recommend/", { profile_id: profile.id }),
-        axios.post("http://localhost:8000/api/live_recommend/", { profile_id: profile.id }),
-        axios.post("http://localhost:8000/recommendation/liked_based_recommend/", { profile_id: profile.id }),
-        axios.post("http://localhost:8000/recommendation/logistic_hybrid_recommend/", { profile_id: profile.id })
+        axios.post("/api/recommendation/subgenre_based_recommend/", { profile_id: profile.id }),
+        axios.post("/api/live_recommend/", { profile_id: profile.id }),
+        axios.post("/api/recommendation/liked_based_recommend/", { profile_id: profile.id }),
+        axios.post("/api/recommendation/logistic_hybrid_recommend/", { profile_id: profile.id })
       ]);
       setGenreContents(res1.data);
       setLivePrograms(res2.data);
@@ -248,7 +248,7 @@ function HomePage({ user, profile, setSelectedProfile, onLogout }) {
 
 
   const fetchDetailRecommendation = async (title, profileId) => {
-    const res = await axios.post("http://localhost:8000/api/recommend_with_detail/", {
+    const res = await axios.post("/api/recommend_with_detail/", {
       title,
       top_n: 5,
       alpha: 0.7,

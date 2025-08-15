@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  db:
+    # 개발에서만 Workbench 편하게 쓰도록 포트 개방
+    ports:
+      - "3306:3306"
+
+  backend:
+    # 개발은 runserver + 소스 마운트
+    command: >
+      sh -c "until mysqladmin ping -h db -uroot -p$$MYSQL_ROOT_PASSWORD --silent;
+      do echo '⏳ waiting for db...'; sleep 2; done &&
+      python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+
+  frontend:
+    # 개발은 HMR
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app"

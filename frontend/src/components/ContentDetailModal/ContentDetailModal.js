@@ -75,7 +75,7 @@ const ContentDetailModal = ({
     if (!profile || !content) return;
 
     try {
-      const response = await axios.post("http://localhost:8000/api/toggle_like/", {
+      const response = await axios.post("/api/toggle_like/", {
         profile_id: profile.id,
         content_id: content.id
       });
@@ -97,7 +97,7 @@ const ContentDetailModal = ({
   const handleWatch = async () => {
     if (!profile || !content) return;
     try {
-      await axios.post('http://localhost:8000/recommendation/watch_history/', {
+      await axios.post('/api/recommendation/watch_history/', {
         content_id: content.id,
         profile_id: profile.id
       });

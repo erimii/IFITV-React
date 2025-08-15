@@ -34,7 +34,7 @@ const SidebarHeader = ({
   useEffect(() => {
     const fetchGenresWithSubgenres = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/recommendation/genres_with_subgenres/");
+        const res = await axios.get("/api/recommendation/genres_with_subgenres/");
         setSubgenresByGenre(res.data);
         console.log("장르 + 서브장르 응답 확인", res.data);
       } catch (error) {

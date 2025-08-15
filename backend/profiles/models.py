@@ -48,4 +48,4 @@ class VODWatchHistory(models.Model):
     watched_percent = models.IntegerField()
 
     class Meta:
-        db_table = 'VOD_watch_history'
+        db_table = 'vod_watch_history'

@@ -20,6 +20,6 @@ urlpatterns = [
     path('api/toggle_like/', toggle_like),
     path('api/recommend_with_detail/', recommend_with_detail),
     path('api/live_recommend/', live_recommend),
-    path('recommendation/', include('recommendations.urls')),
+    path('api/recommendation/', include('recommendations.urls')),
     path('api/', include(router.urls)),
 ]

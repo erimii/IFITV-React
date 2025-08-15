@@ -45,7 +45,11 @@ INSTALLED_APPS = [
     'recommendations',
 ]
 
+ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://127.0.0.1"]
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -85,9 +89,9 @@ DATABASES = {
         'NAME': 'ifitv_db',
         'USER': 'root',
         'PASSWORD': 'rubi',
-        'HOST': 'localhost',
+        # 'HOST': 'localhost',
         #'HOST': 'host.docker.internal',
-        #'HOST': 'db'
+        'HOST': 'db',
         'PORT': '3306',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",

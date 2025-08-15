@@ -26,7 +26,7 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/profiles/by_user/', {
+        const response = await axios.get('/api/profiles/by_user/', {
           params: { user_id: user.id }
         });
         setProfiles(response.data);
@@ -65,7 +65,7 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
     if (!confirmDelete) return;
 
     try {
-      await axios.post("http://localhost:8000/api/delete_profile/", {
+      await axios.post("/api/delete_profile/", {
         user_id: user.id,
         profile_name: profileName,
       });
@@ -78,7 +78,7 @@ function ProfileSelectPage({ user, setSelectedProfile }) {
 
   const handleEdit = async (originalName) => {
     try {
-      await axios.patch("http://localhost:8000/api/edit_profile/", {
+      await axios.patch("/api/edit_profile/", {
         user_id: user.id,
         original_name: originalName,
         updated: editForm,
